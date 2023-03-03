@@ -18,18 +18,31 @@ var roi =
 
 
 // Load the Sentinel-2 image collection for the time period of interest
+// Load the Sentinel-2 image collection
  var sentinel2 = ee.ImageCollection('COPERNICUS/S2_SR') 
-.filterBounds(roi) 
-.filterDate('2021-01-01', '2021-12-31')
- .sort('CLOUD_COVERAGE_ASSESSMENT')
- .first();
+.filterDate('2017-09-01', '2017-12-31') .filterBounds(roi); 
 
- // Calculate the NBR index for the Sentinel-2 image
- var nbr = s2.normalizedDifference(['B8', 'B12']).rename('NBR'); 
+// Define the NBR function
+ var nbr = function(image)
+    { 
+var nir = image.select('B8'); 
+var swir = image.select('B12');
+ var nbr = nir.subtract(swir)
+.divide(nir.add(swir))
+.rename('NBR'); 
+ return image.addBands(nbr);
+   }; 
+   
+// Apply the NBR function to the Sentinel-2 image collection 
+var sentinel2Nbr = sentinel2.map(nbr); 
+// Create a mask for the burned areas 
+var burnedAreaMask = sentinel2Nbr.select('NBR')
+ .lt(-0.1);
 
-// Threshold the NBR index to identify burned areas 
-var burned = nbr.lt(0.1); 
-
-// Display the burned area on the map 
-Map.addLayer(burned, {palette: 'red'}, 'Burned Area');
+// Apply the burned area mask to the Sentinel-2 image collection 
+var burnedArea = sentinel2Nbr.map(function(image) 
+{ return image.updateMask(burnedAreaMask); }); 
+// Calculate the burned area in square meters 
+var burnedAreaM2 = burnedArea.select('NBR') 
+.multiply(ee.Image.pixelArea())
 

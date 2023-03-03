@@ -35,14 +35,4 @@ var swir = image.select('B12');
    
 // Apply the NBR function to the Sentinel-2 image collection 
 var sentinel2Nbr = sentinel2.map(nbr); 
-// Create a mask for the burned areas 
-var burnedAreaMask = sentinel2Nbr.select('NBR')
- .lt(-0.1);
-
-// Apply the burned area mask to the Sentinel-2 image collection 
-var burnedArea = sentinel2Nbr.map(function(image) 
-{ return image.updateMask(burnedAreaMask); }); 
-// Calculate the burned area in square meters 
-var burnedAreaM2 = burnedArea.select('NBR') 
-.multiply(ee.Image.pixelArea())
 

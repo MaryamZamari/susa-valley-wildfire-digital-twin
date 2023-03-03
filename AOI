@@ -1,5 +1,5 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var geometry = 
+var roi = 
     /* color: #80929d */
     /* displayProperties: [
       {
@@ -12,3 +12,24 @@ var geometry =
           [7.716034190070924, 44.91394352253096],
           [7.716034190070924, 45.20882936495508]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
+
+/* Define the Susa Valley region of interest 
+/===> We did by importing the polygone based on the geographyc coordinates */
+
+
+// Load the Sentinel-2 image collection for the time period of interest
+ var sentinel2 = ee.ImageCollection('COPERNICUS/S2_SR') 
+.filterBounds(roi) 
+.filterDate('2021-01-01', '2021-12-31')
+ .sort('CLOUD_COVERAGE_ASSESSMENT')
+ .first();
+
+ // Calculate the NBR index for the Sentinel-2 image
+ var nbr = s2.normalizedDifference(['B8', 'B12']).rename('NBR'); 
+
+// Threshold the NBR index to identify burned areas 
+var burned = nbr.lt(0.1); 
+
+// Display the burned area on the map 
+Map.addLayer(burned, {palette: 'red'}, 'Burned Area');
+

@@ -12,13 +12,13 @@ var roi =
           [7.716034190070924, 44.91394352253096],
           [7.716034190070924, 45.20882936495508]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
-
-
 // Load Sentinel-2 image collection
 var s2 = ee.ImageCollection('COPERNICUS/S2_SR')
   .filterDate('2017-09-01', '2017-12-31')
   .filterBounds(roi)
-  .sort('CLOUD_COVER', false);
+  .sort('CLOUD_COVER', false).select('B8', 'B12')
+// .map(calculateNBR)
+;
 
 // Function to calculate NBR index
 var calculateNBR = function(image) {

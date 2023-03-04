@@ -51,6 +51,6 @@ Map.addLayer(sentinel2);
 Map.addLayer(sentinel2Nbr);
 
 // Create a thresshold mask for the burned areas 
-//var burnedAreaMask = sentinel2Nbr.select('NBR')
- //                                .lt(-0.1);
+var burnedAreaMask = sentinel2Nbr.select('NBR')
+                              .lt(-0.1);
 

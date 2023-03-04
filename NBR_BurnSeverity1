@@ -1,3 +1,19 @@
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var roi = 
+    /* color: #80929d */
+    /* displayProperties: [
+      {
+        "type": "rectangle"
+      }
+    ] */
+    ee.Geometry.Polygon(
+        [[[6.5947420758131114, 45.20882936495508],
+          [6.5947420758131114, 44.91394352253096],
+          [7.716034190070924, 44.91394352253096],
+          [7.716034190070924, 45.20882936495508]]], null, false);
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
+
+
 /* Define the Susa Valley region of interest 
 /===> We did by importing the polygone based on the geographyc coordinates */
 
@@ -11,47 +27,44 @@ var start = ee.Date('2017-09-01');
 var end = ee.Date('2017-12-31');
 var interval = 3; // in days
  
-   // Load Sentinel-2 data
-var s2 = ee.ImageCollection('COPERNICUS/S2_SR')
+// Load Sentinel-2 data
+var sentinel2 = ee.ImageCollection('COPERNICUS/S2_SR')
           .filterBounds(roi)
           .filterDate(start, end)
           .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 20))
-          .select(['B8', 'B11'])
+          .select(['B8', 'B12'])
           .map(function(img) {
             return img.divide(10000); // scale factor
           });
 
-print(sentinel2.size()); //number of sentinel 2 images for the ROI within the defined period
-
-
-// Function to calculate the NBR index
-var calculateNBR = function(img) {
-  return img.normalizedDifference(['B11', 'B8']).rename('NBR');
+// Define the NBR function
+var calcNBR = function(image) {
+  var nbr = image.normalizedDifference(['B8', 'B12']).rename('NBR');
+  return image.addBands(nbr);
 };
 
-// Calculate NBR for each image in the collection
-var nbr = s2.map(calculateNBR);
+// Map the NBR function over the collection
+var s2_nbr = sentinel2.map(calcNBR);
 
-// Calculate the pre-fire and post-fire NBR images
-var preFire = nbr.filterDate(start.advance(-1, 'year'), start);
-var postFire = nbr.filterDate(start, end);
+// Define a mask image
+var mask = s2_nbr.select('NBR').gt(0.1);
 
-// Calculate the delta NBR image (post-fire minus pre-fire)
-var deltaNBR = postFire.mean().subtract(preFire.mean()).rename('deltaNBR');
+// Calculate the pre-fire and post-fire mean NBR
+var prefire_nbr = s2_nbr.filterDate('2017-09-01', '2017-09-30').select('NBR').mean();
+var postfire_nbr = s2_nbr.filterDate('2017-10-01', '2017-12-31').select('NBR').mean();
 
-// Define the burn severity classification thresholds
-var thres1 = -0.1;
-var thres2 = 0.1;
+// Calculate the NBR difference and mask it using the mask image
+var nbr_diff = postfire_nbr.subtract(prefire_nbr).updateMask(mask);
 
-// Create the burn severity map using the delta NBR image
-var severity = deltaNBR.expression(
-  '(deltaNBR > thres2) ? 2 : ' +
-  '((deltaNBR > thres1) ? 1 : 0)',
-  {
-    'deltaNBR': deltaNBR,
-    'thres1': thres1,
-    'thres2': thres2
-  }).rename('burnSeverity');
+// Define a color palette for visualizing the burn severity
+var palette = ['white', 'brown', 'orange', 'red', 'darkred'];
+var vis = {min: -1, max: 1, palette: palette};
 
 // Display the burn severity map
-Map.addLayer(severity, {min: 0, max: 2, palette: ['green', 'yellow', 'red']}, 'Burn Severity');
+Map.centerObject(roi , 11);
+Map.addLayer(nbr_diff, vis, 'Burn Severity');
+
+
+
+
+Regenerate respon

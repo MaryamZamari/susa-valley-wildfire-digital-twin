@@ -11,7 +11,6 @@ var roi =
           [6.5947420758131114, 44.91394352253096],
           [7.716034190070924, 44.91394352253096],
           [7.716034190070924, 45.20882936495508]]], null, false),
-    imageCollection = ee.ImageCollection("COPERNICUS/S2"),
     imageCollection2 = ee.ImageCollection("COPERNICUS/S2_SR");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
@@ -39,11 +38,19 @@ var nbr = function(image)
                 .divide(nir.add(swir))
                 .rename('NBR'); 
                 
-       return image.addBands(nbr);
+       return image.addBands(nbr); //we add the calculated NBR, as a layer to the map.
    }; 
 
 // Apply the NBR function to the Sentinel-2 image collection _ lt= less than _ 
 var sentinel2Nbr = sentinel2.map(nbr); 
 
+// Make a handy variable of visualization parameters.
+var visParams = {bands: ['B8', 'B12'], max: 0.3};
+
+Map.addLayer(sentinel2);
 Map.addLayer(sentinel2Nbr);
+
+// Create a thresshold mask for the burned areas 
+//var burnedAreaMask = sentinel2Nbr.select('NBR')
+ //                                .lt(-0.1);
 

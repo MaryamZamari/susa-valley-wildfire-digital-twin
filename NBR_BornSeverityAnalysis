@@ -44,8 +44,7 @@ var nbr = function(image)
 // Apply the NBR function to the Sentinel-2 image collection _ lt= less than _ 
 var sentinel2Nbr = sentinel2.map(nbr); 
 
-// Make a handy variable of visualization parameters.
-var visParams = {bands: ['B8', 'B12'], max: 0.3};
+
 
 Map.addLayer(sentinel2);
 Map.addLayer(sentinel2Nbr);

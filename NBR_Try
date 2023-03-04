@@ -47,14 +47,14 @@ var calcNBR = function(image) {
 var s2_nbr = sentinel2.map(calcNBR);
 
 // Define a mask image
-//var mask = s2_nbr.select('NBR').gt(0.1);
+var mask = s2_nbr.select('NBR').gt(0.1);
 
 // Calculate the pre-fire and post-fire mean NBR
 var prefire_nbr = s2_nbr.filterDate('2017-09-01', '2017-09-30').select('NBR').mean();
 var postfire_nbr = s2_nbr.filterDate('2017-10-01', '2017-12-31').select('NBR').mean();
 
 // Calculate the NBR difference and mask it using the mask image
-var nbr_diff = postfire_nbr.subtract(prefire_nbr);//.updateMask(mask);
+var nbr_diff = postfire_nbr.subtract(prefire_nbr).updateMask(mask);
 
 // Define a color palette for visualizing the burn severity
 var palette = ['white', 'brown', 'orange', 'red', 'darkred'];

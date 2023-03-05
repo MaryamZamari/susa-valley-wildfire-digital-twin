@@ -30,3 +30,6 @@ var nbr= nir.subtract(swir)
             .nir.add(swir);
             
 var nbr_roi= nbr.clip(roi);
+
+Map.centerObject(roi);
+Map.addLayer(nbr_roi); 

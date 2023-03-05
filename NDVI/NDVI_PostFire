@@ -1,0 +1,24 @@
+
+
+var startDate= '2017-10-01';
+var endDate= '2017-12-15'; 
+
+
+    var data= sentinel2
+              .select('B8','B4')
+              .filterBounds(roi)
+              .filterDate(startDate , endDate)
+              .median();
+                      
+    var nir= data.select('B8');
+    var red= data.select('B4');
+    
+ //   var NIR= function(){
+      
+ //       nir.subtract(red).divide(nir.add(red));
+  //  }
+  var NDVI= nir.subtract(red).divide(nir.add(red));
+  var NDVI_ROI= NDVI.clip(roi);
+  
+  Map.centerObject(roi);
+  Map.addLayer(NDVI_ROI);

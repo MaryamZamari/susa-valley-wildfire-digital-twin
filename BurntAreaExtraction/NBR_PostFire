@@ -27,7 +27,7 @@ var swir= sentinel2.select('B12');
 
 //var nbr= nir.subtract(swir)
   //          .divide(nir.add(swir));
-var nbr= image.normalizedDifference(['B8', 'B12']);
+var nbr= data.normalizedDifference(['B8', 'B12']);
             
 var nbr_roi= nbr.clip(roi);
 

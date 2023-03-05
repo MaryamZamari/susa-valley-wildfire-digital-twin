@@ -13,3 +13,4 @@ var roi =
           [7.716034190070924, 45.20882936495508]]], null, false),
     sentinel2 = ee.ImageCollection("COPERNICUS/S2_SR");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
+

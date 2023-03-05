@@ -33,5 +33,7 @@ var endDate= '2017-09-30';
   var NDVI= nir.subtract(red).divide(nir.add(red));
   var NDVI_ROI= NDVI.clip(roi);
   
+  print(NDVI_ROI);
+  
   Map.centerObject(roi);
   Map.addLayer(NDVI_ROI);

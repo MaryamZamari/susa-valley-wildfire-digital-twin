@@ -13,6 +13,23 @@ var roi =
           [7.716034190070924, 45.20882936495508]]], null, false),
     sentinel2 = ee.ImageCollection("COPERNICUS/S2_SR");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
+var startDate= '2017-09-01';
+var endDate= '2017-12-31'; 
+
 
     var data= sentinel2.filterBounds(roi)
-                      .filterDate('2017-09-01', )
+                      .filterDate(startDate ,endDate)
+                      .median();
+                      
+    var nir= data.select(B8);
+    var red= data.select(B4);
+    
+ //   var NIR= function(){
+      
+ //       nir.subtract(red).divide(nir.add(red));
+  //  }
+  var NDVI= nir.subtract(red).divide(nir.add(red));
+  var NDVI_ROI= NDVI.clip(roi);
+  
+  Map.centerObject(roi);
+  Map.addLayer(NDVI_ROI);

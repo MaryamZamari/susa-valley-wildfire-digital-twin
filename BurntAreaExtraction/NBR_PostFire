@@ -25,8 +25,7 @@ var data= sentinel2
 var nir= sentinel2.select('B8');
 var swir= sentinel2.select('B12');
 
-var nbr= nir.subtract(swir)
-            .divide(nir.add(swir));
+var nbr= nir.subtract(swir).divide(nir.add(swir));
             
 var nbr_roi= nbr.clip(roi);
 

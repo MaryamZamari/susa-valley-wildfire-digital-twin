@@ -20,7 +20,8 @@ var endDate=   '2017-12-15';
 var data= sentinel2
               .select('B8','B12')
               .filterBounds(roi)
-              .filterDate(startDate , endDate);
+              .filterDate(startDate , endDate)
+              .median();
               
 var nir= sentinel2.select('B8');
 var swir= sentinel2.select('B12');

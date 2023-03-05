@@ -17,9 +17,11 @@ var startDate= '2017-09-01';
 var endDate= '2017-12-31'; 
 
 
-    var data= sentinel2.filterBounds(roi)
-                      .filterDate(startDate , endDate)
-                      .median();
+    var data= sentinel2
+              .select('B8','B4')
+              .filterBounds(roi)
+              .filterDate(startDate , endDate)
+              .median();
                       
     var nir= data.select('B8');
     var red= data.select('B4');

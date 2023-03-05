@@ -15,9 +15,9 @@ var roi =
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
 var startDate= '2017-10-01';
-var endDate= '2017-12-15'; 
+var endDate=   '2017-12-15'; 
 
 var data= sentinel2
-            .filterBounds(roi)
-            .filterDate(startDate, endDate)
-            .
+              .select('B8','B12')
+              .filterBounds(roi)
+              .filterDate(startDate , endDate);

@@ -12,4 +12,4 @@ var roi =
           [7.716034190070924, 44.91394352253096],
           [7.716034190070924, 45.20882936495508]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
-
+ee.ImageCollection("COPERNICUS/S2_SR") 

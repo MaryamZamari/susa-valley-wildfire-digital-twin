@@ -27,12 +27,29 @@ var swir= sentinel2.select('B12');
 
 //var nbr= nir.subtract(swir)
   //          .divide(nir.add(swir));
-var nbr= nir.subtract(swir)
-                .divide(nir.add(swir))
-                .rename('NBR'); 
-                
+  
+  
+// Function to calculate NBR index
+function calculateNBR(image) {
+  // Select NIR and SWIR bands from the image
+  var nir = image.select('B8');
+  var swir = image.select('B12');
+  
+  // Calculate NBR index
+  var nbr = nir.subtract(swir).divide(nir.add(swir)).rename('NBR');
+  
+  return nbr;
+}
+  
+// Map the function over the collection to get the NBR for each image
+var nbr_collection = sentinel2.map(calculateNBR);  
             
-var nbr_roi= nbr.clip(roi);
+// Clip the NBR collection to your area of interest
+var clipped_nbr_collection = nbr_collection.map(function(image){
+  return image.clip(roi);
+});
 
 Map.centerObject(roi);
-Map.addLayer(nbr_roi); 
+//Map.addLayer(nbr_roi); 
+
+Map.addLayer(clipped_nbr_collection);

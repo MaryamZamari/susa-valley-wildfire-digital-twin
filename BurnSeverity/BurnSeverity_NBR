@@ -21,10 +21,15 @@ var post_startDate= '2017-10-01';
 var post_endDate=   '2017-12-15'; 
 
 
-var data= sentinel2
+var pre_data= sentinel2
               .select('B8','B12')
               .filterBounds(roi)
-              .filterDate(startDate , endDate);
+              .filterDate(pre_startDate , pre_endDate);
+              
+var post_data= sentinel2
+              .select('B8','B12')
+              .filterBounds(roi)
+              .filterDate(post_startDate , post_endDate);
               
 var nir= sentinel2.select('B8');
 var swir= sentinel2.select('B12');
@@ -52,6 +57,8 @@ var nbr_collection = sentinel2.map(calculateNBR);
 var clipped_nbr_collection = nbr_collection.map(function(image){
   return image.clip(roi);
 });
+
+print (clipped_nbr_collection).count();
 
 Map.centerObject(roi);
 //Map.addLayer(nbr_roi); 

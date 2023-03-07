@@ -13,3 +13,42 @@ var roi =
           [7.716034190070924, 45.20882936495508]]], null, false),
     sentinel2 = ee.ImageCollection("COPERNICUS/S2_SR");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
+var startDate= '2017-10-01';
+var endDate=   '2017-12-15'; 
+
+var data= sentinel2
+              .select('B8','B12')
+              .filterBounds(roi)
+              .filterDate(startDate , endDate);
+              
+var nir= sentinel2.select('B8');
+var swir= sentinel2.select('B12');
+
+//var nbr= nir.subtract(swir)
+  //          .divide(nir.add(swir));
+  
+  
+// Function to calculate NBR index
+function calculateNBR(image) {
+  // Select NIR and SWIR bands from the image
+  var nir = image.select('B8');
+  var swir = image.select('B12');
+  
+  // Calculate NBR index
+  var nbr = nir.subtract(swir).divide(nir.add(swir)).rename('NBR');
+  
+  return nbr;
+}
+  
+// Map the function over the collection to get the NBR for each image
+var nbr_collection = sentinel2.map(calculateNBR);  
+            
+// Clip the NBR collection to your area of interest
+var clipped_nbr_collection = nbr_collection.map(function(image){
+  return image.clip(roi);
+});
+
+Map.centerObject(roi);
+//Map.addLayer(nbr_roi); 
+
+Map.addLayer(clipped_nbr_collection);

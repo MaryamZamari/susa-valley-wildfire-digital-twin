@@ -14,53 +14,46 @@ var roi =
     sentinel2 = ee.ImageCollection("COPERNICUS/S2_SR");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
-var pre_startDate= '2017-09-01';
-var pre_endDate=   '2017-09-30'; 
+// Load Sentinel-2A data and filter according to date and area of interest
+var s2 = ee.ImageCollection('COPERNICUS/S2_SR')
+          .filterDate('2017-09-01', '2017-12-15')
+          .filterBounds(roi);
 
-var post_startDate= '2017-10-01';
-var post_endDate=   '2017-12-15'; 
+// Define a cloud mask function to remove cloud pixels
+var maskClouds = function(image) {
+  var qa = image.select('QA60');
+  var mask = qa.bitwiseAnd(1 << 10).eq(0);
+  return image.updateMask(mask);
+};
 
+// Apply the cloud mask function to the image collection
+var s2masked = s2.map(maskClouds);
 
-var pre_data= sentinel2
-              .select('B8','B12')
-              .filterBounds(roi)
-              .filterDate(pre_startDate , pre_endDate);
-              
-var post_data= sentinel2
-              .select('B8','B12')
-              .filterBounds(roi)
-              .filterDate(post_startDate , post_endDate);
-              
-var nir= sentinel2.select('B8');
-var swir= sentinel2.select('B12');
-
-//var nbr= nir.subtract(swir)
-  //          .divide(nir.add(swir));
-  
-  
-// Function to calculate NBR index
-function calculateNBR(image) {
-  // Select NIR and SWIR bands from the image
+// Calculate the NBR for the prefire period (September 1-30, 2017)
+var prefire_nbr = s2masked.filterDate('2017-09-01', '2017-09-30')
+                          .map(function(image) {
   var nir = image.select('B8');
   var swir = image.select('B12');
-  
-  // Calculate NBR index
   var nbr = nir.subtract(swir).divide(nir.add(swir)).rename('NBR');
-  
   return nbr;
-}
-  
-// Map the function over the collection to get the NBR for each image
-var nbr_collection = sentinel2.map(calculateNBR);  
-            
-// Clip the NBR collection to your area of interest
-var clipped_nbr_collection = nbr_collection.map(function(image){
-  return image.clip(roi);
 });
 
-print (clipped_nbr_collection).count();
+// Calculate the NBR for the postfire period (October 1-December 15, 2017)
+var postfire_nbr = s2masked.filterDate('2017-10-01', '2017-12-15')
+                           .map(function(image) {
+  var nir = image.select('B8');
+  var swir = image.select('B12');
+  var nbr = nir.subtract(swir).divide(nir.add(swir)).rename('NBR');
+  return nbr;
+});
 
-Map.centerObject(roi);
-//Map.addLayer(nbr_roi); 
+// Calculate the Burn Severity by subtracting Postfire NBR from Prefire NBR
+var burn_severity = prefire_nbr.mean().subtract(postfire_nbr.mean())
+                          .multiply(100).rename('Burn Severity');
 
-Map.addLayer(clipped_nbr_collection);
+
+// Clip the Burn Severity map to the ROI
+var burnSeverity_clipped = burn_severity.clip(roi);
+
+// Display the Burn Severity on the map
+Map.addLayer(burnSeverity_clipped, {min:-100, max:100, palette:['yellow','orange','red']},'Burn Severity');

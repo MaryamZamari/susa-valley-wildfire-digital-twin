@@ -41,10 +41,10 @@ function calculateNBR(image) {
   return nbr;
 }
   
-// Map the function over the collection to get the NBR for each image
+// here i mapped the function over the collection to get the NBR for each image
 var nbr_collection = sentinel2.map(calculateNBR);  
             
-// Clip the NBR collection to your area of interest
+// Clip  NBR 
 var clipped_nbr_collection = nbr_collection.map(function(image){
   return image.clip(roi);
 });

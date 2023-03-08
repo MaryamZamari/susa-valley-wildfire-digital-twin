@@ -27,7 +27,7 @@ var maskClouds = function(image) {
   return image.updateMask(mask);
 };
 
-// Apply the cloud mask function to the image collection
+// Apply the cloud mask
 var s2masked = s2.map(maskClouds);
 
 //prefire nbr

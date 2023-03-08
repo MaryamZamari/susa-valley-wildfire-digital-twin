@@ -10,21 +10,9 @@ var geometry =
         [[[6.5947420758131114, 45.20882936495508],
           [6.5947420758131114, 44.91394352253096],
           [7.716034190070924, 44.91394352253096],
-          [7.716034190070924, 45.20882936495508]]], null, false);
+          [7.716034190070924, 45.20882936495508]]], null, false),
+    sentinel2 = ee.ImageCollection("COPERNICUS/S2_SR");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
-
-var sentinel2 = ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED"),
-    roi = 
-    /* color: #80929d */
-    /* displayProperties: [
-      {
-        "type": "rectangle"
-      }
-    ] */
-    geometry,
-    imageVisParam = {"opacity":1,"bands":["B8"],"min":-1,"palette":["ff0000","faff0c","4acc0a"]};
-/***** End of imports. If edited, may not auto-convert in the playground. *****/
-
 
 var startDate= '2017-10-01';
 var endDate= '2017-12-15'; 

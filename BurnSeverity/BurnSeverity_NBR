@@ -56,5 +56,5 @@ var burn_severity = prefire_nbr.mean().subtract(postfire_nbr.mean())
 // Clip the Burn Severity map to the ROI
 var burnSeverity_clipped = burn_severity.clip(roi);
 
-// Display pallette
+// Display pallette_BurnSeverity
 Map.addLayer(burnSeverity_clipped, {min:-100, max:100, palette:['yellow','orange','red']},'Burn Severity');

@@ -20,7 +20,7 @@ var s2 = ee.ImageCollection('COPERNICUS/S2_SR')
           .filterDate('2017-09-01', '2017-12-15')
           .filterBounds(roi);
 
-// Define a cloud mask function to remove cloud pixels
+//remove cloud pixels ====================== > not sure if it is useful
 var maskClouds = function(image) {
   var qa = image.select('QA60');
   var mask = qa.bitwiseAnd(1 << 10).eq(0);

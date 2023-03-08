@@ -59,9 +59,10 @@ var burnSeverity_clipped = burn_severity.clip(roi);
 // Display pallette_BurnSeverity
 Map.addLayer(burnSeverity_clipped, {min:-100, max:100, palette:['yellow','orange','red']},'Burn Severity');
 
-//download the data(collection)
-Export.table.toDrive({
+//download the data(image)
+Export.image.toDrive({
                   collection: 's2',
                   description:'BurnSeverity_NBR_SusaValley',
-                  fileFormat:'TIFF'
+                  fileFormat:'TIFF',
+                  region: 'roi'
 })

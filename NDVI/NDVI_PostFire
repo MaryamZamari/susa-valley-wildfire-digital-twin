@@ -34,3 +34,7 @@ var endDate= '2017-12-15';
   
   Map.centerObject(roi);
   Map.addLayer(NDVI_ROI);
+  
+  // Display NDVI on the map (from lowest to highest, water, barren areas(i.e sand, snow, rock), shrub or grassland, and rain forrest)
+  Map.addLayer(clipped_nbr_collection, {min:-1, max:1, palette:['red','orange','	#d9ef8b', '#006837']},'PostFire_NBR');
+

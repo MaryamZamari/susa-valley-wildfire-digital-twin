@@ -13,7 +13,7 @@ var roi =
           [7.716034190070924, 45.20882936495508]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
-    sentinel2 = ee.ImageCollection("COPERNICUS/S2_SR");
+
 
 
 var startDate= '2017-10-01';

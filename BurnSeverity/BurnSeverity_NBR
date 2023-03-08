@@ -64,5 +64,5 @@ Export.image.toDrive({
                   collection: 's2',
                   description:'BurnSeverity_NBR_SusaValley',
                   fileFormat:'TIFF',
-                  region: 'roi'
+                  region: 'burnSeverity_clipped'
 })

@@ -15,7 +15,7 @@ var roi =
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
 
-// Load Sentinel-2A data and filter according to date and area of interest
+
 var s2 = ee.ImageCollection('COPERNICUS/S2_SR')
           .filterDate('2017-09-01', '2017-12-15')
           .filterBounds(roi);
@@ -30,7 +30,7 @@ var maskClouds = function(image) {
 // Apply the cloud mask function to the image collection
 var s2masked = s2.map(maskClouds);
 
-// Calculate the NBR for the prefire period (September 1-30, 2017)
+//prefire nbr
 var prefire_nbr = s2masked.filterDate('2017-09-01', '2017-09-30')
                           .map(function(image) {
   var nir = image.select('B8');
@@ -39,7 +39,7 @@ var prefire_nbr = s2masked.filterDate('2017-09-01', '2017-09-30')
   return nbr;
 });
 
-// Calculate the NBR for the postfire period (October 1-December 15, 2017)
+// postfire nbr calculation
 var postfire_nbr = s2masked.filterDate('2017-10-01', '2017-12-15')
                            .map(function(image) {
   var nir = image.select('B8');
@@ -56,5 +56,5 @@ var burn_severity = prefire_nbr.mean().subtract(postfire_nbr.mean())
 // Clip the Burn Severity map to the ROI
 var burnSeverity_clipped = burn_severity.clip(roi);
 
-// Display the Burn Severity on the map
+// Display pallette
 Map.addLayer(burnSeverity_clipped, {min:-100, max:100, palette:['yellow','orange','red']},'Burn Severity');

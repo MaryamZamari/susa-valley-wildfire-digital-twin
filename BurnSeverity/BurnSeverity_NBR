@@ -60,9 +60,13 @@ var burnSeverity_clipped = burn_severity.clip(roi);
 Map.addLayer(burnSeverity_clipped, {min:-100, max:100, palette:['yellow','orange','red']},'Burn Severity');
 
 //download the data(image)===========> SHOUL BE SOLVED
-Export.table.toDrive({
-                  collection: 's2',
-                  description:'sentinel 2_2A',
-                  fileFormat:'SHP',
-                 
-})  
+// Define the export parameters
+var exportParams = {
+  image: s2,
+  description: 'Sentinel2_A2LevelForValsusa',
+  scale: 10,
+  region: roi
+};
+
+// Export the image
+Export.image.toDrive(exportParams);

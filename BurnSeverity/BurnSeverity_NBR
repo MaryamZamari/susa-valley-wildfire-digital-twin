@@ -63,6 +63,6 @@ Map.addLayer(burnSeverity_clipped, {min:-100, max:100, palette:['yellow','orange
 Export.table.toDrive({
                   collection: 's2',
                   description:'sentinel 2_2A',
-                  fileFormat:'SHP',
+                  fileFormat:'SHP'
                  
 })  

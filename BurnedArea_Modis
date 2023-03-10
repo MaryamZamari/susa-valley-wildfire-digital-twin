@@ -36,5 +36,5 @@ var baVis = {
 };
 var maxBA = burnedArea.max();
 
-Map.setCenter(roi);
+Map.centerObject(roi);
 Map.addLayer(maxBA, baVis, 'dataset');

@@ -18,7 +18,9 @@ var roi =
 
 var s2 = ee.ImageCollection('COPERNICUS/S2_SR')
           .filterDate('2017-09-01', '2017-12-15')
-          .filterBounds(roi);
+          .filterBounds(roi)
+          .select('B8', 'B12')
+          .median(); // Reduce the collection to a single image by taking the median;
 
 //remove cloud pixels ====================== > not sure if it is useful
 var maskClouds = function(image) {

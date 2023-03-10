@@ -1,5 +1,5 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var AOI = 
+var roi = 
     /* color: #80929d */
     /* displayProperties: [
       {
@@ -37,14 +37,42 @@ var dataset = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
                   .filterDate('2017-10-01', '2017-12-15')
                   // Pre-filter to get less cloudy granules.
                   .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE',30))
-                  .filterBounds(AOI)
+                  .filterBounds(roi)
                   .map(maskS2clouds);
-
+/*
 var visualization = {
   min: 0.0,
   max: 0.3,
   bands: ['B8', 'B12'],
-};
+}; */
 
-Map.centerObject(AOI);
-Map.addLayer(dataset.mean(), visualization, 'NBR');
+ 
+// Function to calculate NBR index
+function calculateNBR(image) {
+  // Select NIR and SWIR bands from the image
+  var nir = image.select('B8');
+  var swir = image.select('B12');
+  
+  // Calculate NBR index
+  var nbr = nir.subtract(swir).divide(nir.add(swir)).rename('NBR');
+  
+  return nbr;
+}
+  
+// here i map the function over the collection to get the NBR for each image
+var nbr_collection = sentinel2.map(calculateNBR);  
+            
+// Clip the NBR collection
+var clipped_nbr_collection = nbr_collection.map(function(image){
+  return image.clip(roi);
+});
+
+Map.centerObject(roi);
+//Map.addLayer(nbr_roi); 
+
+Map.addLayer(clipped_nbr_collection);
+
+// Display NBR(burnt areas) on the map (Healthy green vegetation will have a high NBR value while burnt vegetation will have a low value)
+Map.addLayer(clipped_nbr_collection, {min:-1, max:1, palette:['red','orange','green']},'PostFire_NBR');
+
+//Map.addLayer(dataset.mean(), visualization, 'NBR');

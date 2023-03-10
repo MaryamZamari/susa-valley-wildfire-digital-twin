@@ -19,7 +19,9 @@ var s2 = ee.ImageCollection('COPERNICUS/S2_SR')
           .filterBounds(roi)
           .select('B8', 'B12')
           .median(); // Reduce the collection to a single image by taking the median;
+// Load the Sentinel-2 image
 
+/*
 //defining the dates for start and end of pre-fire and post-fire sessions
 var prefire_date_start = ee.Date('2017-09-01');
 var prefire_date_end = ee.Date('2017-09-30');
@@ -69,7 +71,7 @@ var burnSeverity_clipped = burn_severity.clip(roi);
 
 // Display pallette_BurnSeverity
 Map.addLayer(burnSeverity_clipped, {min:-100, max:100, palette:['yellow','orange','red']},'Burn Severity');
-
+*/
 //download the data(image)===========> SHOUL BE SOLVED
 
 // Export the image collection to Google Drive

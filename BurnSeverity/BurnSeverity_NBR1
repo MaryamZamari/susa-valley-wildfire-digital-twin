@@ -11,3 +11,15 @@ var s2 = ee.ImageCollection('COPERNICUS/S2_SR')
           .filterBounds(roi)
           .select('B8', 'B12')
           .median(); // Reduce the collection to a single image by taking the median;
+
+
+//remove cloud pixels from the integrated image ====================== > not sure if it is useful
+var maskClouds = function(image) {
+  var qa = image.select('QA60');
+  var mask = qa.bitwiseAnd(1 << 10).eq(0);
+  return image.updateMask(mask);
+};
+
+// Apply the cloud mask
+var s2masked = maskClouds(s2);
+

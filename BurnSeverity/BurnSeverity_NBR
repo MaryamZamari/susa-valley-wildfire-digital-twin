@@ -63,7 +63,7 @@ Map.addLayer(burnSeverity_clipped, {min:-100, max:100, palette:['yellow','orange
 
 // Export the image collection to Google Drive
 Export.image.toDrive({
-  image: collection,
+  image: s2,
   description: 'Sentinel2_collection_Valsusa',
   scale: 10,
   region: roi

@@ -23,6 +23,16 @@ var s2 = ee.ImageCollection('COPERNICUS/S2_SR')
           .median(); // Reduce the collection to a single image by taking the median;
 
 //remove cloud pixels ====================== > not sure if it is useful
+/*var maskClouds = function(image) {
+  var qa = image.select('QA60');
+  var mask = qa.bitwiseAnd(1 << 10).eq(0);
+  return image.updateMask(mask);
+};
+
+// Apply the cloud mask
+var s2masked = s2.map(maskClouds); */
+
+//remove cloud pixels from the integrated image ====================== > not sure if it is useful
 var maskClouds = function(image) {
   var qa = image.select('QA60');
   var mask = qa.bitwiseAnd(1 << 10).eq(0);
@@ -30,7 +40,8 @@ var maskClouds = function(image) {
 };
 
 // Apply the cloud mask
-var s2masked = s2.map(maskClouds);
+var s2masked = maskClouds(s2);
+//============================================
 
 //prefire nbr
 var prefire_nbr = s2masked.filterDate('2017-09-01', '2017-09-30')

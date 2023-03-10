@@ -1,10 +1,18 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var imageCollection = ee.ImageCollection("COPERNICUS/S2_SR");
+var imageCollection = ee.ImageCollection("COPERNICUS/S2_SR"),
+    roi = 
+    /* color: #80929d */
+    /* displayProperties: [
+      {
+        "type": "rectangle"
+      }
+    ] */
+    ee.Geometry.Polygon(
+        [[[6.5947420758131114, 45.20882936495508],
+          [6.5947420758131114, 44.91394352253096],
+          [7.716034190070924, 44.91394352253096],
+          [7.716034190070924, 45.20882936495508]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
-
-
-
-
 
 var s2 = ee.ImageCollection('COPERNICUS/S2_SR')
           .filterDate('2017-09-01', '2017-12-15')
@@ -40,3 +48,24 @@ var postfire_nbr = postfireImage.expression('(nir-swir)/(nir+swir)', {
   'nir': postfireImage.select('B8'),
   'swir': postfireImage.select('B12')
 }).rename('postfire_NBR');
+
+// Calculate the Burn Severity by subtracting Postfire NBR from Prefire NBR
+var burn_severity = prefire_nbr.mean().subtract(postfire_nbr.mean())
+                          .multiply(100).rename('Burn Severity');
+
+
+// Clip the Burn Severity map to the ROI
+var burnSeverity_clipped = burn_severity.clip(roi);
+
+// Display pallette_BurnSeverity
+Map.addLayer(burnSeverity_clipped, {min:-100, max:100, palette:['yellow','orange','red']},'Burn Severity');
+
+//download the data(image)===========> SHOUL BE SOLVED
+
+// Export the image collection to Google Drive
+Export.image.toDrive({
+  image: s2,
+  description: 'Sentinel2_collection_Valsusa',
+  scale: 10,
+  region: roi
+});

@@ -18,7 +18,7 @@ var roi =
 
 // Visualize FireCCI51 for one year
 var dataset = ee.ImageCollection('ESA/CCI/FireCCI/5_1')
-                  .filterDate('2017-10-01', '2017-10-30')
+                  .filterDate('2017-10-01', '2017-12-15')
                   .filterBounds(roi);
                   
 var burnedArea = dataset.select('BurnDate');

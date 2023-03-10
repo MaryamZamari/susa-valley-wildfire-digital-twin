@@ -1,0 +1,13 @@
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var imageCollection = ee.ImageCollection("COPERNICUS/S2_SR");
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
+
+
+
+
+
+var s2 = ee.ImageCollection('COPERNICUS/S2_SR')
+          .filterDate('2017-09-01', '2017-12-15')
+          .filterBounds(roi)
+          .select('B8', 'B12')
+          .median(); // Reduce the collection to a single image by taking the median;

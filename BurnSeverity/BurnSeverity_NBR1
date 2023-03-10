@@ -38,8 +38,6 @@ var maskClouds = function(image) {
 // Apply the cloud mask
 var s2masked = maskClouds(s2);
 
-// Filter the image collection by date to get prefire image
-var prefireImage = s2masked.filterDate('2017-09-01', '2017-09-30').median();
 
 // Filter the image collection by date to get postfire image
 var postfireImage = s2masked.filterDate('2017-10-01', '2017-12-15').median();

@@ -1,0 +1,40 @@
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var roi = 
+    /* color: #80929d */
+    /* displayProperties: [
+      {
+        "type": "rectangle"
+      }
+    ] */
+    ee.Geometry.Polygon(
+        [[[6.6263277691724864, 45.20979687438101],
+          [6.6263277691724864, 44.91491603510293],
+          [7.455108897102174, 44.91491603510293],
+          [7.455108897102174, 45.20979687438101]]], null, false),
+    imageCollection = ee.ImageCollection("ESA/CCI/FireCCI/5_1");
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
+
+
+
+// Visualize FireCCI51 for one year
+var dataset = ee.ImageCollection('ESA/CCI/FireCCI/5_1')
+                  .filterDate('2017-10-01', '2017-12-15')
+                  .filterBounds(roi);
+                  
+var burnedArea = dataset.select('BurnDate');
+
+// Use a circular palette to assign colors to date of first detection
+var baVis = {
+  min: 1,
+  max: 366,
+  palette: [
+    'ff0000', 'fd4100', 'fb8200', 'f9c400', 'f2ff00', 'b6ff05',
+    '7aff0a', '3eff0f', '02ff15', '00ff55', '00ff99', '00ffdd',
+    '00ddff', '0098ff', '0052ff', '0210ff', '3a0dfb', '7209f6',
+    'a905f1', 'e102ed', 'ff00cc', 'ff0089', 'ff0047', 'ff0004'
+  ]
+};
+var maxBA = burnedArea.max();
+
+Map.centerObject(roi);
+Map.addLayer(maxBA, baVis, 'dataset');

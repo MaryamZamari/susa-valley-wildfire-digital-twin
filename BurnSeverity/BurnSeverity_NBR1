@@ -17,8 +17,7 @@ var imageCollection = ee.ImageCollection("COPERNICUS/S2_SR"),
 var s2 = ee.ImageCollection('COPERNICUS/S2_SR')
           .filterDate('2017-09-01', '2017-12-15')
           .filterBounds(roi)
-          .select('B8', 'B12')
-          .median(); // Reduce the collection to a single image by taking the median;
+          .select('B8', 'B12');// .median)))()  Reduce the collection to a single image by taking the median;
 // Load the Sentinel-2 image
 
 /*

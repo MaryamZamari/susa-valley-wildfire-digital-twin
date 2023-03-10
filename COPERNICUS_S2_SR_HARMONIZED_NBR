@@ -34,9 +34,9 @@ function maskS2clouds(image) {
 
 var dataset = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
               //    .filterDate('2017-08-01', '2017-09-30')
-                  .filterDate('2017-10-01', '2017-11-30')
+                  .filterDate('2017-10-01', '2017-12-15')
                   // Pre-filter to get less cloudy granules.
-                  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE',20))
+                  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE',30))
                   .filterBounds(AOI)
                   .map(maskS2clouds);
 

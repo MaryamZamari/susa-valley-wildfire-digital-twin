@@ -20,6 +20,13 @@ var s2 = ee.ImageCollection('COPERNICUS/S2_SR')
           .select('B8', 'B12')
           .median(); // Reduce the collection to a single image by taking the median;
 
+//defining the dates for start and end of pre-fire and post-fire sessions
+var prefire_date_start = ee.Date('2017-09-01');
+var prefire_date_end = ee.Date('2017-09-30');
+var postfire_date_start = ee.Date('2017-10-01');
+var postfire_date_end = ee.Date('2017-12-15');
+
+
 
 //remove cloud pixels from the integrated image ====================== > not sure if it is useful
 var maskClouds = function(image) {
@@ -37,17 +44,22 @@ var prefireImage = s2masked.filterDate('2017-09-01', '2017-09-30').median();
 // Filter the image collection by date to get postfire image
 var postfireImage = s2masked.filterDate('2017-10-01', '2017-12-15').median();
 
-// Compute prefire NBR
-var prefire_nbr = prefireImage.expression('(nir-swir)/(nir+swir)', {
-  'nir': prefireImage.select('B8'),
-  'swir': prefireImage.select('B12')
-}).rename('prefire_NBR');
+//prefire nbr
+var prefire_nbr = s2masked.select(['B8', 'B12']).expression(
+  '(nir - swir) / (nir + swir)', {
+    'nir': s2masked.select('B8'),
+    'swir': s2masked.select('B12')
+}).rename('NBR')
+.filterDate(prefire_date_start, prefire_date_end);
 
-// Compute postfire NBR
-var postfire_nbr = postfireImage.expression('(nir-swir)/(nir+swir)', {
-  'nir': postfireImage.select('B8'),
-  'swir': postfireImage.select('B12')
-}).rename('postfire_NBR');
+//postfire nbr
+var postfire_nbr = s2masked.select(['B8', 'B12']).expression(
+  '(nir - swir) / (nir + swir)', {
+    'nir': s2masked.select('B8'),
+    'swir': s2masked.select('B12')
+}).rename('NBR')
+.filterDate(postfire_date_start, postfire_date_end);
+
 
 // Calculate the Burn Severity by subtracting Postfire NBR from Prefire NBR
 var burn_severity = prefire_nbr.mean().subtract(postfire_nbr.mean())

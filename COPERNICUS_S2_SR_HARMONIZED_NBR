@@ -33,12 +33,12 @@ function maskS2clouds(image) {
 }
 
 var dataset = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
-              //    .filterDate('2017-08-01', '2017-09-30')
-                  .filterDate('2017-10-01', '2017-12-15')
+                  .filterDate('2017-03-01', '2017-06-30')
+                //  .filterDate('2017-11-01', '2017-12-30')
                   // Pre-filter to get less cloudy granules.
-                  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE',30))
+                  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE',20))
                   .filterBounds(roi)
-                  .map(maskS2clouds);
+               //   .map(maskS2clouds);
 /*
 var visualization = {
   min: 0.0,

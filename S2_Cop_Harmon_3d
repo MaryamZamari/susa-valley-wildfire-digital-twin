@@ -28,7 +28,7 @@ function maskS2clouds(image) {
 
 var dataset = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
               //    .filterDate('2017-08-01', '2017-09-30')
-                  .filterDate('2017-10-01', '2017-11-30')
+                  .filterDate('2017-09-01', '2018-01-15')
                   // Pre-filter to get less cloudy granules.
                   .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE',20))
                   .filterBounds(roi)
@@ -67,6 +67,7 @@ var s2_3d = s2_nbr.map(create3DModel);
 Map.addLayer(s2_3d.first(), {}, '3D Model');
 
 var nbr_thresh = ee.Number(0.3);
-var burn = s2_nbr.select('NBR').gte(nbr_thresh).rename('Burn');
+
+var burn = s2_nbr.first().select('NBR').gte(nbr_thresh.toFloat()).rename('Burn');
 
 Map.addLayer(burn, {palette: ['black', 'white'], min: 0, max: 1}, 'Burn'); 

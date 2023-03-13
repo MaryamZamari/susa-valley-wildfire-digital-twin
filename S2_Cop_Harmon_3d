@@ -3,7 +3,8 @@ var roi = /* color: #eaeaea */ee.Geometry.Polygon(
         [[[6.6235811871412364, 45.20882936495508],
           [6.6235811871412364, 44.91394352253096],
           [7.500427500617799, 44.91394352253096],
-          [7.500427500617799, 45.20882936495508]]], null, false);
+          [7.500427500617799, 45.20882936495508]]], null, false),
+    dem = ee.Image("USGS/SRTMGL1_003");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
 /**
@@ -32,3 +33,40 @@ var dataset = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
                   .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE',20))
                   .filterBounds(roi)
                   .map(maskS2clouds);
+                  
+//Define the function for the index
+var nbr = function(image) {
+    var nir = image.select('B8');
+    var swir = image.select('B12');
+    var nbr = nir.subtract(swir).divide(nir.add(swir)).rename('NBR');
+    return image.addBands(nbr);
+};
+
+//Apply the NBR function to the Sentinel-2 image collection:
+var s2_nbr = dataset.map(nbr);
+
+//Define a function to create a 3D model of the area
+
+//import the DEM from USGS portal
+var create3DModel = function(image) {
+    
+    var demVis = {min: 0, max: 3000};
+    var dem3d = ee.Image(dem).float().clip(roi).multiply(-1);
+    var terrain = ee.Algorithms.Terrain(dem3d);
+    var hillshade = ee.Terrain.hillshade(terrain, 315, 45).toFloat().multiply(1.5);
+    var rgb = image.visualize({bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3}).clip(roi);
+    var image3d = ee.Image().float().addBands(rgb).addBands(hillshade);
+    return ee.Image.cat(dem3d, image3d);
+};
+
+//Apply the create3DModel function to the Sentinel-2 image collection
+var s2_3d = s2_nbr.map(create3DModel);
+
+
+//Display the 3D model on the map
+Map.addLayer(s2_3d.first(), {}, '3D Model');
+
+var nbr_thresh = ee.Number(0.3);
+var burn = s2_nbr.select('NBR').gte(nbr_thresh).rename('Burn');
+
+Map.addLayer(burn, {palette: ['black', 'white'], min: 0, max: 1}, 'Burn'); 

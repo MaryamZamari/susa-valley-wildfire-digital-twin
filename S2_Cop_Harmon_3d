@@ -64,7 +64,10 @@ var s2_3d = s2_nbr.map(create3DModel);
 
 
 //Display the 3D model on the map
-Map.addLayer(s2_3d.first(), {}, '3D Model');
+Map.addLayer(s2_3d.first(), {}, '3D Model RGB');
+
+//Display the 3D model on the map
+Map.addLayer(s2_3d.select('elevation').first(), {min:0, max: 3000},  '3D Model Elevation');
 
 var nbr_thresh = ee.Number(0.3);
 

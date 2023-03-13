@@ -30,5 +30,5 @@ var dataset = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
                   .filterDate('2017-10-01', '2017-11-30')
                   // Pre-filter to get less cloudy granules.
                   .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE',20))
-                  .filterBounds(AOI)
+                  .filterBounds(roi)
                   .map(maskS2clouds);

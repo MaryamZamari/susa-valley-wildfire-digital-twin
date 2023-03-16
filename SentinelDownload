@@ -1,15 +1,16 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var dataset = ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED"),
-    roi = /* color: #e9e9e9 */ee.Geometry.Polygon(
+var roi = /* color: #e9e9e9 */ee.Geometry.Polygon(
         [[[6.6235811871412364, 45.20882936495508],
           [6.6235811871412364, 44.91394352253096],
           [7.500427500617799, 44.91394352253096],
           [7.500427500617799, 45.20882936495508]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
-
-var sentinel2= dataset
-                  .filterDate('2017-11-10','2018-04-20')
-                  .filterBounds(roi).select(['B4','B3','B2','B8', 'B12']).first();
+//var dataset= ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED")
+var image = ee.Image('COPERNICUS/S2_SR/' + 'S2B_MSIL2A_20180420T103019_N0207_R108_T32TLQ_20180420T114307');
+var sentinel2= image
+                //  .filterDate('2017-11-10','2018-04-20')
+                  .filterBounds(roi);
+                  //.select(['B4','B3','B2','B8', 'B12']).first();
 
 print(sentinel2);
 

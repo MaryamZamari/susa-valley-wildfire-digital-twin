@@ -19,7 +19,7 @@ Map.addLayer(sentinel2);
 
 Export.image.toDrive({
   image: sentinel2,
-  description: 'sentinel-image112017',
+  description: 'sentinel-image20180420',
   scale: 10,
   region: roi,
 })

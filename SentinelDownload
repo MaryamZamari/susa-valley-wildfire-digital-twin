@@ -9,7 +9,7 @@ var roi = /* color: #e9e9e9 */ee.Geometry.Polygon(
 
 //var image = ee.Image('COPERNICUS/S2_SR/' + 'S2B_MSIL2A_20180420T103019_N0207_R108_T32TLQ_20180420T114307');
 var sentinel2= dataset
-                  .filterDate('2017-11-01','2018-12-20')
+                  .filterDate('2017-10-30','2018-11-05')
                   .filterBounds(roi)
                   // Pre-filter to get less cloudy granules.
                   .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE',20))

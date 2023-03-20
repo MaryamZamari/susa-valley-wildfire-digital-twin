@@ -20,7 +20,7 @@ var dataset = ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED"),
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
 geometry = /* color: #98ff00 */geometry;
-//var image = ee.Image('COPERNICUS/S2_SR/' + 'S2B_MSIL2A_20180420T103019_N0207_R108_T32TLQ_20180420T114307');
+//var PostFireimage = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20171116T103311_20171116T103542_T32TLR');
 var sentinel2= dataset
                   .filterDate('2017-10-30','2018-11-02')
                   .filterBounds(roi)

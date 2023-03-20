@@ -10,8 +10,6 @@ var geometry = /* color: #ffffff */ee.Geometry.Polygon(
                         // .mosaic().clip(geometry) 
                          .select(['B12','B8']); 
 
-
-
 //---------------------------------------------------------
 // Function to calculate NBR index
 function calculateNBR(image) {
@@ -26,7 +24,7 @@ function calculateNBR(image) {
 }
   
 // here i map the function over the collection to get the NBR for each image
-var nbr_collection = dataset.map(calculateNBR);  
+var nbr_collection = image.map(calculateNBR);  
             
             
 //---------------------Visualisation phase ----------------------------------------------

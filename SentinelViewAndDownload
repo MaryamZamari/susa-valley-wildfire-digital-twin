@@ -20,7 +20,7 @@ var geometry = /* color: #f2ffeb */ee.Geometry.Polygon(
 
 
 Map.centerObject(geometry);
-Map.addLayer(sentinel2);
+Map.addLayer(image);
 
 Export.image.toDrive({
   image: sentinel2,

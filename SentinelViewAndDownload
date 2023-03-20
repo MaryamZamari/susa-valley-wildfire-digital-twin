@@ -7,24 +7,17 @@ var geometry = /* color: #f2ffeb */ee.Geometry.Polygon(
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
  geometry = /* color: #f2ffeb */geometry;
  
-// var image = ee.Image('COPERNICUS/S2_SR/' + 'S2B_MSIL2A_20180420T103019_N0207_R108_T32TLQ_20180420T114307');
- var image = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20171103T102201_20171103T102724_T32TLR');
-
-
-
-
-
-
-
-
+ //var image1 = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20171103T102201_20171103T102724_T32TLR');
+// 2-COPERNICUS/S2_SR_HARMONIZED/20171116T103311_20171116T103542_T32TLQ  ---> lower part_ maybe
+ var image = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20171116T103311_20171116T103542_T32TLR'); //feature index= 3
 
 
 Map.centerObject(geometry);
 Map.addLayer(image);
 
 Export.image.toDrive({
-  image: sentinel2,
+  image: image,
   description: 'sentinel-image20180420',
   scale: 10,
-  region: roi,
+  region: geometry,
 })

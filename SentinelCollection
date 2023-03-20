@@ -31,7 +31,7 @@ var sentinel2= dataset
 
 print(sentinel2);
 
-Map.centerObject(roi);
+Map.centerObject(geometry);
 Map.addLayer(sentinel2);
 
 Export.image.toDrive({

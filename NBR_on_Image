@@ -12,31 +12,30 @@ var geometry = /* color: #ffffff */ee.Geometry.Polygon(
 
 //---------------------------------------------------------
 // Function to calculate NBR index
-function calculateNBR(image) {
+ /*function calculateNBR(image) {
   // Select NIR and SWIR bands from the image
   var nir = image.select('B8');
   var swir = image.select('B12');
   
-  // Calculate NBR index
+  Calculate NBR index
   var nbr = nir.subtract(swir).divide(nir.add(swir)).rename('NBR');
   
   return nbr;
-}
-  
-// here i map the function over the collection to get the NBR for each image
-var nbr_collection = image.map(calculateNBR);  
-            
-            
-//---------------------Visualisation phase ----------------------------------------------
+}  */
 
-// Clip the NBR collection
-var clipped_nbr_collection = nbr_collection.map(function(image){
-  return image.clip(roi);
-});
+// Expression using image band indices to calculate NBR
+var bandIndexExp = '(b(8) - b(12)) / (b(8) + b(12))';
+var bandIndexImg = image.expression(bandIndexExp).rename('NBR');
+
+
+//---------------------Visualisation phase ----------------------------------------------
+// Visualization parameters for NDVI.
+var nbrVis = {min: -1, max: 1};
 
 
 print(image);
 Map.centerObject(geometry);
+Map.addLayer(bandIndexImg , nbrVis, 'NBR1');
 Map.addLayer(image);
 
 Export.image.toDrive({

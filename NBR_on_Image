@@ -11,17 +11,6 @@ var geometry = /* color: #ffffff */ee.Geometry.Polygon(
                          .select(['B12','B8']); 
 
 //---------------------------------------------------------
-// Function to calculate NBR index
- /*function calculateNBR(image) {
-  // Select NIR and SWIR bands from the image
-  var nir = image.select('B8');
-  var swir = image.select('B12');
-  
-  Calculate NBR index
-  var nbr = nir.subtract(swir).divide(nir.add(swir)).rename('NBR');
-  
-  return nbr;
-}  */
 
 // Expression using image band indices to calculate NBR
 var bandIndexExp = '(b(8) - b(12)) / (b(8) + b(12))';

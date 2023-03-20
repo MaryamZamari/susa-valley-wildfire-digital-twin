@@ -5,3 +5,26 @@ var geometry = /* color: #ffffff */ee.Geometry.Polygon(
           [7.219377293889102, 45.110246992050875],
           [7.219377293889102, 45.21869339705463]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
+
+// Function to calculate NBR index
+function calculateNBR(image) {
+  // Select NIR and SWIR bands from the image
+  var nir = image.select('B8');
+  var swir = image.select('B12');
+  
+  // Calculate NBR index
+  var nbr = nir.subtract(swir).divide(nir.add(swir)).rename('NBR');
+  
+  return nbr;
+}
+  
+// here i map the function over the collection to get the NBR for each image
+var nbr_collection = dataset.map(calculateNBR);  
+            
+            
+//---------------------Visualisation phase ----------------------------------------------
+
+// Clip the NBR collection
+var clipped_nbr_collection = nbr_collection.map(function(image){
+  return image.clip(roi);
+});

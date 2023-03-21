@@ -13,7 +13,7 @@ var geometry = /* color: #ffffff */ee.Geometry.Polygon(
 //---------------------------------------------------------
 
 // Expression using image band indices to calculate NBR
-var bandIndexExp = '(b(8) - b(12)) / (b(8) + b(12))';
+var bandIndexExp = '(b("B8") - b("B12")) / (b("B8") + b("B12"))';
 var bandIndexImg = image.expression(bandIndexExp).rename('NBR');
 
 

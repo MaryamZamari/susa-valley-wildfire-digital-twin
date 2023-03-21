@@ -23,7 +23,7 @@ var dataset = ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED"),
 
 geometry = /* color: #98ff00 */geometry;
 //var Index[2]PostFireimage = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20171116T103311_20171116T103542_T32TLR'); //'2017-10-30','2017-11-20' dates
-//PreFire_Dates: '2012-08-15','2012-08-20' _ Image: 
+//PreFire_Dates: '2017-04-01','2017-06-20' _ Image: 
 var sentinel2= dataset
                   .filterDate('2017-04-01','2017-06-20')
                   .filterBounds(roi)

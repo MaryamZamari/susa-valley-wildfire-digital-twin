@@ -1,0 +1,29 @@
+
+var image = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20170619T103021_20170619T103806_T32TLR') //Pre_Fire image
+                        // .mosaic().clip(geometry) 
+                         .select(['B4','B8']); 
+
+//---------------------------------------------------------
+
+// Expression using image band indices to calculate NBR
+var bandIndexExp = '(b("B8") - b("B4")) / (b("B8") + b("B4"))';
+var bandIndexImg = image.expression(bandIndexExp).rename('NDVI');
+
+
+//---------------------Visualisation phase ----------------------------------------------
+// Visualization parameters for NDVI.
+var nbrVis = {min: -1, max: 1 , palette:['#000000','#a50026','#d73027', '#f46d43', '#fdae61', '#fee08b', '#ffffbf', '#d9ef8b', '#a6d96a', '	#66bd63', '#1a9850', '#006837']};  
+
+
+print(image);
+Map.centerObject(geometry);
+Map.addLayer(bandIndexImg , nbrVis, 'NDVI1');
+//Map.addLayer(image);
+
+Export.image.toDrive({
+  image: bandIndexImg /*image*/,
+  description: 'S2SrHarmonized-20170619T103021_20170619T103806_T32TLR_NDVI_Prefire',
+  scale: 10,
+  region: geometry,
+})
+

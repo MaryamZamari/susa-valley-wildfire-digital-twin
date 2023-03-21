@@ -21,10 +21,11 @@ var dataset = ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED"),
 
 
 geometry = /* color: #98ff00 */geometry;
-//var Index[2]PostFireimage = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20171116T103311_20171116T103542_T32TLR'); //'2017-10-30','2017-11-20' dates
+//var Index[2]PostFireimage(For NBR) = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20171116T103311_20171116T103542_T32TLR'); //'2017-10-30','2017-11-20' dates
 //PreFire_Dates (For NBR and NDVI): '2017-04-01','2017-06-20' _ Image:  '20170619T103021_20170619T103806_T32TLR'
+//PostFire (for NDVI) : Dates: 
 var sentinel2= dataset
-                  .filterDate('2017-04-01','2017-06-20')
+                  .filterDate('2018-05-01','2018-06-20')
                   .filterBounds(roi)
                   // Pre-filter to get less cloudy granules.
                   .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE',20))

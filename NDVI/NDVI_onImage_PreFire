@@ -8,7 +8,7 @@ var geometry = /* color: #ffffff */ee.Geometry.Polygon(
 
 var image = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20170619T103021_20170619T103806_T32TLR') //Pre_Fire image
                         // .mosaic().clip(geometry) 
-                         .select(['B12','B8']); 
+                         .select(['B4','B8']); 
 
 //---------------------------------------------------------
 

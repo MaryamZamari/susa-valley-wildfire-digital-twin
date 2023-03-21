@@ -8,7 +8,7 @@ var geometry = /* color: #ffffff */ee.Geometry.Polygon(
 
 
 //PostFire_Present2022 (for NDVI) : Dates: '2022-05-01','2022-06-20'       _ Image: '20220618T102559_20220618T103528_T32TLR'
-var image = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20220618T102559_20220618T103528_T32TLR') //Pre_Fire image
+var image = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20220618T102559_20220618T103528_T32TLR') //Present image
                         // .mosaic().clip(geometry) 
                          .select(['B4','B8']); 
 

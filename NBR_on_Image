@@ -25,11 +25,11 @@ var nbrVis = {min: -1, max: 1 , palette:['red','orange','green']};
 print(image);
 Map.centerObject(geometry);
 Map.addLayer(bandIndexImg , nbrVis, 'NBR1');
-Map.addLayer(image);
+//Map.addLayer(image);
 
 Export.image.toDrive({
   image: image,
-  description: 'S2SrHarmonized-20171116T103311_20171116T103542_T32TLR_B12B8B4',
+  description: 'S2SrHarmonized-20171116T103311_20171116T103542_T32TLR_B12B8B4_NBR',
   scale: 10,
   region: geometry,
 })

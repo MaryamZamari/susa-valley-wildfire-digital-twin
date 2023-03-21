@@ -1,5 +1,6 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var dataset = ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED"),
+    dataset2 = ee.ImageCollection("COPERNICUS/S2_SR"),
     roi = 
     /* color: #e9e9e9 */
     /* displayProperties: [
@@ -19,14 +20,15 @@ var dataset = ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED"),
           [7.219377293889102, 45.21869339705463]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
+
 geometry = /* color: #98ff00 */geometry;
-//var Index[2]PostFireimage = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20171116T103311_20171116T103542_T32TLR'); //'2017-10-30','2018-11-02' dates
+//var Index[2]PostFireimage = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20171116T103311_20171116T103542_T32TLR'); //'2017-10-30','2017-11-20' dates
 //PreFire_Dates: '2012-08-15','2012-08-20' _ Image: 
 var sentinel2= dataset
-                  .filterDate('2012-08-15','2012-08-20')
+                  .filterDate('2017-04-01','2017-06-20')
                   .filterBounds(roi)
                   // Pre-filter to get less cloudy granules.
-                  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE',5))
+                  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE',20))
                   .select(['B4','B3','B2','B8','B12']);
                   //.first();
 

@@ -28,7 +28,7 @@ Map.addLayer(bandIndexImg , nbrVis, 'NBR1');
 //Map.addLayer(image);
 
 Export.image.toDrive({
-  image: image,
+  image: bandIndexImg /*image*/,
   description: 'S2SrHarmonized-20171116T103311_20171116T103542_T32TLR_B12B8B4_NBR',
   scale: 10,
   region: geometry,

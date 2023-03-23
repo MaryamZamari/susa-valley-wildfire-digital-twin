@@ -30,7 +30,7 @@ var burnSeverity = delta_nbr.expression(
     threshold_low: threshold_low,
     threshold_moderate: threshold_moderate,
     threshold_high: threshold_high
-  }).rename(['burnSeverity']);
+  }).rename(['dNBR','burnSeverity']);
 
 
 print(burnSeverity);

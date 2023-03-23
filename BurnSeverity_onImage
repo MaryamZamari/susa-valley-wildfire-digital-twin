@@ -1,5 +1,10 @@
-
-
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var geometry = /* color: #ffffff */ee.Geometry.Polygon(
+        [[[7.003083958928165, 45.21869339705463],
+          [7.003083958928165, 45.110246992050875],
+          [7.219377293889102, 45.110246992050875],
+          [7.219377293889102, 45.21869339705463]]], null, false);
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
 
 // Load pre-fire and post-fire NBR images
 var prefire_nbr = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20170619T103021_20170619T103806_T32TLR')

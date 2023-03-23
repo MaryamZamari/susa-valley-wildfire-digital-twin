@@ -1,0 +1,32 @@
+
+
+
+// Load pre-fire and post-fire NBR images
+var prefire_nbr = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20170619T103021_20170619T103806_T32TLR')
+                        .select(['B8', 'B12']);
+var postfire_nbr = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20171116T103311_20171116T103542_T32TLR')
+                        .select(['B8', 'B12']);
+
+// Calculate the difference between pre-fire and post-fire NBR
+var delta_nbr = postfire_nbr.subtract(prefire_nbr).rename('dNBR');
+
+// Define thresholds for the three burn severity levels (low, moderate, and high)
+var threshold_low = -0.1;
+var threshold_moderate = 0.1;
+var threshold_high = 0.27;
+
+// Create a burn severity image based on the NBR difference and the thresholds
+var burnSeverity = delta_nbr.expression(
+  "(b('dNBR') > threshold_high) ? 3" +  // High burn severity
+    ": (b('dNBR') > threshold_moderate) ? 2" +  // Moderate burn severity
+      ": (b('dNBR') > threshold_low) ? 1" +  // Low burn severity
+        ": 0"  // No burn
+  , {
+    threshold_low: threshold_low,
+    threshold_moderate: threshold_moderate,
+    threshold_high: threshold_high
+  }).rename('burnSeverity');
+
+// Display the burn severity map
+var visBurnSeverity = {min: 0, max: 3, palette: ['white', 'yellow', 'orange', 'red']};
+Map.addLayer(burnSeverity, visBurnSeverity, 'Burn Severity');

@@ -7,14 +7,18 @@ var geometry = /* color: #ffffff */ee.Geometry.Polygon(
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
 // importing pre-fire and post-fire NBR images (the same dates for which NBR was calculated)
-var prefire_nbr = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20170619T103021_20170619T103806_T32TLR')
+var prefire_image = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20170619T103021_20170619T103806_T32TLR')
                         .select('B8', 'B12');
-var postfire_nbr = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20171116T103311_20171116T103542_T32TLR')
+var postfire_image = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20171116T103311_20171116T103542_T32TLR')
                         .select('B8', 'B12');
+
+
+
+
 
 // delta_nbr calculation(Burn Severity formula)
 var delta_nbr = postfire_nbr.subtract(prefire_nbr).rename('dNBR');
-print(delta_nbr);
+print("delta_nbr", delta_nbr);
 
 // threshhold for further visualisation (low, moderate, and high)
 var threshold_low = -0.1;

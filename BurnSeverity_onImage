@@ -22,7 +22,7 @@ var threshold_moderate = 0.1;
 var threshold_high = 0.27;
 
 // defining the burn severity image based on the threshholds and values_3,2,1,0 are values for visualisation
-var burnSeverity = delta_nbr.expression(
+/*var burnSeverity = delta_nbr.expression(
   "(b('dNBR') > threshold_high) ? 3" +  // High burn severity
     ": (b('dNBR') > threshold_moderate) ? 2" +  // Moderate burn severity
       ": (b('dNBR') > threshold_low) ? 1" +  // Low burn severity
@@ -32,9 +32,9 @@ var burnSeverity = delta_nbr.expression(
     threshold_moderate: threshold_moderate,
     threshold_high: threshold_high
   }).rename(['dNBR','burnSeverity']);
+*/
 
-
-print(burnSeverity);
+//print(burnSeverity);
 // Display the burn severity map
 var visBurnSeverity = {min: 0, max: 3, palette: ['white', 'yellow', 'orange', 'red']};
 //Map.addLayer(burnSeverity, visBurnSeverity, 'Burn Severity');

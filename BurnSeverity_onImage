@@ -20,7 +20,7 @@ var threshold_low = -0.1;
 var threshold_moderate = 0.1;
 var threshold_high = 0.27;
 
-// defining the burn severity image based on the threshholds and values
+// defining the burn severity image based on the threshholds and values_3,2,1,0 are values for visualisation
 var burnSeverity = delta_nbr.expression(
   "(b('dNBR') > threshold_high) ? 3" +  // High burn severity
     ": (b('dNBR') > threshold_moderate) ? 2" +  // Moderate burn severity

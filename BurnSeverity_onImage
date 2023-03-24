@@ -14,6 +14,7 @@ var postfire_nbr = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20171116T103311_20
 
 // delta_nbr calculation(Burn Severity formula)
 var delta_nbr = postfire_nbr.subtract(prefire_nbr).rename('dNBR');
+print(delta_nbr);
 
 // threshhold for further visualisation (low, moderate, and high)
 var threshold_low = -0.1;

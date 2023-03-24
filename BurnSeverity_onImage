@@ -18,7 +18,6 @@ var bandIndexExp = '(b("B8") - b("B12")) / (b("B8") + b("B12"))';
 var prefire_nbr = prefire_image.expression(bandIndexExp).rename('NBR_Prefire');
 var postfire_nbr = postfire_image.expression(bandIndexExp).rename('NBR_Postfire');
 
-
 // delta_nbr calculation(Burn Severity formula)-----------------------------------
 var delta_nbr = postfire_nbr.subtract(prefire_nbr).rename('dNBR');
 print("delta_nbr", delta_nbr);
@@ -40,8 +39,6 @@ var burnSeverity = delta_nbr.expression(
     threshold_high: threshold_high
   }).rename(['burnSeverity']);
 
-
-//print(burnSeverity);
 // Display the burn severity map
 var visBurnSeverity = {min: 0, max: 3, palette: ['white', 'yellow', 'orange', 'red']};
 Map.addLayer(burnSeverity, visBurnSeverity, 'Burn Severity');

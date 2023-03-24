@@ -12,11 +12,14 @@ var prefire_image = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20170619T103021_2
 var postfire_image = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20171116T103311_20171116T103542_T32TLR')
                         .select('B8', 'B12');
 
+//----------------------NBR Calculations for Post and Prefire-------------------
+// Expression using image band indices to calculate NBR
+var bandIndexExp = '(b("B8") - b("B12")) / (b("B8") + b("B12"))';
+var prefire_nbr = prefire_image.expression(bandIndexExp).rename('NBR_Prefire');
+var postfire_nbr = postfire_image.expression(bandIndexExp).rename('NBR_Postfire');
 
 
-
-
-// delta_nbr calculation(Burn Severity formula)
+// delta_nbr calculation(Burn Severity formula)-----------------------------------
 var delta_nbr = postfire_nbr.subtract(prefire_nbr).rename('dNBR');
 print("delta_nbr", delta_nbr);
 
@@ -26,7 +29,7 @@ var threshold_moderate = 0.1;
 var threshold_high = 0.27;
 
 // defining the burn severity image based on the threshholds and values_3,2,1,0 are values for visualisation
-/*var burnSeverity = delta_nbr.expression(
+var burnSeverity = delta_nbr.expression(
   "(b('dNBR') > threshold_high) ? 3" +  // High burn severity
     ": (b('dNBR') > threshold_moderate) ? 2" +  // Moderate burn severity
       ": (b('dNBR') > threshold_low) ? 1" +  // Low burn severity
@@ -35,12 +38,12 @@ var threshold_high = 0.27;
     threshold_low: threshold_low,
     threshold_moderate: threshold_moderate,
     threshold_high: threshold_high
-  }).rename(['dNBR','burnSeverity']);
-*/
+  }).rename(['burnSeverity']);
+
 
 //print(burnSeverity);
 // Display the burn severity map
 var visBurnSeverity = {min: 0, max: 3, palette: ['white', 'yellow', 'orange', 'red']};
-//Map.addLayer(burnSeverity, visBurnSeverity, 'Burn Severity');
+Map.addLayer(burnSeverity, visBurnSeverity, 'Burn Severity');
 /* 
 */

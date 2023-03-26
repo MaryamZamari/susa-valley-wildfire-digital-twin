@@ -34,6 +34,11 @@ Map.addLayer(bandIndexImg , nbrVis, 'NBR1');
 //  region: geometry,
 //})
      
+     
+// Map over the collection to convert VV data to vis-gray visualization images.
+var mapVisualisation = bandIndexImg.map(function(image) {
+  return image.visualize(nbrVis).copyProperties(image, image.propertyNames());
+});
 
 //Download Task
 // Define the download task
@@ -49,7 +54,7 @@ var downloadTask = ee.batch.Export.image.toDrive({
     cloudOptimized: true
   },
   skipEmptyTiles: true,
-  visualization: nbrVis // specify the visualization parameters
+//  visualization: nbrVis // specify the visualization parameters
 });
 
 // Start the download task

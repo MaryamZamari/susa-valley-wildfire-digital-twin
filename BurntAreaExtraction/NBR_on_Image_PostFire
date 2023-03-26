@@ -1,5 +1,8 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var geometry = /* color: #d63000 */ee.Geometry.Polygon(
+var geometry = 
+    /* color: #efefef */
+    /* shown: false */
+    ee.Geometry.Polygon(
         [[[7.003083958928165, 45.21869339705463],
           [7.003083958928165, 45.110246992050875],
           [7.219377293889102, 45.110246992050875],
@@ -53,8 +56,8 @@ var title = ui.Label({
 
 panel.add(title)
 
-var color = ['309e48','ffad16','fff80c','1426ff']
-var lc_class = ['Forest', 'Vegetation Non Forest', 'Non Vegetated', 'Water']
+var color = ['red','orange','green']
+var lc_class = ['Burned', 'Not burned', 'Healthy vegetation']
 
 var list_legend = function(color, description) {
   
@@ -79,7 +82,7 @@ var list_legend = function(color, description) {
   })
 }
 
-for(var a = 0; a < 4; a++){
+for(var a = 0; a < 3; a++){
   panel.add(list_legend(color[a], lc_class[a]))
 }
 

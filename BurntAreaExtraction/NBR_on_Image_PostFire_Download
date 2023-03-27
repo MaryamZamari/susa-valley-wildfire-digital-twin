@@ -30,22 +30,22 @@ Map.addLayer(bandIndexImg , nbrVis, 'NBR1');
 
 //Map.addLayer(image);
 
-//Export.image.toDrive({
-//  image: bandIndexImg /*image*/,
- // description: 'S2SrHarmonized-20171116T103311_20171116T103542_T32TLR_B12B8B4_NBR',
- // scale: 10,
-//  region: geometry,
-//})
+Export.image.toDrive({
+  image: bandIndexImg /*image*/,
+  description: 'S2SrHarmonized-20171116T103311_20171116T103542_T32TLR_PostFireNBR',
+  scale: 10,
+  region: geometry,
+})
      
      
 // Map over the collection to convert VV data to vis-gray visualization images.
-var mapVisualisation = bandIndexImg.map(function(image) {
+/*var mapVisualisation = bandIndexImg.map(function(image) {
   return image.visualize(nbrVis).copyProperties(image, image.propertyNames());
-});
+}); */
 
 //Download Task
 // Define the download task
-var downloadTask = ee.batch.Export.image.toDrive({
+/* var downloadTask = ee.batch.Export.image.toDrive({
   image: bandIndexImg,
   description: 'NBR_download',
   folder: 'NBR_download',
@@ -61,4 +61,4 @@ var downloadTask = ee.batch.Export.image.toDrive({
 });
 
 // Start the download task
-downloadTask.start();
+downloadTask.start(); */

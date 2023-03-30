@@ -19,11 +19,30 @@ var geometry =
 var bandIndexExp = '(b("B8") - b("B12")) / (b("B8") + b("B12"))';
 var bandIndexImg = image.expression(bandIndexExp).rename('NBR');
 
+//Shadow masking process
+// Define the Canny edge detection parameters
+var cannyThreshold = 0.4;
+var cannySigma = 0.4;
 
-// Apply TDOM shadow mask in order to mask-away the shadowed areas
-var shadowMask = ee.Algorithms.Terrain.Slope(image.select('B8')).gt(5); // define slope threshold
-var tdomMask = ee.Algorithms.TDOM(image, shadowMask, 8); // define TDOM parameters
-var nbrMasked = bandIndexImg.updateMask(tdomMask);
+// Apply the Canny edge detector to detect shadow edges
+var edges = ee.Algorithms.CannyEdgeDetector(bandIndexImg, cannyThreshold, cannySigma);
+
+// Create a mask based on the edges
+var shadowMask = edges.not();
+
+// Apply the mask to the NBR image
+var shadowMasked_nbr = bandIndexImg.updateMask(shadowMask);
+
+
+//End of Shadow Masking
+
+
+
+
+
+
+
+
 
 //---------------------Visualisation phase ----------------------------------------------
 // Visualization parameters for NDVI.

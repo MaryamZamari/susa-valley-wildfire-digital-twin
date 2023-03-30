@@ -14,16 +14,13 @@ var geometry =
                          .select(['B12','B8']); 
 
 //---------------------------------------------------------
-
 // Expression using image band indices to calculate NBR
 var bandIndexExp = '(b("B8") - b("B12")) / (b("B8") + b("B12"))';
 var bandIndexImg = image.expression(bandIndexExp).rename('NBR');
 
-
 //---------------------Visualisation phase ----------------------------------------------
 // Visualization parameters for NDVI.
 var nbrVis = {min: -1, max: 1 , palette:['red','orange','green']};  
-
 
 print(image);
 Map.centerObject(geometry);

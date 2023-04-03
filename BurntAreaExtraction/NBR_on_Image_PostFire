@@ -11,13 +11,65 @@ var geometry =
 
  var image = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20171116T103311_20171116T103542_T32TLR') //Post_Fire image
                         // .mosaic().clip(geometry) 
-                         .select(['B12','B8']); 
+                         .select(['B12','B8','B4', 'QA60']); 
+
+//--------TEST---------
+// Define the bands to use for the false color image.
+var falseColorBands = ['B12', 'B8', 'B4'];
+
+// Define the cloud mask function.
+var maskClouds = function(image) {
+  // Bitmask for cloudy pixels.
+  var cloudyBitMask = 1 << 10;
+  // Bitmask for shadow pixels.
+  var shadowBitMask = 1 << 3;
+  // Get the pixel QA band.
+  var qa = image.select('QA60');
+  // Both shadow and clouds are masked.
+  var mask = qa.bitwiseAnd(cloudyBitMask).eq(0).and(qa.bitwiseAnd(shadowBitMask).eq(0));
+  // Apply the mask to the image and return it.
+  return image.updateMask(mask);
+};
+
+// Apply the cloud mask.
+var maskedImage = maskClouds(image);
+
+
+//End Test part-------------------------------------
 
 //---------------------------------------------------------
 // Expression using image band indices to calculate NBR
 var bandIndexExp = '(b("B8") - b("B12")) / (b("B8") + b("B12"))';
-var bandIndexImg = image.expression(bandIndexExp).rename('NBR');
+var bandIndexImg = maskedImage.expression(bandIndexExp).rename('NBR');
 
+//---------------------TEST -----------------------------------
+// Define a function to mask shadowed areas.
+/*var maskShadows = function(image) {
+  // Set the threshold for shadow detection.
+  var shadowThreshold = 0.2;
+  // Calculate the CCCI (Canopy Chlorophyll Content Index).
+  var ccci = image.expression('(NIR - RED) / (NIR + RED)', {
+    'NIR': image.select('B8'),
+    'RED': image.select('B4')
+  }).rename('CCCI');
+  // Calculate the NDMI (Normalized Difference Moisture Index).
+  var ndmi = image.normalizedDifference(['B8', 'B11']).rename('NDMI');
+  // Calculate the NDVI (Normalized Difference Vegetation Index).
+  var ndvi = image.normalizedDifference(['B8', 'B4']).rename('NDVI');
+  // Combine the indices into a single image.
+  var indices = ee.Image.cat([ccci, ndmi, ndvi]);
+  // Threshold the indices to detect shadows.
+  var shadowMask = indices.reduce(ee.Reducer.anyNonZero()).lt(shadowThreshold);
+  // Mask the NBR image with the shadow mask.
+  var maskedNbr = bandIndexImg.updateMask(shadowMask.not());
+  // Return the masked NBR image.
+  return maskedNbr;
+};
+
+// Mask shadowed areas in the NBR image.
+var maskedNbr = maskShadows(maskedImage);
+
+*/
 //---------------------Visualisation phase ----------------------------------------------
 // Visualization parameters for NDVI.
 var nbrVis = {min: -1, max: 1 , palette:['red','orange','green']};  
@@ -54,7 +106,6 @@ var title = ui.Label({
     margin: '0px;'
   }
 })
-
 panel.add(title)
 
 var color = ['red','orange','green']

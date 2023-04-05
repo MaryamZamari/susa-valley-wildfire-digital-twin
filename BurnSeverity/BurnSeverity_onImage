@@ -43,6 +43,6 @@ var burnSeverity = delta_nbr.expression(
 var visBurnSeverity = {min: 0, max: 3, palette: ['white', 'yellow', 'orange', 'red']};
 Map.addLayer(burnSeverity, visBurnSeverity, 'Burn Severity');
 Map.addLayer(geometry);
-map.centerObject(geometry);
+Map.centerObject(geometry);
 /* 
 */

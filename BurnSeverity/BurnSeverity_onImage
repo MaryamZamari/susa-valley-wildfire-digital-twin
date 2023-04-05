@@ -37,7 +37,7 @@ var burnSeverity = delta_nbr.expression(
         ": 0"  // No burn
   , {
     threshold_low: threshold_low,
-    threshold_moderate_high: threshold_moderate_low,
+    threshold_moderate_low: threshold_moderate_low,
     threshold_moderate_high: threshold_moderate_high,
     threshold_high: threshold_high
   }).rename(['burnSeverity']);

@@ -25,11 +25,6 @@ var postfire_nbr = postfire_image.expression(bandIndexExp).rename('NBR_Postfire'
 var delta_nbr = postfire_nbr.subtract(prefire_nbr).rename('dNBR');
 print("delta_nbr", delta_nbr);
 
-// threshhold for further visualisation (low, moderate, and high)
-/*var threshold_low = 0.1; //-0.1;
-var threshold_moderate_low = 0.27; //0.1;
-var threshold_moderate_high = 0.44; //0.1;
-var threshold_high = 0.66; //0.27; */
 
 //var threshold_enhanced_regrowth_high = -0.5;  
 var threshold_enhanced_regrowth_low = -0.25; 
@@ -39,20 +34,7 @@ var threshold_moderate_low_severity= 0.27;
 var threshold_moderate_high_severity=0.44;
 var threshold_high_severity= 0.66;
 
-// defining the burn severity image based on the threshholds and values_3,2,1,0 are values for visualisation
-/*var burnSeverity = delta_nbr.expression(
-  "(b('dNBR') > threshold_high) ? 4" +  // High burn severity
-    ": (b('dNBR') > threshold_moderate_high) ? 3" +  // Moderate-high burn severity
-    ": (b('dNBR') > threshold_moderate_low) ? 2" +  // Moderate-low burn severity
-      ": (b('dNBR') > threshold_low) ? 1" +  // Low burn severity
-        ": 0"  // No burn
-  , {
-    threshold_low: threshold_low,
-    threshold_moderate_low: threshold_moderate_low,
-    threshold_moderate_high: threshold_moderate_high,
-    threshold_high: threshold_high
-  }).rename(['burnSeverity']);
-*/
+
 // defining the burn severity image based on the threshholds and values_3,2,1,0 are values for visualisation
 var burnSeverity = delta_nbr.expression(
   "(b('dNBR') > threshold_high_severity) ? 6" +  // High burn severity

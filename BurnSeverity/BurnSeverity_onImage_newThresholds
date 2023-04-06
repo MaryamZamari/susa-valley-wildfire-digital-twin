@@ -23,6 +23,7 @@ var postfire_nbr = postfire_image.expression(bandIndexExp).rename('NBR_Postfire'
 
 // delta_nbr calculation(Burn Severity formula)-----------------------------------
 var delta_nbr = postfire_nbr.subtract(prefire_nbr).rename('dNBR');
+//var delta_nbr = prefire_nbr.subtract(postfire_nbr).rename('dNBR');
 print("delta_nbr", delta_nbr);
 
 

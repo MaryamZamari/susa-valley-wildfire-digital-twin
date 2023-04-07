@@ -19,6 +19,48 @@ var image = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20170619T103021_20170619T
 var bandIndexExp = '(b("B8") - b("B4")) / (b("B8") + b("B4"))';
 var bandIndexImg = image.expression(bandIndexExp).rename('NDVI');
 
+//--------thresholds----------------------------
+var threshold_water = -0.1;
+//var threshold_buildupAreas = 0.015;
+var threshold_barrenLand = 0.00;
+var threshold_shrubAndGrassland = 0.15;
+var threshold_sparseVegetation =0.30;
+var threshold_denseVegetation = 0.60;
+
+
+// defining the burn severity image based on the threshholds and values_3,2,1,0 are values for visualisation
+var ndvi_classified = bandIndexImg.expression(
+  "(b('NDVI') > threshold_denseVegetation) ? 5" +  // High burn severity
+    ": (b('NDVI') > threshold_sparseVegetation) ? 4" +  // Moderate-high burn severity
+    ": (b('NDVI') > threshold_shrubAndGrassland) ? 3" +  // Moderate-low burn severity
+    ": (b('NDVI') > threshold_barrenLand) ? 2" + 
+    ": (b('NDVI') > threshold_water) ? 1" +
+      ":0" //unclassified 
+  , {
+
+     threshold_water : threshold_water ,
+     threshold_barrenLand : threshold_barrenLand ,
+     threshold_shrubAndGrassland : threshold_shrubAndGrassland ,
+     threshold_sparseVegetation : threshold_sparseVegetation ,
+     threshold_denseVegetation : threshold_denseVegetation  ,
+  }).rename(['NDVI']);
+
+
+// Display the burn severity map       )       
+var visNdvi = {min: 0, max: 6, palette: ['#0066ff', '#d9d9d9', '#f7e9b2', '#a6d887', '#6abf49', '#006400']};
+print(bandIndexImg);
+//----------------------------------------
+/*
+Water: #0066ff (blue)
+Buildup areas: #d9d9d9 (light gray)
+Barren land: #f7e9b2 (light brown)
+Shrub and grassland: #a6d887 (light green)
+Sparse vegetation: #6abf49 (medium green)
+Dense vegetation: #006400 (dark green)  */
+
+
+
+
 
 //---------------------Visualisation phase ----------------------------------------------
 // Visualization parameters for NDVI.
@@ -27,7 +69,9 @@ var nbrVis = {min: -1, max: 1 , palette:['#000000','#a50026','#d73027', '#f46d43
 
 print(image);
 Map.centerObject(geometry);
-Map.addLayer(bandIndexImg , nbrVis, 'NDVI1');
+//Map.addLayer(bandIndexImg , nbrVis, 'NDVI1');
+//visNdvi
+Map.addLayer(ndvi_classified , visNdvi, 'NDVI2');
 Map.addLayer(geometry);
 
 Export.image.toDrive({

@@ -37,10 +37,11 @@ var thresh_burned = -0.1; //lt
 var thresh_unburned= 0.1; //lt
 var thresh_healthyGreen= 0.1; //gt
 
-// Define threshold ranges
-//var lowThreshold = -0.2;
-//var highThreshold = 0.2;
 
+
+
+
+//-------------------------------------------------QUANTIFICATION OF STATISTICS---------
 // Create binary masks for NBR pixel categories
 var burnedMask = bandIndexImg.lt(thresh_burned);
 var unburnedMask= bandIndexImg.lt(thresh_unburned);

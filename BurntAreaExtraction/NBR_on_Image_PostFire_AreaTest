@@ -15,15 +15,61 @@ var geometry =
                           .updateMask(ee.Image('JRC/GSW1_2/GlobalSurfaceWater').select('max_extent').not()); // Mask out water areas; 
 
 //---------------------------------------------------------
+// Define the threshold values for each category
+var burnedThreshold = -0.2;
+var unburnedThreshold = 0.2;
+
 // Expression using image band indices to calculate NBR
 var bandIndexExp = '(b("B8") - b("B12")) / (b("B8") + b("B12"))';
 var bandIndexImg = image.expression(bandIndexExp).rename('NBR');
 
-
-
 //---------------------Visualisation phase ----------------------------------------------
 // Visualization parameters for NDVI.
 var nbrVis = {min: -1, max: 1 , palette:['red','orange','green']};  
+
+//-------Area Calculation----------------------
+/*
+Burned: NBR values less than or equal to -0.1
+Unburned: NBR values between -0.1 and 0.1
+Healthy greenery: NBR values greater than or equal to 0.1
+*/
+var thresh_burned = -0.1; //lt
+var thresh_unburned= 0.1; //lt
+var thresh_healthyGreen= 0.1; //gt
+
+// Define threshold ranges
+//var lowThreshold = -0.2;
+//var highThreshold = 0.2;
+
+// Create binary masks for NBR pixel categories
+var burnedMask = bandIndexImg.lt(thresh_burned);
+var unburnedMask= bandIndexImg.lt(thresh_unburned);
+var healthyMask= bandIndexImg.gt(thresh_healthyGreen);
+
+// Mask the image based on the binary masks
+var burnedNBRImage = image.updateMask(burnedMask);
+var unburnedNBRImage = image.updateMask(unburnedMask);
+var unburnedNBRImage = image.updateMask(healthyMask);
+
+// Get the pixel values for the low and high NBR areas
+var burnedNbrValues = burnedNBRImage.reduceRegion({
+  reducer: ee.Reducer.mean(),
+  geometry: image.geometry(),
+  scale: 10,
+  maxPixels: 1e9   //to eliminate the error 
+}).get('constant');
+
+var unburnedNbrValues = unburnedNBRImage.reduceRegion({
+  reducer: ee.Reducer.mean(),
+  geometry: image.geometry(),
+  scale: 10
+}).get('constant');
+
+// Print the mean pixel values for the low and high NBR areas
+print('Mean pixel value for burnedNBR area:', burnedNbrValues);
+print('Mean pixel value for unburnedNBR area:', unburnedNbrValues);
+
+
 
 print(image);
 Map.centerObject(geometry);

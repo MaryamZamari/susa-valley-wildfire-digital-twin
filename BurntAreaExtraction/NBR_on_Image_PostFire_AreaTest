@@ -92,10 +92,6 @@ var burnedAreaHa = burnedNBRImageMerged.multiply(pixelArea)
   })
   .get('burnedNBRImageMerged');
 
-// Print the mean pixel values for the low and high NBR areas
-print('Sum of pixel value for burnedNBR area:', burnedAreaHa);
-
-
 // Print the burned area in hectares
 print('Burned area (ha):', burnedAreaHa);
 

@@ -67,9 +67,6 @@ var burnedNBRImageMerged = burnedNBRImage
                                 .toFloat()
                                 .rename('burnedNBRImageMerged');
   
-//calculate area
-//var burnedAreaImage = burnedNBRImage.multiply(ee.Image.pixelArea());
-
 // // Calculate the sum of pixels in the merged burned area
 var burnedNbrPixels = burnedNBRImageMerged.reduceRegion({
   reducer: ee.Reducer.sum(),

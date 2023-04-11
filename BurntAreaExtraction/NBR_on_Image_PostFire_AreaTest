@@ -64,7 +64,7 @@ var healthyNBRImage = image.updateMask(healthyMask);
 //var burnedNBRImageMerged = burnedNBRImage.select(['B8', 'B12']);
   
 //calculate area
-var burnedAreaImage = burnedNBRImage.multiply(ee.Image.pixelArea());
+//var burnedAreaImage = burnedNBRImage.multiply(ee.Image.pixelArea());
 
 // Sum the values of burned and unburned pixels (Area calculation)------------
 var burnedNbrValues = burnedNBRImage.reduceRegion({

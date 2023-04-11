@@ -56,19 +56,18 @@ var unburnedMask= bandIndexImg.lt(thresh_unburned);
 var healthyMask= bandIndexImg.gt(thresh_healthyGreen);
 
 // Mask the image based on the binary masks
-var burnedNBRImage = image.updateMask(burnedMask).rename('burnedImage');
+var burnedNBRImage = image.updateMask(burnedMask);
 var unburnedNBRImage = image.updateMask(unburnedMask);
 var healthyNBRImage = image.updateMask(healthyMask);
 
 //-------Merging the masked images (merging the two bands in 1 band)--
-var burnedNBRImageMerged = burnedNBRImage.select(['B8', 'B12'])
-  .reduce(ee.Reducer.sum())
-  .toFloat()
-  .rename('burnedAreaMerged');
+//var burnedNBRImageMerged = burnedNBRImage.select(['B8', 'B12']);
   
+//calculate area
+var burnedAreaImage = burnedNBRImage.multiply(ee.Image.pixelArea());
 
 // Sum the values of burned and unburned pixels (Area calculation)------------
-var burnedNbrValues = burnedNBRImageMerged.reduceRegion({
+var burnedNbrValues = burnedNBRImage.reduceRegion({
   reducer: ee.Reducer.sum(),
   geometry: BurnedRoi, //image.geometry(),
   scale: 10,

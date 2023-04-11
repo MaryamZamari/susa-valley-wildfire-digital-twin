@@ -6,7 +6,19 @@ var geometry =
         [[[7.003083958928165, 45.21869339705463],
           [7.003083958928165, 45.110246992050875],
           [7.219377293889102, 45.110246992050875],
-          [7.219377293889102, 45.21869339705463]]], null, false);
+          [7.219377293889102, 45.21869339705463]]], null, false),
+    BurnedRoi = 
+    /* color: #d63000 */
+    /* displayProperties: [
+      {
+        "type": "rectangle"
+      }
+    ] */
+    ee.Geometry.Polygon(
+        [[[7.019220128361758, 45.18786421842558],
+          [7.019220128361758, 45.14211379100212],
+          [7.167192235295352, 45.14211379100212],
+          [7.167192235295352, 45.18786421842558]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
  var image = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20171116T103311_20171116T103542_T32TLR') //Post_Fire image
@@ -37,10 +49,6 @@ var thresh_burned = -0.1; //lt
 var thresh_unburned= 0.1; //lt
 var thresh_healthyGreen= 0.1; //gt
 
-
-
-
-
 //-------------------------------------------------QUANTIFICATION OF STATISTICS---------
 // Create binary masks for NBR pixel categories
 var burnedMask = bandIndexImg.lt(thresh_burned);
@@ -48,35 +56,35 @@ var unburnedMask= bandIndexImg.lt(thresh_unburned);
 var healthyMask= bandIndexImg.gt(thresh_healthyGreen);
 
 // Mask the image based on the binary masks
-var burnedNBRImage = image.updateMask(burnedMask);
+var burnedNBRImage = image.updateMask(burnedMask).rename('burnedImage');
 var unburnedNBRImage = image.updateMask(unburnedMask);
-var unburnedNBRImage = image.updateMask(healthyMask);
+var healthyNBRImage = image.updateMask(healthyMask);
 
-// Sum the values of burned and unburned pixels 
-var burnedNbrValues = burnedNBRImage.reduceRegion({
-  reducer: ee.Reducer.mean(),
-  geometry: image.geometry(),
+//-------Merging the masked images (merging the two bands in 1 band)--
+var burnedNBRImageMerged = burnedNBRImage.select(['B8', 'B12'])
+  .reduce(ee.Reducer.sum())
+  .toFloat()
+  .rename('burnedAreaMerged');
+  
+
+// Sum the values of burned and unburned pixels (Area calculation)------------
+var burnedNbrValues = burnedNBRImageMerged.reduceRegion({
+  reducer: ee.Reducer.sum(),
+  geometry: BurnedRoi, //image.geometry(),
   scale: 10,
   maxPixels: 1e9   //to eliminate the error 
-}).get('constant');
+});
 
-//stats Unburned
-var unburnedNbrValues = unburnedNBRImage.reduceRegion({
-  reducer: ee.Reducer.mean(),
-  geometry: image.geometry(),
-  scale: 10,
-  maxPixels: 1e9
-}).get('constant');
 
 // Print the mean pixel values for the low and high NBR areas
-print('Mean pixel value for burnedNBR area:', burnedNbrValues);
-print('Mean pixel value for unburnedNBR area:', unburnedNbrValues);
+print('Sum of pixel value for burnedNBR area:', burnedNbrValues);
 
 
 
 //----------------visualisation commands------------
 print(image);
 Map.centerObject(geometry);
+Map.addLayer(burnedNBRImage);
 Map.addLayer(bandIndexImg , nbrVis, 'NBR1');
 //Map.addLayer(image); 
 //Map.addLayer(bandIndexImg);

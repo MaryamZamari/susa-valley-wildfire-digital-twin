@@ -61,13 +61,17 @@ var unburnedNBRImage = image.updateMask(unburnedMask);
 var healthyNBRImage = image.updateMask(healthyMask);
 
 //-------Merging the masked images (merging the two bands in 1 band)--
-//var burnedNBRImageMerged = burnedNBRImage.select(['B8', 'B12']);
+var burnedNBRImageMerged = burnedNBRImage
+                              .select(['B8', 'B12'])
+                                .reduce(ee.Reducer.sum())
+                                .toFloat()
+                                .rename('burnedNBRImageMerged');
   
 //calculate area
 //var burnedAreaImage = burnedNBRImage.multiply(ee.Image.pixelArea());
 
-// Sum the values of burned and unburned pixels (Area calculation)------------
-var burnedNbrValues = burnedNBRImage.reduceRegion({
+// // Calculate the sum of pixels in the merged burned area
+var burnedNbrPixels = burnedNBRImageMerged.reduceRegion({
   reducer: ee.Reducer.sum(),
   geometry: BurnedRoi, //image.geometry(),
   scale: 10,
@@ -75,10 +79,28 @@ var burnedNbrValues = burnedNBRImage.reduceRegion({
 });
 
 
+// Get the sum of burned area pixels
+var sumBurnedAreaPixels = burnedNbrPixels.get('burnedNBRImageMerged');
+
+// Calculate the area covered by each pixel in hectares
+var pixelArea = ee.Image.pixelArea().divide(10000);
+
+// Calculate the burned area in hectares
+var burnedAreaHa = burnedNBRImageMerged.multiply(pixelArea)
+  .reduceRegion({
+    reducer: ee.Reducer.sum(),
+    geometry: BurnedRoi,
+    scale: 10,
+    maxPixels: 1e9
+  })
+  .get('burnedNBRImageMerged');
+
 // Print the mean pixel values for the low and high NBR areas
-print('Sum of pixel value for burnedNBR area:', burnedNbrValues);
+print('Sum of pixel value for burnedNBR area:', burnedAreaHa);
 
 
+// Print the burned area in hectares
+print('Burned area (ha):', burnedAreaHa);
 
 //----------------visualisation commands------------
 print(image);

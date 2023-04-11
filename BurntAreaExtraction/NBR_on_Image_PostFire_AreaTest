@@ -17,8 +17,8 @@ var geometry =
     ee.Geometry.Polygon(
         [[[7.019220128361758, 45.18786421842558],
           [7.019220128361758, 45.14211379100212],
-          [7.167192235295352, 45.14211379100212],
-          [7.167192235295352, 45.18786421842558]]], null, false);
+          [7.169595494572696, 45.14211379100212],
+          [7.169595494572696, 45.18786421842558]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
  var image = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20171116T103311_20171116T103542_T32TLR') //Post_Fire image
@@ -67,7 +67,7 @@ var burnedNBRImageMerged = burnedNBRImage
                                 .toFloat()
                                 .rename('burnedNBRImageMerged');
   
-// // Calculate the sum of pixels in the merged burned area
+// Calculate the sum of pixels in the merged burned area
 var burnedNbrPixels = burnedNBRImageMerged.reduceRegion({
   reducer: ee.Reducer.sum(),
   geometry: BurnedRoi, //image.geometry(),
@@ -76,7 +76,7 @@ var burnedNbrPixels = burnedNBRImageMerged.reduceRegion({
 });
 
 
-// Get the sum of burned area pixels
+// Get the sum of burned area pixels   ---> same as burnedNbrPixels basically
 var sumBurnedAreaPixels = burnedNbrPixels.get('burnedNBRImageMerged');
 
 // Calculate the area covered by each pixel in hectares
@@ -94,6 +94,7 @@ var burnedAreaHa = burnedNBRImageMerged.multiply(pixelArea)
 
 // Print the burned area in hectares
 print('Burned area (ha):', burnedAreaHa);
+print('BurnedNbrPixels:', burnedNbrPixels);
 
 //----------------visualisation commands------------
 print(image);

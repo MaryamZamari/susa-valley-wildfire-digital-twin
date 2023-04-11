@@ -80,7 +80,7 @@ var burnedNbrPixels = burnedNBRImageMerged.reduceRegion({
 var sumBurnedAreaPixels = burnedNbrPixels.get('burnedNBRImageMerged');
 
 // Calculate the area covered by each pixel in hectares
-var pixelArea = ee.Image.pixelArea().divide(10000);
+var pixelArea = ee.Image.pixelArea().divide(100000);
 
 // Calculate the burned area in hectares
 var burnedAreaHa = burnedNBRImageMerged.multiply(pixelArea)

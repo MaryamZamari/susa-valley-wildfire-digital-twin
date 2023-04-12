@@ -71,7 +71,6 @@ var burnedNbrPixels = burnedNBRImageMerged.reduceRegion({
   maxPixels: 1e9   //to eliminate the error 
 });
 
-
 // Get the sum of burned area pixels   ---> same as burnedNbrPixels basically
 var sumBurnedAreaPixels = burnedNbrPixels.get('burnedNBRImageMerged');
 

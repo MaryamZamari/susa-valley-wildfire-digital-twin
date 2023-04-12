@@ -32,44 +32,50 @@ var threshold_extremDenseVegCover= 0.8; //extremely dense vegetation cover, such
 var threshold_nearOptimalVegCover= 0.9; //near-optimal vegetation density and productivity, such as highly productive croplands or other ecosystems with high biomass.
 var threshold_optimalVegCover= 1.0 ; //optimal vegetation density and productivity, such as highly productive croplands or other ecosystems with high biomass.
 
-// defining the burn severity image based on the threshholds and values_3,2,1,0 are values for visualisation
+// defining the NDVI image based on the threshholds and values_3,2,1,0 are values for visualisation
 var ndvi_classified = bandIndexImg.expression(
-  "(b('NDVI') > threshold_denseVegetation) ? 5" +  // High burn severity
-    ": (b('NDVI') > threshold_sparseVegetation) ? 4" +  // Moderate-high burn severity
-    ": (b('NDVI') > threshold_shrubAndGrassland) ? 3" +  // Moderate-low burn severity
-    ": (b('NDVI') > threshold_barrenLand) ? 2" + 
-    ": (b('NDVI') > threshold_water) ? 1" +
-      ":0" //unclassified 
+  "(b('NDVI') < threshold_noVegetation) ? 0" +  // 
+    ": (b('NDVI') =< threshold_sparseGrassland) ? 1" +  // 
+    ": (b('NDVI') =< threshold_degradedLandsRecentDisturbed) ? 2" +  // 
+    ": (b('NDVI') =< threshold_moderateVegCover) ? 3" + 
+    ": (b('NDVI') =< threshold_moderateHighVegCover) ? 4" +
+    ": (b('NDVI') =< threshold_highVegCover) ? 5" +
+    ": (b('NDVI') =< threshold_veryHighVegCover) ? 6" +
+    ": (b('NDVI') =< threshold_extremHighVegCover) ? 7" +
+    ": (b('NDVI') =< threshold_veryDenseVegCover) ? 8" +
+    ": (b('NDVI') =< threshold_extremDenseVegCover) ? 9" +
+    ": (b('NDVI') =< threshold_nearOptimalVegCover) ? 10" +
+    ": (b('NDVI') =< threshold_optimalVegCover) ? 11" +
+      ":12" //unclassified 
   , {
 
-     threshold_water : threshold_water ,
-     threshold_barrenLand : threshold_barrenLand ,
-     threshold_shrubAndGrassland : threshold_shrubAndGrassland ,
-     threshold_sparseVegetation : threshold_sparseVegetation ,
-     threshold_denseVegetation : threshold_denseVegetation  ,
-  }).rename(['NDVI']);
+     threshold_noVegetation : threshold_noVegetation ,
+     threshold_sparseGrassland : threshold_sparseGrassland ,
+     threshold_degradedLandsRecentDisturbed : threshold_degradedLandsRecentDisturbed ,
+     threshold_moderateVegCover : threshold_moderateVegCover ,
+     threshold_moderateHighVegCover : threshold_moderateHighVegCover,
+     threshold_highVegCover:threshold_highVegCover,
+     threshold_veryHighVegCover:threshold_veryHighVegCover,
+     threshold_extremHighVegCover:threshold_extremHighVegCover,
+     threshold_veryDenseVegCover:threshold_veryDenseVegCover,
+     threshold_extremDenseVegCover:threshold_extremDenseVegCover,
+     threshold_nearOptimalVegCover: threshold_nearOptimalVegCover,
+     threshold_optimalVegCover: threshold_optimalVegCover, 
+    }).rename(['NDVI']);
 
 
 // Display the burn severity map       )       
-var visNdvi = {min: 0, max: 6, palette: ['#0066ff', '#d9d9d9', '#f7e9b2', '#a6d887', '#6abf49', '#006400']};
-
-//----------------------------------------
-
-
-
-
-
+//var visNdvi = {min: 0, max: 6, palette: ['#0066ff', '#d9d9d9', '#f7e9b2', '#a6d887', '#6abf49', '#006400']};
 
 //---------------------Visualisation phase ----------------------------------------------
 // Visualization parameters for NDVI.
-var nbrVis = {min: 0, max: 11 , palette:['#000000','#a50026','#d73027', '#f46d43', '#fdae61', '#fee08b', '#ffffbf', '#d9ef8b', '#a6d96a', '	#66bd63', '#1a9850', '#006837']};  
+var ndviVis = {min: 0, max: 11 , palette:['#000000','#a50026','#d73027', '#f46d43', '#fdae61', '#fee08b', '#ffffbf', '#d9ef8b', '#a6d96a', '	#66bd63', '#1a9850', '#006837']};  
 
 
 print(image);
 Map.centerObject(geometry);
 //Map.addLayer(bandIndexImg , nbrVis, 'NDVI1');
-//visNdvi
-Map.addLayer(ndvi_classified , visNdvi, 'NDVI2');
+Map.addLayer(ndvi_classified , ndvVis, 'NDVI2');
 Map.addLayer(geometry);
 
 Export.image.toDrive({

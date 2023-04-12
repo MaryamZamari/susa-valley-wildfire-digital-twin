@@ -62,7 +62,7 @@ var healthyNBRImage = image.updateMask(healthyMask);
 
 //-------Merging the masked images (merging the two bands in 1 band)--
 var burnedNBRImageMerged = burnedNBRImage
-                              .select(['B8', 'B12'])
+                                .select(['B8', 'B12'])
                                 .reduce(ee.Reducer.sum())
                                 .toFloat()
                                 .rename('burnedNBRImageMerged');

@@ -81,3 +81,53 @@ Export.image.toDrive({
   region: geometry,
 })
 
+//---------Add Legend-----------------------
+var panel = ui.Panel({
+  style: {
+    position: 'bottom-left',
+    padding: '5px;'
+  }
+})
+
+var title = ui.Label({
+  value: 'Classification',
+  style: {
+    fontSize: '14px',
+    fontWeight: 'bold',
+    margin: '0px;'
+  }
+})
+
+panel.add(title)
+
+var color = ['red','orange','green']
+var lc_class = ['Burned', 'Not burned', 'Healthy vegetation']
+
+var list_legend = function(color, description) {
+  
+  var c = ui.Label({
+    style: {
+      backgroundColor: color,
+      padding: '10px',
+      margin: '4px'
+    }
+  })
+  
+  var ds = ui.Label({
+    value: description,
+    style: {
+      margin: '5px'
+    }
+  })
+  
+  return ui.Panel({
+    widgets: [c, ds],
+    layout: ui.Panel.Layout.Flow('horizontal')
+  })
+}
+
+for(var a = 0; a < 3; a++){
+  panel.add(list_legend(color[a], lc_class[a]))
+}
+
+Map.add(panel)

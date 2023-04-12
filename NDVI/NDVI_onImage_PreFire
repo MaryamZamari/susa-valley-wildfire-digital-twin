@@ -22,12 +22,12 @@ var bandIndexImg = image.expression(bandIndexExp).rename('NDVI');
 //--------thresholds (lt)----------------------------
 var threshold_noVegetation= -0.2; //areas with little to no vegetation cover, such as bare soil, water bodies, or urban areas.
 var threshold_sparseGrassland= 0;
-var threshold_
-var threshold_
-var threshold_
-var threshold_
-var threshold_
-var threshold_
+var threshold_degradedLandsRecentDisturbed= 0.1;
+var threshold_moderateVegCover= 0.2; //croplands, grasslands, or forests with low leaf density.
+var threshold_moderateHighVegCover= 0.3; //such as grasslands, forests, or croplands with moderate leaf density.
+var threshold_highVegCover= 0.4; //high vegetation cover dense forests, croplands with high leaf density, or wetlands.
+var threshold_veryHighVegCover= 0.5; //mature forests, dense wetlands, or highly productive croplands.
+var threshold_extremHighVegCover= 0.6; //extremely high vegetation cover, such as dense tropical rainforests or other ecosystems with high biomass.
 var threshold_
 var threshold_
 var threshold_

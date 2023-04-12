@@ -35,17 +35,17 @@ var threshold_optimalVegCover= 1.0 ; //optimal vegetation density and productivi
 // defining the NDVI image based on the threshholds and values_3,2,1,0 are values for visualisation
 var ndvi_classified = bandIndexImg.expression(
   "(b('NDVI') < threshold_noVegetation) ? 0" +  // 
-    ": (b('NDVI') =< threshold_sparseGrassland) ? 1" +  // 
-    ": (b('NDVI') =< threshold_degradedLandsRecentDisturbed) ? 2" +  // 
-    ": (b('NDVI') =< threshold_moderateVegCover) ? 3" + 
-    ": (b('NDVI') =< threshold_moderateHighVegCover) ? 4" +
-    ": (b('NDVI') =< threshold_highVegCover) ? 5" +
-    ": (b('NDVI') =< threshold_veryHighVegCover) ? 6" +
-    ": (b('NDVI') =< threshold_extremHighVegCover) ? 7" +
-    ": (b('NDVI') =< threshold_veryDenseVegCover) ? 8" +
-    ": (b('NDVI') =< threshold_extremDenseVegCover) ? 9" +
-    ": (b('NDVI') =< threshold_nearOptimalVegCover) ? 10" +
-    ": (b('NDVI') =< threshold_optimalVegCover) ? 11" +
+    ": (b('NDVI') <= threshold_sparseGrassland) ? 1" +  // 
+    ": (b('NDVI') <= threshold_degradedLandsRecentDisturbed) ? 2" +  // 
+    ": (b('NDVI') <= threshold_moderateVegCover) ? 3" + 
+    ": (b('NDVI') <= threshold_moderateHighVegCover) ? 4" +
+    ": (b('NDVI') <= threshold_highVegCover) ? 5" +
+    ": (b('NDVI') <= threshold_veryHighVegCover) ? 6" +
+    ": (b('NDVI') <= threshold_extremHighVegCover) ? 7" +
+    ": (b('NDVI') <= threshold_veryDenseVegCover) ? 8" +
+    ": (b('NDVI') <= threshold_extremDenseVegCover) ? 9" +
+    ": (b('NDVI') <= threshold_nearOptimalVegCover) ? 10" +
+    ": (b('NDVI') <= threshold_optimalVegCover) ? 11" +
       ":12" //unclassified 
   , {
 
@@ -75,7 +75,7 @@ var ndviVis = {min: 0, max: 11 , palette:['#000000','#a50026','#d73027', '#f46d4
 print(image);
 Map.centerObject(geometry);
 //Map.addLayer(bandIndexImg , nbrVis, 'NDVI1');
-Map.addLayer(ndvi_classified , ndvVis, 'NDVI2');
+Map.addLayer(ndvi_classified , ndviVis, 'NDVI2');
 Map.addLayer(geometry);
 
 Export.image.toDrive({

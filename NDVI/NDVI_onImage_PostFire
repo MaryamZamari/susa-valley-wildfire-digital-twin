@@ -61,8 +61,20 @@ var title = ui.Label({
 
 panel.add(title)
 
-var color = ['red','orange','green']
-var lc_class = ['Burned', 'Not burned', 'Healthy vegetation']
+var color = ['#000000','#a50026','#d73027','#f46d43', '#fdae61', '#fee08b', '#ffffbf', '#d9ef8b', '#a6d96a', '#66bd63', '#1a9850', '#006837'];
+
+var lc_class = ['little/vegetation cover,i.e bare soil, water bodies, or urban areas',
+                'sparse vegetation i.e grasslands or shrublands',
+                'sparse vegetation/degraded land/recently grown',
+                'moderate vegetation cover, i.e croplands, grasslands, forests with low leaf density',
+                'areas with moderate to high vegetation cover,i.e grasslands, forests, or croplands with moderate leaf density',
+                'areas with high vegetation cover i.e.dense forests, croplands with high leaf density,wetlands',
+                'areas with very high vegetation cover i.e mature forests, dense wetlands,highly productive croplands',
+                'very dense vegetation cover i.e old-growth forests or other ecosystems with high biomass',
+                'areas with extremely high vegetation cover,i.e dense tropical rainforests or other ecosystems with high biomass',
+                'areas with extremely dense vegetation cover,i.e old-growth forests or other high biomass ecosystems',
+                'areas with near-optimal vegetation density and productivity',
+                'optimal vegetation density and productivity']
 
 var list_legend = function(color, description) {
   
@@ -87,7 +99,7 @@ var list_legend = function(color, description) {
   })
 }
 
-for(var a = 0; a < 3; a++){
+for(var a = 0; a < 11; a++){
   panel.add(list_legend(color[a], lc_class[a]))
 }
 

@@ -40,11 +40,7 @@ var bandIndexImg = image.expression(bandIndexExp).rename('NBR');
 var nbrVis = {min: -1, max: 1 , palette:['red','orange','green']};  
 
 //-------Area Calculation----------------------
-/*
-Burned: NBR values less than or equal to -0.1
-Unburned: NBR values between -0.1 and 0.1
-Healthy greenery: NBR values greater than or equal to 0.1
-*/
+
 var thresh_burned = -0.1; //lt
 var thresh_unburned= 0.1; //lt
 var thresh_healthyGreen= 0.1; //gt
@@ -91,9 +87,36 @@ var burnedAreaHa = burnedNBRImageMerged.multiply(pixelArea)
     maxPixels: 1e9
   })
   .get('burnedNBRImageMerged');
+  
+//total area calculation
+//-------Merging the masked images (merging the two bands in 1 band)--
+var imageMerged = image
+                                .select(['B8', 'B12'])
+                                .reduce(ee.Reducer.sum())
+                                .toFloat()
+                                .rename('imageMerged');
+                                
+// Calculate the sum of pixels in the image
+var imagePixels = image.reduceRegion({
+  reducer: ee.Reducer.sum(),
+  geometry: geometry, //image.geometry(),
+  scale: 10,
+  maxPixels: 1e9   //to eliminate the error 
+});
 
-// Print the burned area in hectares
+// Calculate the image area in hectares
+var imageTotalAreaHa = imageMerged.multiply(pixelArea)
+  .reduceRegion({
+    reducer: ee.Reducer.sum(),
+    geometry: geometry,
+    scale: 10,
+    maxPixels: 1e9
+  })
+  .get('imageMerged');
+
+//######### Print the burned area in hectares##########################
 print('Burned area (ha):', burnedAreaHa);
+print('Total area (ha):', imageTotalAreaHa);
 print('BurnedNbrPixels:', burnedNbrPixels);
 
 //----------------visualisation commands------------

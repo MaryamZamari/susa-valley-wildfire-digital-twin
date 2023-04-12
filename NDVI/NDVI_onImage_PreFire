@@ -19,14 +19,19 @@ var image = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20170619T103021_20170619T
 var bandIndexExp = '(b("B8") - b("B4")) / (b("B8") + b("B4"))';
 var bandIndexImg = image.expression(bandIndexExp).rename('NDVI');
 
-//--------thresholds----------------------------
-var threshold_water = -0.1;
-//var threshold_buildupAreas = 0.015;
-var threshold_barrenLand = 0.00;
-var threshold_shrubAndGrassland = 0.15;
-var threshold_sparseVegetation =0.30;
-var threshold_denseVegetation = 0.60;
-
+//--------thresholds (lt)----------------------------
+var threshold_noVegetation= -0.2; //areas with little to no vegetation cover, such as bare soil, water bodies, or urban areas.
+var threshold_sparseGrassland= 0;
+var threshold_
+var threshold_
+var threshold_
+var threshold_
+var threshold_
+var threshold_
+var threshold_
+var threshold_
+var threshold_
+var threshold_
 
 // defining the burn severity image based on the threshholds and values_3,2,1,0 are values for visualisation
 var ndvi_classified = bandIndexImg.expression(
@@ -48,15 +53,9 @@ var ndvi_classified = bandIndexImg.expression(
 
 // Display the burn severity map       )       
 var visNdvi = {min: 0, max: 6, palette: ['#0066ff', '#d9d9d9', '#f7e9b2', '#a6d887', '#6abf49', '#006400']};
-print(bandIndexImg);
+
 //----------------------------------------
-/*
-Water: #0066ff (blue)
-Buildup areas: #d9d9d9 (light gray)
-Barren land: #f7e9b2 (light brown)
-Shrub and grassland: #a6d887 (light green)
-Sparse vegetation: #6abf49 (medium green)
-Dense vegetation: #006400 (dark green)  */
+
 
 
 

@@ -59,7 +59,8 @@ var title = ui.Label({
 
 panel.add(title)
 
-var color = ['#000000','#a50026','#d73027','#f46d43', '#fdae61', '#fee08b', '#ffffbf', '#d9ef8b', '#a6d96a', '	#66bd63', '#1a9850', '#006837']
+var color = ['#000000','#a50026','#d73027','#f46d43', '#fdae61', '#fee08b', '#ffffbf', '#d9ef8b', '#a6d96a', '#66bd63', '#1a9850', '#006837'];
+
 var lc_class = ['little/vegetation cover,i.e bare soil, water bodies, or urban areas',
                 'sparse vegetation i.e grasslands or shrublands',
                 'sparse vegetation/degraded land/recently grown',

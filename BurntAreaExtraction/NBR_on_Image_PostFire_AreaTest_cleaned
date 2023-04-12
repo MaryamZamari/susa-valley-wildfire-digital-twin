@@ -91,10 +91,10 @@ var burnedAreaHa = burnedNBRImageMerged.multiply(pixelArea)
 //total area calculation (for AOI)
 //-------Merging the masked images (merging the two bands in 1 band)--
 var imageMerged = image
-                                .select(['B8', 'B12'])
-                                .reduce(ee.Reducer.sum())
-                                .toFloat()
-                                .rename('imageMerged');
+                            .select(['B8', 'B12'])
+                            .reduce(ee.Reducer.sum())
+                            .toFloat()
+                            .rename('imageMerged');
                                 
 // Calculate the sum of pixels in the image
 var imagePixels = image.reduceRegion({

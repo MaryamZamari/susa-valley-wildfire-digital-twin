@@ -117,7 +117,7 @@ var imageTotalAreaHa = imageMerged.multiply(pixelArea)
 //######### Print the burned area in hectares##########################
 print('Burned area (ha):', burnedAreaHa);
 print('Total area (ha):', imageTotalAreaHa);
-print('BurnedNbrPixels:', burnedNbrPixels);
+
 
 //----------------visualisation commands------------
 Map.addLayer(burnedNBRImage);

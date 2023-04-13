@@ -142,7 +142,7 @@ var list_legend = function(color, description) {
   })
 }
 
-for(var a = 0; a < 11; a++){
+for(var a = 0; a <= 11; a++){
   panel.add(list_legend(color[a], lc_class[a]))
 }
 

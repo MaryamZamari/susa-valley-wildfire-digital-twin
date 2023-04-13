@@ -71,8 +71,9 @@ var ndvi_classified = bandIndexImg.expression(
     }).rename(['NDVI']);
 
 
-// Display the burn severity map       )       
+// Display the NDVI map       )       
 //var visNdvi = {min: 0, max: 6, palette: ['#0066ff', '#d9d9d9', '#f7e9b2', '#a6d887', '#6abf49', '#006400']};
+//Map.addLayer(bandIndexImg , ndviVis , 'NDVI1');
 
 //---------------------Visualisation phase ----------------------------------------------
 // Visualization parameters for NDVI.
@@ -82,7 +83,7 @@ var ndviVis = {min: 0, max: 11 , palette:['#000000','#a50026','#d73027', '#f46d4
 
 print(image);
 Map.centerObject(geometry);
-Map.addLayer(bandIndexImg , ndviVis , 'NDVI1');
+Map.addLayer(ndvi_classified , ndviVis , 'NDVI1');
 Map.addLayer(geometry);
 //Map.addLayer(image);
 

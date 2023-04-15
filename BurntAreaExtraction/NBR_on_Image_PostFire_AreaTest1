@@ -71,7 +71,32 @@ var burnedNbrPixels = burnedNBRImageMerged.reduceRegion({
   maxPixels: 1e9   //to eliminate the error 
 });
 
+//----Solution From StackoverFlow--------
+var totalAreaImage = ee.Image.pixelArea()
+  .updateMask(clippedndvi.mask())
+  .rename('totalArea')
+var desertAreaImage = totalAreaImage
+  .updateMask(clippedndvi.lt(2000))
+  .rename('desertArea')
+var areas = totalAreaImage
+  .addBands(desertAreaImage)
+  .reduceRegion({
+    reducer: ee.Reducer.sum(),
+    geometry: country.geometry(),
+    scale: 250,
+    crs: 'SR-ORG:6974',
+    maxPixels: 1e13
+  })
+  
+var desertArea = areas.getNumber('desertArea')
+var totalArea = areas.getNumber('totalArea')
+var percentage = desertArea.divide(totalArea).multiply(100)
 
+print('Desert Area (million km²)', desertArea.divide(1e12))
+print('Total Area (million km²)', totalArea.divide(1e12))
+print('Desertified Fraction (%)', percentage)
+
+//==========================================================================
 // Get the sum of burned area pixels   ---> same as burnedNbrPixels basically
 var sumBurnedAreaPixels = burnedNbrPixels.get('burnedNBRImageMerged');
 

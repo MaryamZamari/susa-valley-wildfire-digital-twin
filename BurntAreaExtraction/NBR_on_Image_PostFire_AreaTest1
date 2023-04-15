@@ -76,18 +76,20 @@ var areas = totalAreaImage
     reducer: ee.Reducer.sum(),
     geometry: BurnedRoi,
     scale: 10,
-    crs: 'SR-ORG:6974',
+    crs: 'EPSG:32632',
     maxPixels: 1e13
   })
   
-var desertArea = areas.getNumber('desertArea')
+var burnedArea = areas.getNumber('burnedArea')
 var totalArea = areas.getNumber('totalArea')
-var percentage = desertArea.divide(totalArea).multiply(100)
+var percentage = burnedArea.divide(totalArea).multiply(100)
 
-print('Desert Area (million km²)', desertArea.divide(1e12))
-print('Total Area (million km²)', totalArea.divide(1e12))
-print('Desertified Fraction (%)', percentage)
+print('Burned Area (Hectares)', burnedArea.divide(100000))
+print('Total Area (Hectares)', totalArea.divide(100000))
+print('Burned Fraction (%)', percentage)
 
+print('Projection B8: ', projectionb8);
+print('Projection B12: ', projectionb12);
 //==========================================================================  
   
 // Calculate the sum of pixels in the merged burned area

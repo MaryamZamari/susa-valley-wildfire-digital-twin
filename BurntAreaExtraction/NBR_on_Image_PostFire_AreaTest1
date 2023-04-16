@@ -73,30 +73,32 @@ var imageMerged= image
                     .toFloat()
                     .rename('imageMerged');
   
-//---*-***************Solution From StackoverFlow ************--------
+//**************** Solution From StackoverFlow ************
 var totalAreaImage = ee.Image.pixelArea()
   .updateMask(imageMerged.mask())
   .rename('totalArea');
+  
 var burnedAreaImage = totalAreaImage
   .updateMask(burnedNBRImageMerged)
-  .rename('burnedArea')
+  .rename('burnedArea');
+  
 var areas = totalAreaImage
-  .addBands(burnedNBRImageMerged)
+  .addBands(burnedAreaImage)
   .reduceRegion({
     reducer: ee.Reducer.sum(),
     geometry: BurnedRoi,
     scale: 10,
     crs: 'EPSG:32632',
     maxPixels: 1e13
-  })
+  });
   
-var burnedArea = areas.getNumber('burnedArea')
-var totalArea = areas.getNumber('totalArea')
-var percentage = burnedArea.divide(totalArea).multiply(100)
+var burnedArea = areas.getNumber('burnedArea');
+var totalArea = areas.getNumber('totalArea');
+var percentage = burnedArea.divide(totalArea).multiply(100);
 
-print('Burned Area (Hectares)', burnedArea.divide(100000))
-print('Total Area (Hectares)', totalArea.divide(100000))
-print('Burned Fraction (%)', percentage)
+print('Burned Area (Hectares)', burnedArea.divide(100000));
+print('Total Area (Hectares)', totalArea.divide(100000));
+print('Burned Fraction (%)', percentage);
 
 print('Projection B8: ', projectionb8);
 print('Projection B12: ', projectionb12);

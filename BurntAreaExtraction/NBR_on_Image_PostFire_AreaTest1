@@ -65,11 +65,18 @@ var burnedNBRImageMerged = burnedNBRImage
                                 .reduce(ee.Reducer.sum())
                                 .toFloat()
                                 .rename('burnedNBRImageMerged');
+                                
+//------Mergine the complete image into 1 band
+var imageMerged= image
+                    .select('B8', 'B12')
+                    .reduce(ee.Reducer.sum())
+                    .toFloat()
+                    .rename('imageMerged');
   
-//----Solution From StackoverFlow--------
+//---*-***************Solution From StackoverFlow ************--------
 var totalAreaImage = ee.Image.pixelArea()
-  .updateMask(image.mask())
-  .rename('totalArea')
+  .updateMask(imageMerged.mask())
+  .rename('totalArea');
 var burnedAreaImage = totalAreaImage
   .updateMask(burnedNBRImageMerged)
   .rename('burnedArea')
@@ -93,62 +100,7 @@ print('Burned Fraction (%)', percentage)
 
 print('Projection B8: ', projectionb8);
 print('Projection B12: ', projectionb12);
-//==========================================================================  
-  
-// Calculate the sum of pixels in the merged burned area
-var burnedNbrPixels = burnedNBRImageMerged.reduceRegion({
-  reducer: ee.Reducer.sum(),
-  geometry: BurnedRoi, //image.geometry(),
-  scale: 10,
-  maxPixels: 1e9   //to eliminate the error 
-});
 
-// Get the sum of burned area pixels   ---> same as burnedNbrPixels basically
-var sumBurnedAreaPixels = burnedNbrPixels.get('burnedNBRImageMerged');
-
-// Calculate the area covered by each pixel in hectares
-var pixelArea = ee.Image.pixelArea().divide(100000);
-
-// Calculate the burned area in hectares
-var burnedAreaHa = burnedNBRImageMerged.multiply(pixelArea)
-  .reduceRegion({
-    reducer: ee.Reducer.sum(),
-    geometry: BurnedRoi,
-    scale: 10,
-    maxPixels: 1e9
-  })
-  .get('burnedNBRImageMerged');
-  
-//total area calculation
-//-------Merging the masked images (merging the two bands in 1 band)--
-var imageMerged = image
-                                .select(['B8', 'B12'])
-                                .reduce(ee.Reducer.sum())
-                                .toFloat()
-                                .rename('imageMerged');
-                                
-// Calculate the sum of pixels in the image
-var imagePixels = image.reduceRegion({
-  reducer: ee.Reducer.sum(),
-  geometry: geometry, //image.geometry(),
-  scale: 10,
-  maxPixels: 1e9   //to eliminate the error 
-});
-
-// Calculate the image area in hectares
-var imageTotalAreaHa = imageMerged.multiply(pixelArea)
-  .reduceRegion({
-    reducer: ee.Reducer.sum(),
-    geometry: geometry,
-    scale: 10,
-    maxPixels: 1e9
-  })
-  .get('imageMerged');
-
-//######### Print the burned area in hectares##########################.
-print('Burned area (ha):', burnedAreaHa);
-print('Total area (ha):', imageTotalAreaHa);
-print('BurnedNbrPixels:', burnedNbrPixels);
 
 //----------------visualisation commands------------
 print(image);

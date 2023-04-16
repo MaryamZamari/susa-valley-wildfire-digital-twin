@@ -43,7 +43,6 @@ var bandIndexImg = image.expression(bandIndexExp).rename('NBR');
 var nbrVis = {min: -1, max: 1 , palette:['red','orange','green']};  
 
 //-------Area Calculation----------------------
-
 var thresh_burned = -0.1; //lt
 var thresh_unburned= 0.1; //lt
 var thresh_healthyGreen= 0.1; //gt
@@ -51,13 +50,9 @@ var thresh_healthyGreen= 0.1; //gt
 //------------------------------QUANTIFICATION OF STATISTICS------------------
 // Create binary masks for NBR pixel categories
 var burnedMask = bandIndexImg.lt(thresh_burned);
-var unburnedMask= bandIndexImg.lt(thresh_unburned);
-var healthyMask= bandIndexImg.gt(thresh_healthyGreen);
 
 // Mask the image based on the binary masks
 var burnedNBRImage = image.updateMask(burnedMask);
-var unburnedNBRImage = image.updateMask(unburnedMask);
-var healthyNBRImage = image.updateMask(healthyMask);
 
 //-------Merging the masked images (merging the two bands in 1 band)--
 var burnedNBRImageMerged = burnedNBRImage
@@ -96,8 +91,8 @@ var burnedArea = areas.getNumber('burnedArea');
 var totalArea = areas.getNumber('totalArea');
 var percentage = burnedArea.divide(totalArea).multiply(100);
 
-print('Burned Area (Hectares)', burnedArea.divide(100000));
-print('Total Area (Hectares)', totalArea.divide(100000));
+print('Burned Area (Hectares)', burnedArea.divide(10000));
+print('Total Area (Hectares)', totalArea.divide(10000));
 print('Burned Fraction (%)', percentage);
 
 print('Projection B8: ', projectionb8);

@@ -55,15 +55,15 @@ var nbrVis = {min: -1, max: 1 , palette:['red','orange','green']};
 
 //-------Area Calculation----------------------
 var thresh_burned = -0.1; //lt
-var thresh_unburned= 0.1; //lt
-var thresh_healthyGreen= 0.1; //gt
 
 //------------------------------QUANTIFICATION OF STATISTICS------------------
 // Create binary masks for NBR pixel categories
 var burnedMask = bandIndexImg.lt(thresh_burned);
+var unburnedMask= bandIndexImg.gt(thresh_burned);
 
 // Mask the image based on the binary masks
 var burnedNBRImage = image.updateMask(burnedMask);
+var unburnedNBRImage= image.updateMask(unburnedMask);
 
 //-------Merging the masked images (merging the two bands in 1 band)--
 var burnedNBRImageMerged = burnedNBRImage
@@ -72,7 +72,13 @@ var burnedNBRImageMerged = burnedNBRImage
                                 .toFloat()
                                 .rename('burnedNBRImageMerged');
                                 
-//------Mergine the complete image into 1 band
+var unburnedNBRImageMerged = unburnedNBRImage
+                                .select(['B8', 'B12'])
+                                .reduce(ee.Reducer.sum())
+                                .toFloat()
+                                .rename('unburnedNBRImageMerged');
+                                
+//------Merging the complete image into 1 band
 var imageMerged= image
                     .select('B8', 'B12')
                     .reduce(ee.Reducer.sum())
@@ -102,12 +108,29 @@ var burnedArea = areas.getNumber('burnedArea');
 var totalArea = areas.getNumber('totalArea');
 var percentage = burnedArea.divide(totalArea).multiply(100);
 
+/* create a histogram of the NBR index values to visualize
+   the distribution of burned and unburned pixels:*/
+var histogram = ui.Chart.image.histogram({
+  image: s2Image,
+  region: roi,
+  scale: 20,
+  maxBuckets: 50,
+  minBucketWidth: 0.01,
+  series: 'NBR',
+  cumulative: true
+})
+  .setOptions({
+    title: 'NBR Histogram',
+    hAxis: { title: 'NBR' },
+    vAxis: { title: 'Pixel Count' }
+});
+
+
 print('Burned Area (Hectares)', burnedArea.divide(10000));
 print('Total Area (Hectares)', totalArea.divide(10000));
 print('Burned Fraction (%)', percentage);
 
-print('Projection B8: ', projectionb8);
-print('Projection B12: ', projectionb12);
+
 
 
 //----------------visualisation commands------------.
@@ -115,67 +138,7 @@ print(image);
 Map.centerObject(geometry2);
 Map.addLayer(burnedNBRImage);
 Map.addLayer(bandIndexImg , nbrVis, 'NBR1');
-//Map.addLayer(image); 
-//Map.addLayer(bandIndexImg);
 Map.addLayer(geometry2);
 Map.addLayer(geometry);
-//Map.centerObject(geometry);
 
-//-----------download task----------------------------
-Export.image.toDrive({
-  image: bandIndexImg /*image*/,
-  description: 'S2SrHarmonized-20171116T103311_20171116T103542_T32TLR_B12B8B4_NBR',
-  scale: 10,
-  region: geometry,
-})
 
-//---------Add Legend-----------------------
-var panel = ui.Panel({
-  style: {
-    position: 'bottom-left',
-    padding: '5px;'
-  }
-})
-
-var title = ui.Label({
-  value: 'Classification',
-  style: {
-    fontSize: '14px',
-    fontWeight: 'bold',
-    margin: '0px;'
-  }
-})
-
-panel.add(title)
-
-var color = ['red','orange','green']
-var lc_class = ['Burned', 'Not burned', 'Healthy vegetation']
-
-var list_legend = function(color, description) {
-  
-  var c = ui.Label({
-    style: {
-      backgroundColor: color,
-      padding: '10px',
-      margin: '4px'
-    }
-  })
-  
-  var ds = ui.Label({
-    value: description,
-    style: {
-      margin: '5px'
-    }
-  })
-  
-  return ui.Panel({
-    widgets: [c, ds],
-    layout: ui.Panel.Layout.Flow('horizontal')
-  })
-}
-
-for(var a = 0; a < 3; a++){
-  panel.add(list_legend(color[a], lc_class[a]))
-}
-
-Map.add(panel)

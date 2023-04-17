@@ -111,20 +111,18 @@ var percentage = burnedArea.divide(totalArea).multiply(100);
 /* create a histogram of the NBR index values to visualize
    the distribution of burned and unburned pixels:*/
 var histogram = ui.Chart.image.histogram({
-  image: s2Image,
-  region: roi,
-  scale: 20,
+  image: imageMerged,
+  region: geometry2,
+  scale: 10,
   maxBuckets: 50,
   minBucketWidth: 0.01,
-  series: 'NBR',
-  cumulative: true
+  series: ['burnedAreaImage']
 })
   .setOptions({
     title: 'NBR Histogram',
     hAxis: { title: 'NBR' },
     vAxis: { title: 'Pixel Count' }
 });
-
 
 print('Burned Area (Hectares)', burnedArea.divide(10000));
 print('Total Area (Hectares)', totalArea.divide(10000));

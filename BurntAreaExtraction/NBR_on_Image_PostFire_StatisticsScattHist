@@ -143,6 +143,8 @@ var histogram_Burned = ui.Chart.image.histogram({
     hAxis: { title: 'Burned Areas' },
     vAxis: { title: 'Pixel Count' }
 });
+
+
 print('Burned Area (Hectares)', burnedArea.divide(10000));
 print('Total Area (Hectares)', totalArea.divide(10000));
 print('Burned Fraction (%)', percentage);

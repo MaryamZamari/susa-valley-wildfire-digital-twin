@@ -41,7 +41,6 @@ var histogram_NBR = ui.Chart.image.histogram({
   scale: 10,
   maxBuckets: 50,
   minBucketWidth: 0.01,
-//  series: ['burnedAreaImage']
 })
   .setOptions({
     title: 'NBR Histogram_Prefire',

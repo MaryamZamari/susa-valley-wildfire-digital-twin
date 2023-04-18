@@ -25,10 +25,28 @@ var bandIndexImg = image.expression(bandIndexExp).rename('NBR');
 var nbrVis = {min: -1, max: 1 , palette:['red','orange','green']};  
 
 
+//--Histogram of NBR
+/* create a histogram of the NBR index values to visualize
+   the distribution of burned and unburned pixels:*/
+var histogram_NBR = ui.Chart.image.histogram({
+  image: bandIndexImg,
+  region: geometry2,
+  scale: 10,
+  maxBuckets: 50,
+  minBucketWidth: 0.01,
+//  series: ['burnedAreaImage']
+})
+  .setOptions({
+    title: 'NBR Histogram',
+    hAxis: { title: 'NBR' },
+    vAxis: { title: 'Pixel Count' }
+});
+
 print(image);
 Map.centerObject(geometry);
 Map.addLayer(bandIndexImg , nbrVis, 'NBR1');
 Map.addLayer(geometry);
+Map.add(histogram_NBR)
 
 Export.image.toDrive({
   image: bandIndexImg /*image*/,

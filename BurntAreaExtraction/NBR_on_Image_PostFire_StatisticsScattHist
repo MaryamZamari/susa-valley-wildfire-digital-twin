@@ -48,7 +48,7 @@ var unburnedThreshold = 0.2;
 // Expression using image band indices to calculate NBR
 var bandIndexExp = '(b("B8") - b("B12")) / (b("B8") + b("B12"))';
 var bandIndexImg = image.expression(bandIndexExp).rename('NBR');
-
+var nbr_ND = image.normalizedDifference(['B8', 'B12']).rename('NBR_ND');
 //---------------------Visualisation phase ----------------------------------------------
 // Visualization parameters for NDVI.
 var nbrVis = {min: -1, max: 1 , palette:['red','orange','green']};  
@@ -61,9 +61,13 @@ var thresh_burned = -0.1; //lt
 var burnedMask = bandIndexImg.lt(thresh_burned);
 var unburnedMask= bandIndexImg.gt(thresh_burned);
 
+// Create a binary mask for burned areas
+var burnedMask = nbr_ND.lt(-0.1);
+
 // Mask the image based on the binary masks
 var burnedNBRImage = image.updateMask(burnedMask);
 var unburnedNBRImage= image.updateMask(unburnedMask);
+var burnedNbrImage_ND = nbr_ND.updateMask(burnedMask);
 
 //-------Merging the masked images (merging the two bands in 1 band)--
 var burnedNBRImageMerged = burnedNBRImage
@@ -110,13 +114,13 @@ var percentage = burnedArea.divide(totalArea).multiply(100);
 
 /* create a histogram of the NBR index values to visualize
    the distribution of burned and unburned pixels:*/
-var histogram = ui.Chart.image.histogram({
-  image: imageMerged,
+var histogram_NBR = ui.Chart.image.histogram({
+  image: bandIndexImg,
   region: geometry2,
   scale: 10,
   maxBuckets: 50,
   minBucketWidth: 0.01,
-  series: ['burnedAreaImage']
+//  series: ['burnedAreaImage']
 })
   .setOptions({
     title: 'NBR Histogram',
@@ -124,6 +128,21 @@ var histogram = ui.Chart.image.histogram({
     vAxis: { title: 'Pixel Count' }
 });
 
+
+//Histogram for burned areas
+var histogram_Burned = ui.Chart.image.histogram({
+  image: burnedNbrImage_ND,
+  region: geometry2,
+  scale: 10,
+  maxBuckets: 50,
+  minBucketWidth: 0.01,
+//  series: ['burnedAreaImage']
+})
+  .setOptions({
+    title: 'Burned Histogram',
+    hAxis: { title: 'Burned Areas' },
+    vAxis: { title: 'Pixel Count' }
+});
 print('Burned Area (Hectares)', burnedArea.divide(10000));
 print('Total Area (Hectares)', totalArea.divide(10000));
 print('Burned Fraction (%)', percentage);
@@ -138,5 +157,6 @@ Map.addLayer(burnedNBRImage);
 Map.addLayer(bandIndexImg , nbrVis, 'NBR1');
 Map.addLayer(geometry2);
 Map.addLayer(geometry);
-
-
+// Add the histogram chart to the map
+Map.add(histogram_NBR);
+Map.add(histogram_Burned);

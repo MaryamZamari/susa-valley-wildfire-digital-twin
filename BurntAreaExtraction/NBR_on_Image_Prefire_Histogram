@@ -44,7 +44,7 @@ var histogram_NBR = ui.Chart.image.histogram({
 //  series: ['burnedAreaImage']
 })
   .setOptions({
-    title: 'NBR Histogram',
+    title: 'NBR Histogram_Prefire',
     hAxis: { title: 'NBR' },
     vAxis: { title: 'Pixel Count' }
 });

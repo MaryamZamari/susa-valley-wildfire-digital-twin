@@ -13,13 +13,25 @@ var image_prefire = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20170619T103021_2
                         // .mosaic().clip(geometry) 
                          .select(['B4','B8']); 
 
-var image_postfire = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20180619T103019_20180619T103559_T32TLR') //Pre_Fire image
+var image_postfire = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20180619T103019_20180619T103559_T32TLR') //Postfire_Fire image
                         // .mosaic().clip(geometry) 
                          .select(['B4','B8']); 
                          
-var image_2022 = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20220618T102559_20220618T103528_T32TLR') //Pre_Fire image
+var image_2022 = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20220618T102559_20220618T103528_T32TLR') //present image
                         // .mosaic().clip(geometry) 
                          .select(['B4','B8']); 
+
+
+// Get the acquisition time of the image
+// Get the acquisition time of each image
+var acquisitionTime_prefire = ee.Date(image_prefire.get("system:time_start"));
+var acquisitionTime_postfire = ee.Date(image_postfire.get("system:time_start"));
+var acquisitionTime_2022 = ee.Date(image_2022.get("system:time_start"));
+
+// Set the "system:time_start" property for each image
+image_prefire = image_prefire.set("system:time_start", acquisitionTime_prefire.millis());
+image_postfire= image_postfire.set("system:time_start", acquisitionTime_postfire.millis());
+image_2022= image_2022.set("system:time_start", acquisitionTime_2022.millis());
 
 // Compute the NDVI for each image
 var ndvi_prefire = image_prefire.normalizedDifference(['B8', 'B4']).rename('NDVI');

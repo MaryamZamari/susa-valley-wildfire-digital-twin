@@ -52,8 +52,7 @@ var nbrVis = {min: -1, max: 1 , palette:['red','orange','green']};
 
 //-------Area Calculation----------------------
 var thresh_burned = -0.1; //lt
-var thresh_unburned= 0.1; //lt
-var thresh_healthyGreen= 0.1; //gt
+
 
 //------------------------------QUANTIFICATION OF STATISTICS-------------------
 // Create binary masks for NBR pixel categories
@@ -69,12 +68,52 @@ var burnedNBRImageMerged = burnedNBRImage
                                 .toFloat()
                                 .rename('burnedNBRImageMerged');
                                 
-//------Mergine the complete image into 1 band
-var imageMerged= image
-                    .select('B8', 'B12')
-                    .reduce(ee.Reducer.sum())
-                    .toFloat()
-                    .rename('imageMerged');
+//--------thresholds (lt)----------------------------
+var threshold_noVegetation= -0.2; //areas with little to no vegetation cover, such as bare soil, water bodies, or urban areas.
+var threshold_sparseGrassland= 0;
+var threshold_degradedLandsRecentDisturbed= 0.1;
+var threshold_moderateVegCover= 0.2; //croplands, grasslands, or forests with low leaf density.
+var threshold_moderateHighVegCover= 0.3; //such as grasslands, forests, or croplands with moderate leaf density.
+var threshold_highVegCover= 0.4; //high vegetation cover dense forests, croplands with high leaf density, or wetlands.
+var threshold_veryHighVegCover= 0.5; //mature forests, dense wetlands, or highly productive croplands.
+var threshold_extremHighVegCover= 0.6; //extremely high vegetation cover, such as dense tropical rainforests or other ecosystems with high biomass.
+var threshold_veryDenseVegCover= 0.7; //very dense vegetation cover, such as old-growth forests or other ecosystems with high biomass.
+var threshold_extremDenseVegCover= 0.8; //extremely dense vegetation cover, such as old-growth forests or other high biomass ecosystems.
+var threshold_nearOptimalVegCover= 0.9; //near-optimal vegetation density and productivity, such as highly productive croplands or other ecosystems with high biomass.
+var threshold_optimalVegCover= 1.0 ; //optimal vegetation density and productivity, such as highly productive croplands or other ecosystems with high biomass.
+
+// defining the NDVI image based on the threshholds and values_3,2,1,0 are values for visualisation
+var ndvi_classified = bandIndexImg.expression(
+  "(b('NDVI') < threshold_noVegetation) ? 0" +  // 
+    ": (b('NDVI') <= threshold_sparseGrassland) ? 1" +  // 
+    ": (b('NDVI') <= threshold_degradedLandsRecentDisturbed) ? 2" +  // 
+    ": (b('NDVI') <= threshold_moderateVegCover) ? 3" + 
+    ": (b('NDVI') <= threshold_moderateHighVegCover) ? 4" +
+    ": (b('NDVI') <= threshold_highVegCover) ? 5" +
+    ": (b('NDVI') <= threshold_veryHighVegCover) ? 6" +
+    ": (b('NDVI') <= threshold_extremHighVegCover) ? 7" +
+    ": (b('NDVI') <= threshold_veryDenseVegCover) ? 8" +
+    ": (b('NDVI') <= threshold_extremDenseVegCover) ? 9" +
+    ": (b('NDVI') <= threshold_nearOptimalVegCover) ? 10" +
+    ": (b('NDVI') <= threshold_optimalVegCover) ? 11" +
+      ":12" //unclassified 
+  , {
+
+     threshold_noVegetation : threshold_noVegetation ,
+     threshold_sparseGrassland : threshold_sparseGrassland ,
+     threshold_degradedLandsRecentDisturbed : threshold_degradedLandsRecentDisturbed ,
+     threshold_moderateVegCover : threshold_moderateVegCover ,
+     threshold_moderateHighVegCover : threshold_moderateHighVegCover,
+     threshold_highVegCover:threshold_highVegCover,
+     threshold_veryHighVegCover:threshold_veryHighVegCover,
+     threshold_extremHighVegCover:threshold_extremHighVegCover,
+     threshold_veryDenseVegCover:threshold_veryDenseVegCover,
+     threshold_extremDenseVegCover:threshold_extremDenseVegCover,
+     threshold_nearOptimalVegCover: threshold_nearOptimalVegCover,
+     threshold_optimalVegCover: threshold_optimalVegCover, 
+    }).rename(['NDVI']);
+
+
   
 //**************** Solution From StackoverFlow ************
 var totalAreaImage = ee.Image.pixelArea()

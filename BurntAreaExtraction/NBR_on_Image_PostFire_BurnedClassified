@@ -1,6 +1,7 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var BurnedRoi = 
     /* color: #d63000 */
+    /* shown: false */
     /* displayProperties: [
       {
         "type": "rectangle"
@@ -24,7 +25,10 @@ var BurnedRoi =
           [7.011323522807711, 45.11601945581964],
           [7.214570593120211, 45.11601945581964],
           [7.214570593120211, 45.20994425310098]]], null, false),
-    geometry = /* color: #98ff00 */ee.Geometry.Polygon(
+    geometry = 
+    /* color: #98ff00 */
+    /* shown: false */
+    ee.Geometry.Polygon(
         [[[7.003083958928165, 45.21869339705463],
           [7.003083958928165, 45.110246992050875],
           [7.219377293889102, 45.110246992050875],
@@ -47,22 +51,6 @@ var bandIndexExp = '(b("B8") - b("B12")) / (b("B8") + b("B12"))';
 var bandIndexImg = image.expression(bandIndexExp).rename('NBR');
 
 //---------------------Visualisation phase ----------------------------------------------
-// Visualization parameters for NDVI.
-var nbrVis = {min: -1, max: 1 , palette:['red','orange','green']};  
-
-//-------Area Calculation----------------------
-var thresh_burned = -0.1; //lt
-
-
-//------------------------------QUANTIFICATION OF STATISTICS-------------------
-var nbr_ND = image.normalizedDifference(['B8', 'B12']).rename('NBR_ND'); //NBR using Normalised Difference 
-var thresh_burned = -0.1; //lt
-
-// Create a binary mask for burned areas
-var burnedMask = nbr_ND.lt(thresh_burned );
-
-var burnedNbrImage_ND = nbr_ND.updateMask(burnedMask);
-
 
 //--------thresholds (lt)----------------------------
 var thresh_SevereBurn = -0.9; 
@@ -76,14 +64,14 @@ var thresh_NoBurnOrLowSeverityBurn = 0;
 
 // defining the NBR image based on the threshholds and values_3,2,1,0 are values for visualisation
 var nbr_classified = bandIndexImg.expression(
-  "(b('burnedNbrImage_ND') < thresh_SevereBurn) ? 0" +   
-    ": (b('burnedNbrImage_ND') <= thresh_ModeratetoSevereBurn) ? 1" +  
-    ": (b('burnedNbrImage_ND') <= thresh_ModerateBurn) ? 2" +  
-    ": (b('burnedNbrImage_ND') <= thresh_moderateLowBurn) ? 3" + 
-    ": (b('burnedNbrImage_ND') <= thresh_LowBurn) ? 4" +
-    ": (b('burnedNbrImage_ND') <= thresh_VeryLowBurn) ? 5" +
-    ": (b('burnedNbrImage_ND') <= thresh_NoBurnOrVeryLowSeverityBurn) ? 6" +
-    ": (b('burnedNbrImage_ND') <= thresh_NoBurnOrLowSeverityBurn) ? 7" +
+  "(b('NBR') < thresh_SevereBurn) ? 0" +   
+    ": (b('NBR') <= thresh_ModeratetoSevereBurn) ? 1" +  
+    ": (b('NBR') <= thresh_ModerateBurn) ? 2" +  
+    ": (b('NBR') <= thresh_moderateLowBurn) ? 3" + 
+    ": (b('NBR') <= thresh_LowBurn) ? 4" +
+    ": (b('NBR') <= thresh_VeryLowBurn) ? 5" +
+    ": (b('NBR') <= thresh_NoBurnOrVeryLowSeverityBurn) ? 6" +
+    ": (b('NBR') <= thresh_NoBurnOrLowSeverityBurn) ? 7" +
       ":8" //unclassified 
   , {
 
@@ -95,14 +83,15 @@ var nbr_classified = bandIndexImg.expression(
      thresh_VeryLowBurn : thresh_VeryLowBurn,
      thresh_NoBurnOrVeryLowSeverityBurn : thresh_NoBurnOrVeryLowSeverityBurn,
      thresh_NoBurnOrLowSeverityBurn : thresh_NoBurnOrLowSeverityBurn,
-    }).rename(['NBR']);
+    }).rename(['NBR_ClassifiedSeverity']);
+
+//---------------------Visualisation phase ----------------------------------------------
+// Visualization parameters for NDVI.
+var nbrVis = {min: 0, max: 8 , palette:['#8B0000','#FF0000','#FF4500', '#FFA500', '#FFD700', '#FFFF00', '#90EE90', '#008000']};  
 
 //----------------visualisation commands------------
-print(image);
 Map.centerObject(geometry2);
-Map.addLayer(burnedNbrImage_ND , nbrVis, 'NBR1');
-Map.addLayer(burnedMask); 
-//Map.addLayer(bandIndexImg);
+Map.addLayer(nbr_classified , nbrVis, 'NBR1');
 Map.addLayer(geometry2);
 Map.addLayer(geometry);
 //Map.centerObject(geometry);
@@ -146,7 +135,7 @@ var title = ui.Label({
 
 panel.add(title)
 
-var color = ['#8B0000','#FF0000','#FF4500', '#FFA500', '#FFD700', '#FFFF00', '#90EE90', '#008000']
+var color = ['#8B0000','#FF0000','#FF4500', '#FFA500', '#FFD700', '#FFFF00', '#90EE90', '#008000', 'white']
 var lc_class = ['Severe burn', 'Moderate to severe burn', 'Moderate burn', 'Moderate to low burn', 'Low burn', 'Very low burn', 'No burn or very low severity burn', 'No burn or low severity burn'  ]
 
 var list_legend = function(color, description) {

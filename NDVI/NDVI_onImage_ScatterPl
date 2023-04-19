@@ -30,7 +30,7 @@ var ndvi_2022 = image_2022.normalizedDifference(['B8', 'B4']).rename('NDVI');
 // Create a time series chart of the NDVI values
 var chart = ui.Chart.image.series({
   imageCollection: ee.ImageCollection.fromImages([ndvi_prefire, ndvi_postfire, ndvi_2022]),
-  region: roi,
+  region: geometry,
   reducer: ee.Reducer.mean(),
   scale: 30
 }).setOptions({

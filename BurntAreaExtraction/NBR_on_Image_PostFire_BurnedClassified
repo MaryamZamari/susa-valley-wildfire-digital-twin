@@ -37,9 +37,6 @@ var BurnedRoi =
                          .select(['B12','B8'])
                           .updateMask(ee.Image('JRC/GSW1_2/GlobalSurfaceWater').select('max_extent').not()); // Mask out water areas; 
 
-// Get the projection of the image
-var projectionb8 = image.select(['B8']).projection();
-var projectionb12 = image.select(['B12']).projection();
 //---------------------------------------------------------
 // Define the threshold values for each category
 var burnedThreshold = -0.2;
@@ -88,26 +85,7 @@ var burnedAreaImage = totalAreaImage
   .updateMask(burnedNBRImageMerged)
   .rename('burnedArea');
   
-var areas = totalAreaImage
-  .addBands(burnedAreaImage)
-  .reduceRegion({
-    reducer: ee.Reducer.sum(),
-    geometry: geometry2,
-    scale: 10,
-    crs: 'EPSG:32632',
-    maxPixels: 1e13
-  });
-  
-var burnedArea = areas.getNumber('burnedArea');
-var totalArea = areas.getNumber('totalArea');
-var percentage = burnedArea.divide(totalArea).multiply(100);
 
-print('Burned Area (Hectares)', burnedArea.divide(10000));
-print('Total Area (Hectares)', totalArea.divide(10000));
-print('Burned Fraction (%)', percentage);
-
-print('Projection B8: ', projectionb8);
-print('Projection B12: ', projectionb12);
 
 
 //----------------visualisation commands------------
@@ -121,13 +99,7 @@ Map.addLayer(geometry2);
 Map.addLayer(geometry);
 //Map.centerObject(geometry);
 
-//-----------download task----------------------------
-Export.image.toDrive({
-  image: bandIndexImg /*image*/,
-  description: 'S2SrHarmonized-20171116T103311_20171116T103542_T32TLR_B12B8B4_NBR',
-  scale: 10,
-  region: geometry,
-})
+
 
 //---------Add Legend-----------------------
 var panel = ui.Panel({

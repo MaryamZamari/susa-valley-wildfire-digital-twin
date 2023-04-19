@@ -74,7 +74,6 @@ var nbr_classified = bandIndexImg.expression(
     ": (b('NBR') <= thresh_NoBurnOrLowSeverityBurn) ? 7" +
       ":8" //unclassified 
   , {
-
      thresh_SevereBurn : thresh_SevereBurn ,
      thresh_ModeratetoSevereBurn : thresh_ModeratetoSevereBurn ,
      thresh_ModerateBurn : thresh_ModerateBurn ,
@@ -83,7 +82,8 @@ var nbr_classified = bandIndexImg.expression(
      thresh_VeryLowBurn : thresh_VeryLowBurn,
      thresh_NoBurnOrVeryLowSeverityBurn : thresh_NoBurnOrVeryLowSeverityBurn,
      thresh_NoBurnOrLowSeverityBurn : thresh_NoBurnOrLowSeverityBurn,
-    }).rename(['NBR_ClassifiedSeverity']);
+    })
+    .rename(['NBR_ClassifiedSeverity']);
 
 //---------------------Visualisation phase ----------------------------------------------
 // Visualization parameters for NDVI.
@@ -94,7 +94,6 @@ Map.centerObject(geometry2);
 Map.addLayer(nbr_classified , nbrVis, 'NBR1');
 Map.addLayer(geometry2);
 Map.addLayer(geometry);
-//Map.centerObject(geometry);
 
 /*
 - -1 < NBR < -0.9: Severe burn
@@ -104,7 +103,8 @@ Map.addLayer(geometry);
 - -0.6 < NBR < -0.5: Low burn
 - -0.5 < NBR < -0.4: Very low burn
 - -0.2 < NBR < -0.1: No burn or very low severity burn
-- -0.1 < NBR < 0: No burn or low severity burn        */ 
+- -0.1 < NBR < 0: No burn or low severity burn        
+*/ 
 
 /*-0.9 < NBR < -1: #8B0000 (Dark Red)
 -0.8 < NBR < -0.9: #FF0000 (Red)

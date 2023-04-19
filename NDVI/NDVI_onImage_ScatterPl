@@ -9,29 +9,27 @@ var geometry =
           [7.219377293889102, 45.21869339705463]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // Load the three images
-var image1 = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20170619T103021_20170619T103806_T32TLR') //Pre_Fire image
+var image_prefire = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20170619T103021_20170619T103806_T32TLR') //Pre_Fire image
                         // .mosaic().clip(geometry) 
                          .select(['B4','B8']); 
 
-var image2 = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20170619T103021_20170619T103806_T32TLR') //Pre_Fire image
+var image_postfire = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20170619T103021_20170619T103806_T32TLR') //Pre_Fire image
                         // .mosaic().clip(geometry) 
                          .select(['B4','B8']); 
                          
-var image3 = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20170619T103021_20170619T103806_T32TLR') //Pre_Fire image
+var image_2022 = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20170619T103021_20170619T103806_T32TLR') //Pre_Fire image
                         // .mosaic().clip(geometry) 
                          .select(['B4','B8']); 
 
 // Compute the NDVI for each image
-var ndvi1 = image1.normalizedDifference(['B8', 'B4']).rename('NDVI');
-var ndvi2 = image2.normalizedDifference(['B8', 'B4']).rename('NDVI');
-var ndvi3 = image3.normalizedDifference(['B8', 'B4']).rename('NDVI');
+var ndvi_prefire = image_prefire.normalizedDifference(['B8', 'B4']).rename('NDVI');
+var ndvi_postfire = image_postfire.normalizedDifference(['B8', 'B4']).rename('NDVI');
+var ndvi_2022 = image_2022.normalizedDifference(['B8', 'B4']).rename('NDVI');
 
-// Define the region of interest (ROI) for the scatter plot
-var roi = ee.Geometry.Point(-122.084, 37.42);
 
 // Create a time series chart of the NDVI values
 var chart = ui.Chart.image.series({
-  imageCollection: ee.ImageCollection.fromImages([ndvi1, ndvi2, ndvi3]),
+  imageCollection: ee.ImageCollection.fromImages([ndvi_prefire, ndvi_postfire, ndvi_2022]),
   region: roi,
   reducer: ee.Reducer.mean(),
   scale: 30

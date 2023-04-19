@@ -13,7 +13,7 @@ var image_prefire = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20170619T103021_2
                         // .mosaic().clip(geometry) 
                          .select(['B4','B8']); 
 
-var image_postfire = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20170619T103021_20170619T103806_T32TLR') //Pre_Fire image
+var image_postfire = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20180619T103019_20180619T103559_T32TLR') //Pre_Fire image
                         // .mosaic().clip(geometry) 
                          .select(['B4','B8']); 
                          

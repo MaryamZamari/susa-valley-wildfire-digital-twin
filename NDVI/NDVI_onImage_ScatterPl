@@ -21,23 +21,6 @@ var image_2022 = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20220618T102559_2022
                         // .mosaic().clip(geometry) 
                          .select(['B4','B8']); 
 
-//Generating Scatter Chart
-// 1. Sample The Pixel Values as Feature Collection
-var sampled1 = image_prefire.sampleRegions({
-  collection: points, // is a featureCollection
-  scale: 10,
-});
-
-var sampled2 = image_postfire.sampleRegions({
-  collection: points, // is a featureCollection
-  scale: 10,
-});
-
-var sampled3 = image_2022.sampleRegions({
-  collection: points, // is a featureCollection
-  scale: 10,
-});
-
 // Get the acquisition time of each image
 var acquisitionTime_prefire = ee.Date(image_prefire.get("system:time_start"));
 var acquisitionTime_postfire = ee.Date(image_postfire.get("system:time_start"));

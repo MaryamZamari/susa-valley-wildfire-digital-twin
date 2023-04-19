@@ -100,7 +100,6 @@ var nbr_classified = bandIndexImg.expression(
 //----------------visualisation commands------------
 print(image);
 Map.centerObject(geometry2);
-Map.addLayer();
 Map.addLayer(burnedNbrImage_ND , nbrVis, 'NBR1');
 Map.addLayer(burnedMask); 
 //Map.addLayer(bandIndexImg);

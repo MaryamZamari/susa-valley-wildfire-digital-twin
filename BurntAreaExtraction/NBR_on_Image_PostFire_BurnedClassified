@@ -55,90 +55,78 @@ var thresh_burned = -0.1; //lt
 
 
 //------------------------------QUANTIFICATION OF STATISTICS-------------------
-// Create binary masks for NBR pixel categories
-var burnedMask = bandIndexImg.lt(thresh_burned);
+var nbr_ND = image.normalizedDifference(['B8', 'B12']).rename('NBR_ND'); //NBR using Normalised Difference 
+var thresh_burned = -0.1; //lt
 
-// Mask the image based on the binary masks
-var burnedNBRImage = image.updateMask(burnedMask);
+// Create a binary mask for burned areas
+var burnedMask = nbr_ND.lt(thresh_burned );
 
-//-------Merging the masked images (merging the two bands in 1 band)--
-var burnedNBRImageMerged = burnedNBRImage
-                                .select(['B8', 'B12'])
-                                .reduce(ee.Reducer.sum())
-                                .toFloat()
-                                .rename('burnedNBRImageMerged');
-                                
+var burnedNbrImage_ND = nbr_ND.updateMask(burnedMask);
+
+
 //--------thresholds (lt)----------------------------
-var threshold_noVegetation= -0.2; //areas with little to no vegetation cover, such as bare soil, water bodies, or urban areas.
-var threshold_sparseGrassland= 0;
-var threshold_degradedLandsRecentDisturbed= 0.1;
-var threshold_moderateVegCover= 0.2; //croplands, grasslands, or forests with low leaf density.
-var threshold_moderateHighVegCover= 0.3; //such as grasslands, forests, or croplands with moderate leaf density.
-var threshold_highVegCover= 0.4; //high vegetation cover dense forests, croplands with high leaf density, or wetlands.
-var threshold_veryHighVegCover= 0.5; //mature forests, dense wetlands, or highly productive croplands.
-var threshold_extremHighVegCover= 0.6; //extremely high vegetation cover, such as dense tropical rainforests or other ecosystems with high biomass.
-var threshold_veryDenseVegCover= 0.7; //very dense vegetation cover, such as old-growth forests or other ecosystems with high biomass.
-var threshold_extremDenseVegCover= 0.8; //extremely dense vegetation cover, such as old-growth forests or other high biomass ecosystems.
-var threshold_nearOptimalVegCover= 0.9; //near-optimal vegetation density and productivity, such as highly productive croplands or other ecosystems with high biomass.
-var threshold_optimalVegCover= 1.0 ; //optimal vegetation density and productivity, such as highly productive croplands or other ecosystems with high biomass.
+var thresh_SevereBurn = -0.9; 
+var thresh_ModeratetoSevereBurn= -0.8;
+var thresh_ModerateBurn= -0.7;
+var thresh_moderateLowBurn= -0.6; 
+var thresh_LowBurn= -0.5;
+var thresh_VeryLowBurn= -0.4; 
+var thresh_NoBurnOrVeryLowSeverityBurn= -0.1; 
+var thresh_NoBurnOrLowSeverityBurn = 0; 
 
-// defining the NDVI image based on the threshholds and values_3,2,1,0 are values for visualisation
-var ndvi_classified = bandIndexImg.expression(
-  "(b('NDVI') < threshold_noVegetation) ? 0" +  // 
-    ": (b('NDVI') <= threshold_sparseGrassland) ? 1" +  // 
-    ": (b('NDVI') <= threshold_degradedLandsRecentDisturbed) ? 2" +  // 
-    ": (b('NDVI') <= threshold_moderateVegCover) ? 3" + 
-    ": (b('NDVI') <= threshold_moderateHighVegCover) ? 4" +
-    ": (b('NDVI') <= threshold_highVegCover) ? 5" +
-    ": (b('NDVI') <= threshold_veryHighVegCover) ? 6" +
-    ": (b('NDVI') <= threshold_extremHighVegCover) ? 7" +
-    ": (b('NDVI') <= threshold_veryDenseVegCover) ? 8" +
-    ": (b('NDVI') <= threshold_extremDenseVegCover) ? 9" +
-    ": (b('NDVI') <= threshold_nearOptimalVegCover) ? 10" +
-    ": (b('NDVI') <= threshold_optimalVegCover) ? 11" +
-      ":12" //unclassified 
+// defining the NBR image based on the threshholds and values_3,2,1,0 are values for visualisation
+var nbr_classified = bandIndexImg.expression(
+  "(b('burnedNbrImage_ND') < thresh_SevereBurn) ? 0" +   
+    ": (b('burnedNbrImage_ND') <= thresh_ModeratetoSevereBurn) ? 1" +  
+    ": (b('burnedNbrImage_ND') <= thresh_ModerateBurn) ? 2" +  
+    ": (b('burnedNbrImage_ND') <= thresh_moderateLowBurn) ? 3" + 
+    ": (b('burnedNbrImage_ND') <= thresh_LowBurn) ? 4" +
+    ": (b('burnedNbrImage_ND') <= thresh_VeryLowBurn) ? 5" +
+    ": (b('burnedNbrImage_ND') <= thresh_NoBurnOrVeryLowSeverityBurn) ? 6" +
+    ": (b('burnedNbrImage_ND') <= thresh_NoBurnOrLowSeverityBurn) ? 7" +
+      ":8" //unclassified 
   , {
 
-     threshold_noVegetation : threshold_noVegetation ,
-     threshold_sparseGrassland : threshold_sparseGrassland ,
-     threshold_degradedLandsRecentDisturbed : threshold_degradedLandsRecentDisturbed ,
-     threshold_moderateVegCover : threshold_moderateVegCover ,
-     threshold_moderateHighVegCover : threshold_moderateHighVegCover,
-     threshold_highVegCover:threshold_highVegCover,
-     threshold_veryHighVegCover:threshold_veryHighVegCover,
-     threshold_extremHighVegCover:threshold_extremHighVegCover,
-     threshold_veryDenseVegCover:threshold_veryDenseVegCover,
-     threshold_extremDenseVegCover:threshold_extremDenseVegCover,
-     threshold_nearOptimalVegCover: threshold_nearOptimalVegCover,
-     threshold_optimalVegCover: threshold_optimalVegCover, 
-    }).rename(['NDVI']);
-
-
-  
-//**************** Solution From StackoverFlow ************
-var totalAreaImage = ee.Image.pixelArea()
-  .updateMask(imageMerged.mask())
-  .rename('totalArea');
-  
-var burnedAreaImage = totalAreaImage
-  .updateMask(burnedNBRImageMerged)
-  .rename('burnedArea');
-  
-
-
+     thresh_SevereBurn : thresh_SevereBurn ,
+     thresh_ModeratetoSevereBurn : thresh_ModeratetoSevereBurn ,
+     thresh_ModerateBurn : thresh_ModerateBurn ,
+     thresh_moderateLowBurn : thresh_moderateLowBurn ,
+     thresh_LowBurn : thresh_LowBurn,
+     thresh_VeryLowBurn : thresh_VeryLowBurn,
+     thresh_NoBurnOrVeryLowSeverityBurn : thresh_NoBurnOrVeryLowSeverityBurn,
+     thresh_NoBurnOrLowSeverityBurn : thresh_NoBurnOrLowSeverityBurn,
+    }).rename(['NBR']);
 
 //----------------visualisation commands------------
 print(image);
 Map.centerObject(geometry2);
-Map.addLayer(burnedNBRImage);
-Map.addLayer(bandIndexImg , nbrVis, 'NBR1');
-//Map.addLayer(image); 
+Map.addLayer();
+Map.addLayer(burnedNbrImage_ND , nbrVis, 'NBR1');
+Map.addLayer(burnedMask); 
 //Map.addLayer(bandIndexImg);
 Map.addLayer(geometry2);
 Map.addLayer(geometry);
 //Map.centerObject(geometry);
 
+/*
+- -1 < NBR < -0.9: Severe burn
+- -0.9 < NBR < -0.8: Moderate to severe burn
+- -0.8 < NBR < -0.7: Moderate burn
+- -0.7 < NBR < -0.6: Moderate to low burn
+- -0.6 < NBR < -0.5: Low burn
+- -0.5 < NBR < -0.4: Very low burn
+- -0.2 < NBR < -0.1: No burn or very low severity burn
+- -0.1 < NBR < 0: No burn or low severity burn        */ 
 
+/*-0.9 < NBR < -1: #8B0000 (Dark Red)
+-0.8 < NBR < -0.9: #FF0000 (Red)
+-0.7 < NBR < -0.8: #FF4500 (Orange-Red)
+-0.7 < NBR < -0.6: #FFA500 (Orange)
+-0.6 < NBR < -0.5: #FFD700 (Yellow-Orange)
+-0.5 < NBR < -0.4: #FFFF00 (Yellow)
+-0.2 < NBR < -0.1: #90EE90 (Light Green)
+-0.1 < NBR < 0: #008000 (Green) 
+*/
 
 //---------Add Legend-----------------------
 var panel = ui.Panel({
@@ -159,8 +147,8 @@ var title = ui.Label({
 
 panel.add(title)
 
-var color = ['red','orange','green']
-var lc_class = ['Burned', 'Not burned', 'Healthy vegetation']
+var color = ['#8B0000','#FF0000','#FF4500', '#FFA500', '#FFD700', '#FFFF00', '#90EE90', '#008000']
+var lc_class = ['Severe burn', 'Moderate to severe burn', 'Moderate burn', 'Moderate to low burn', 'Low burn', 'Very low burn', 'No burn or very low severity burn', 'No burn or low severity burn'  ]
 
 var list_legend = function(color, description) {
   
@@ -185,7 +173,7 @@ var list_legend = function(color, description) {
   })
 }
 
-for(var a = 0; a < 3; a++){
+for(var a = 0; a <= 8; a++){
   panel.add(list_legend(color[a], lc_class[a]))
 }
 

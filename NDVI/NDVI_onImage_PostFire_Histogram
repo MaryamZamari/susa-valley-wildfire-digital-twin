@@ -23,25 +23,39 @@ var geometry =
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
  geometry2 = 
         geometry2;
-
-var image_prefire = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20170619T103021_20170619T103806_T32TLR') //Pre_Fire image
-                        // .mosaic().clip(geometry) 
-                         .select(['B4','B8']); 
+        
 //For NDVI I would need the same time of the year(Preferably)---> Dates: 
+var image_prefire = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20170619T103021_20170619T103806_T32TLR') //Pre_Fire image
+                         .select(['B4','B8']); 
+                         
 var image_postfire = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20180619T103019_20180619T103559_T32TLR') //Pre_Fire image
-                        // .mosaic().clip(geometry) 
+                         .select(['B4','B8']); 
+                         
+var image_2022 = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20220618T102559_20220618T103528_T32TLR') //Present image
                          .select(['B4','B8']); 
 
-//---------------------------------------------------------
-
-// Expression using image band indices to calculate NBR
+//---------- Expression using image band indices to calculate NBR-----------------------
 var bandIndexExp = '(b("B8") - b("B4")) / (b("B8") + b("B4"))';
-var NDVI1 = image1.expression(bandIndexExp).rename('NDVI');
+var NDVI_prefire = image_prefire.expression(bandIndexExp).rename('NDVI');
+var NDVI_postfire = image_postfire.expression(bandIndexExp).rename('NDVI');
+var NDVI_2022 = image_2022.expression(bandIndexExp).rename('NDVI');
 
+//---Histogram-------------
+var histo_NDVI_prefire = ui.Chart.image.histogram({
+  image: NDVI_prefire,
+  region: geometry2,
+  scale: 10,
+  maxBuckets: 50,
+  minBucketWidth: 0.01,
+})
+  .setOptions({
+    title: 'NDVI Histogram_Prefire',
+    hAxis: { title: 'NDVI' },
+    vAxis: { title: 'Pixel Count' }
+});
 
-
-var histogram_NDVI = ui.Chart.image.histogram({
-  image: bandIndexImg,
+var histo_NDVI_postfire = ui.Chart.image.histogram({
+  image: NDVI_postfire,
   region: geometry2,
   scale: 10,
   maxBuckets: 50,
@@ -53,7 +67,18 @@ var histogram_NDVI = ui.Chart.image.histogram({
     vAxis: { title: 'Pixel Count' }
 });
 
-
+var histo_NDVI_2022 = ui.Chart.image.histogram({
+  image: NDVI_2022,
+  region: geometry2,
+  scale: 10,
+  maxBuckets: 50,
+  minBucketWidth: 0.01,
+})
+  .setOptions({
+    title: 'NDVI Histogram_2022',
+    hAxis: { title: 'NDVI' },
+    vAxis: { title: 'Pixel Count' }
+});
 
 
 

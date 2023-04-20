@@ -80,10 +80,6 @@ var histo_NDVI_2022 = ui.Chart.image.histogram({
     vAxis: { title: 'Pixel Count' }
 });
 
-
-
-
-
 //---------------------Test For Categories------------------------------
 print(histo_NDVI_prefire);
 print(histo_NDVI_postfire);

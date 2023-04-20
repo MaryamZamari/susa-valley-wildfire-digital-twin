@@ -1,0 +1,65 @@
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var geometry = 
+    /* color: #ffffff */
+    /* shown: false */
+    ee.Geometry.Polygon(
+        [[[7.003083958928165, 45.21869339705463],
+          [7.003083958928165, 45.110246992050875],
+          [7.219377293889102, 45.110246992050875],
+          [7.219377293889102, 45.21869339705463]]], null, false);
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
+
+// importing pre-fire and post-fire NBR images (the same dates for which NBR was calculated).
+var prefire_image = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20170619T103021_20170619T103806_T32TLR')
+                        .select('B8', 'B12');
+var postfire_image = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20171116T103311_20171116T103542_T32TLR')
+                        .select('B8', 'B12');
+
+//----------------------NBR Calculations for Post and Prefire-------------------
+// Expression using image band indices to calculate NBR
+var bandIndexExp = '(b("B8") - b("B12")) / (b("B8") + b("B12"))';
+var prefire_nbr = prefire_image.expression(bandIndexExp).rename('NBR_Prefire');
+var postfire_nbr = postfire_image.expression(bandIndexExp).rename('NBR_Postfire');
+
+// delta_nbr calculation(Burn Severity formula)-----------------------------------
+var delta_nbr = postfire_nbr.subtract(prefire_nbr).rename('dNBR');
+//var delta_nbr = prefire_nbr.subtract(postfire_nbr).rename('dNBR');
+print("delta_nbr", delta_nbr);
+
+
+//var threshold_enhanced_regrowth_high = -0.5;  
+var threshold_enhanced_regrowth_low = -0.25; 
+var threshold_unburned= -0.1;
+var threshold_low_severity= 0.1;
+var threshold_moderate_low_severity= 0.27;
+var threshold_moderate_high_severity=0.44;
+var threshold_high_severity= 0.66;
+
+
+// defining the burn severity image based on the threshholds and values_3,2,1,0 are values for visualisation
+var burnSeverity = delta_nbr.expression(
+  "(b('dNBR') > threshold_high_severity) ? 6" +  // High burn severity
+    ": (b('dNBR') > threshold_moderate_high_severity) ? 5" +  // Moderate-high burn severity
+    ": (b('dNBR') > threshold_moderate_low_severity) ? 4" +  // Moderate-low burn severity
+    ": (b('dNBR') > threshold_low_severity) ? 3" + 
+    ": (b('dNBR') > threshold_unburned) ? 2" + 
+    ": (b('dNBR') > threshold_enhanced_regrowth_low) ? 1" + 
+      ":0" 
+  , {
+  //   threshold_enhanced_regrowth_high : threshold_enhanced_regrowth_high ,  
+     threshold_enhanced_regrowth_low : threshold_enhanced_regrowth_low , 
+     threshold_unburned : threshold_unburned ,
+     threshold_low_severity : threshold_low_severity ,
+     threshold_moderate_low_severity : threshold_moderate_low_severity ,
+     threshold_moderate_high_severity : threshold_moderate_high_severity ,
+     threshold_high_severity : threshold_high_severity  ,
+  }).rename(['burnSeverity']);
+
+
+// Display the burn severity map       )       
+//var visBurnSeverity = {min: 0, max: 6, palette: ['white', 'yellow', 'orange', 'red', 'black']};   //here add 1 more visualisation
+var visBurnSeverity = {min: 0, max: 6, palette: ['#FFFFFF', '#FEE090', '#FDAE61', '#F46D43', '#D73027', '#A50026','black']};
+Map.addLayer(burnSeverity, visBurnSeverity, 'Burn Severity');
+Map.addLayer(geometry);
+Map.centerObject(geometry);
+

@@ -62,7 +62,7 @@ var chart = ui.Chart.feature.byFeature(features, 'system:time_start')
       title: 'NDVI Time Series',
       vAxis: {title: 'NDVI'},
       hAxis: {title: 'Date', format: 'MMM-yyyy'},
-      pointSize: 4,
+      pointSize: 15,
       series: {
         0: {pointShape: 'circle'},
       }

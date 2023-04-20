@@ -9,9 +9,11 @@ var geometry =
           [7.219377293889102, 45.21869339705463]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
-
+var image_prefire = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20170619T103021_20170619T103806_T32TLR') //Pre_Fire image
+                        // .mosaic().clip(geometry) 
+                         .select(['B4','B8']); 
 //For NDVI I would need the same time of the year(Preferably)---> Dates: 
-var image1 = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20180619T103019_20180619T103559_T32TLR') //Pre_Fire image
+var image_postfire = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20180619T103019_20180619T103559_T32TLR') //Pre_Fire image
                         // .mosaic().clip(geometry) 
                          .select(['B4','B8']); 
 

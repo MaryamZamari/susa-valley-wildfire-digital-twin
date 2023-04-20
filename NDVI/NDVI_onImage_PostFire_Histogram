@@ -86,6 +86,5 @@ print(histo_NDVI_postfire);
 print(histo_NDVI_2022);
 
 Map.centerObject(geometry);
-Map.addLayer(geometry);
-//Map.addLayer(image);
+
 

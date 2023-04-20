@@ -38,14 +38,13 @@ var threshold_high_severity= 0.66;
 
 // defining the burn severity image based on the threshholds and values_3,2,1,0 are values for visualisation
 var burnSeverity = delta_nbr.expression(
-  
-      "(b('dNBR') < threshold_high_severity) ? 0" +  // High burn severity
-    ": (b('dNBR') < threshold_moderate_high_severity) ? 1" +  // Moderate-high burn severity
-    ": (b('dNBR') < threshold_moderate_low_severity) ? 2" +  // Moderate-low burn severity
+      "(b('dNBR') < threshold_enhanced_regrowth_high) ? 0" + 
+    ": (b('dNBR') < threshold_enhanced_regrowth_low) ? 1" +  // Moderate-high burn severity
+    ": (b('dNBR') < threshold_unburned) ? 2" +  // Moderate-low burn severity
     ": (b('dNBR') < threshold_low_severity) ? 3" + 
-    ": (b('dNBR') < threshold_unburned) ? 4" + 
-    ": (b('dNBR') < threshold_enhanced_regrowth_low) ? 5" + 
-    ": (b('dNBR') < threshold_enhanced_regrowth_high) ? 6" +
+    ": (b('dNBR') < threshold_moderate_low_severity ) ? 4" + 
+    ": (b('dNBR') < threshold_moderate_high_severity) ? 5" + 
+    ": (b('dNBR') < threshold_high_severity) ? 6" +
       ":7" 
   , {
      threshold_enhanced_regrowth_high : threshold_enhanced_regrowth_high ,  
@@ -59,7 +58,7 @@ var burnSeverity = delta_nbr.expression(
 
 
 // Display the burn severity map       )       
-var visBurnSeverity = {min: 0, max: 7, palette: ['#FFFFFF', '#FEE090', '#FDAE61', '#F46D43', '#D73027', '#A50026', 'Grey']};
+var visBurnSeverity = {min: 0, max: 7, palette: ['#00FF00', '#7CFC00', '#FFFF00', '#FFA500', '#FF4500', '#FF0000', '800000', 'Grey']};
 Map.addLayer(burnSeverity, visBurnSeverity, 'Burn Severity');
 Map.addLayer(geometry);
 Map.centerObject(geometry);

@@ -85,9 +85,11 @@ var histo_NDVI_2022 = ui.Chart.image.histogram({
 
 
 //---------------------Test For Categories------------------------------
-print(image);
+print(histo_NDVI_prefire);
+print(histo_NDVI_postfire);
+print(histo_NDVI_2022);
+
 Map.centerObject(geometry);
-Map.addLayer(ndvi_classified , ndviVis , 'NDVI1');
 Map.addLayer(geometry);
 //Map.addLayer(image);
 

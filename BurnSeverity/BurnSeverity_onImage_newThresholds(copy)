@@ -1,7 +1,7 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var geometry = 
     /* color: #ffffff */
-    /* shown: false */
+    /* locked: true */
     ee.Geometry.Polygon(
         [[[7.003083958928165, 45.21869339705463],
           [7.003083958928165, 45.110246992050875],

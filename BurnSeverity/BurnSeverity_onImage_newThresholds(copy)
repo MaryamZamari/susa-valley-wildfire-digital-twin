@@ -25,6 +25,8 @@ var postfire_nbr = postfire_image.expression(bandIndexExp).rename('NBR_Postfire'
 // delta_nbr calculation(Burn Severity formula)-----------------------------------
 var delta_nbr = prefire_nbr.subtract(postfire_nbr).rename('dNBR');
 
+// Clip the dNBR image to your geometry
+var clipped_dNBR = delta_nbr.clip(geometry);
 print("delta_nbr", delta_nbr);
 
 //thresholds lt
@@ -38,7 +40,7 @@ var threshold_high_severity= 1;//;
 
 
 // defining the burn severity image based on the threshholds and values_3,2,1,0 are values for visualisation
-var burnSeverity = delta_nbr.expression(
+var burnSeverity = clipped_dNBR.expression(
       "(b('dNBR') <= threshold_enhanced_regrowth_high) ? 0" + 
     ": (b('dNBR') <= threshold_enhanced_regrowth_low) ? 1" +  // Moderate-high burn severity
     ": (b('dNBR') <= threshold_unburned) ? 2" +  // Moderate-low burn severity
@@ -62,6 +64,6 @@ var burnSeverity = delta_nbr.expression(
 var visBurnSeverity = {min: 0, max: 7, palette: ['#778835', '#a7c050', '#0be344', '#f8fc11', '#f8b140', '#f8671a', 'a600d4', 'Grey']};
 Map.addLayer(burnSeverity, visBurnSeverity, 'Burn Severity');
 Map.addLayer(geometry);
-Map.addLayer(delta_nbr);
+//Map.addLayer(delta_nbr);
 Map.centerObject(geometry);
 

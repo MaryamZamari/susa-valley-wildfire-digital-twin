@@ -77,7 +77,7 @@ var burnSeverity = clipped_dNBR.expression(
 //--Histogram of NBR
 /* create a histogram of the NBR index values to visualize
    the distribution of burned and unburned pixels:*/
-var histogram_NBR = ui.Chart.image.histogram({
+var histogram_burnSeverity = ui.Chart.image.histogram({
   image: burnSeverity,
   region: geometry2,
   scale: 10,
@@ -85,16 +85,17 @@ var histogram_NBR = ui.Chart.image.histogram({
   minBucketWidth: 0.01,
 })
   .setOptions({
-    title: 'NBR Histogram_Prefire',
-    hAxis: { title: 'NBR' },
+    title: 'dNBR Histogram based on Thresholds',
+    hAxis: { title: 'Burn Severity category' },
     vAxis: { title: 'Pixel Count' }
 });
 
 // Display the burn severity map       )       
 var visBurnSeverity = {min: 0, max: 7, palette: ['#778835', '#a7c050', '#0be344', '#f8fc11', '#f8b140', '#f8671a', 'a600d4', 'Grey']};
-Map.addLayer(burnSeverity, visBurnSeverity, 'Burn Severity');
+//Map.addLayer(burnSeverity, visBurnSeverity, 'Burn Severity');
 Map.addLayer(geometry);
 //Map.addLayer(delta_nbr);
 Map.centerObject(geometry);
+Map.add(histogram_burnSeverity);
 
 

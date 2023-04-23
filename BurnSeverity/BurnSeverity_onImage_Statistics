@@ -79,22 +79,65 @@ var highSeverity_6 = burnSeverity.where(burnSeverity.eq(6), 1).where(burnSeverit
 var moderateHighSeverity_5 = burnSeverity.where(burnSeverity.eq(5), 1).where(burnSeverity.neq(5), 0);
 var moderate_low_severity_4 = burnSeverity.where(burnSeverity.eq(4), 1).where(burnSeverity.neq(4), 0);
 var low_severity_3 = burnSeverity.where(burnSeverity.eq(3), 1).where(burnSeverity.neq(3), 0);
-var unburned_2 = burnSeverity.where(burnSeverity.eq(2), 1).where(burnSeverity.neq(2), 0);
+/*var unburned_2 = burnSeverity.where(burnSeverity.eq(2), 1).where(burnSeverity.neq(2), 0);
 var enhanced_regrowth_low_1 = burnSeverity.where(burnSeverity.eq(1), 1).where(burnSeverity.neq(1), 0);
-var enhanced_regrowth_high_0 = burnSeverity.where(burnSeverity.eq(0), 1).where(burnSeverity.neq(0), 0);
+var enhanced_regrowth_high_0 = burnSeverity.where(burnSeverity.eq(0), 1).where(burnSeverity.neq(0), 0); */
 
 var dnbr_6= clipped_dNBR.updateMask(burnSeverity.eq(6));
 var dnbr_5= clipped_dNBR.updateMask(burnSeverity.eq(5));
 var dnbr_4= clipped_dNBR.updateMask(burnSeverity.eq(4));
 var dnbr_3= clipped_dNBR.updateMask(burnSeverity.eq(3));
-var dnbr_2= clipped_dNBR.updateMask(burnSeverity.eq(2));
+/*var dnbr_2= clipped_dNBR.updateMask(burnSeverity.eq(2));
 var dnbr_1= clipped_dNBR.updateMask(burnSeverity.eq(1));
-var dnbr_0= clipped_dNBR.updateMask(burnSeverity.eq(0));
+var dnbr_0= clipped_dNBR.updateMask(burnSeverity.eq(0)); */
+
+print(dnbr_6); 
+//----------Area ----------------
+//-------Merging the masked images (merging the two bands in 1 band)--
 
 
+/*var burnedNBRImageMerged = burnedNBRImage
+                                .select(['B8', 'B12'])
+                                .reduce(ee.Reducer.sum())
+                                .toFloat()
+                                .rename('burnedNBRImageMerged');
+    */                            
+//------Mergine the complete image into 1 band
+var imageMerged= clipped_dNBR
+                    .select('B8', 'B12')
+                    .reduce(ee.Reducer.sum())
+                    .toFloat()
+                    .rename('imageMerged');
+  
+//**************** Solution From StackoverFlow ************
+var totalAreaImage = ee.Image.pixelArea()
+  .updateMask(imageMerged.mask())
+  .rename('totalArea');
+  
+var highSeverityAreaImage = totalAreaImage
+  .updateMask(dnbr_6)
+  .rename('high_severityArea');
+  
+var areas = totalAreaImage
+  .addBands(dnbr_6)
+  .reduceRegion({
+    reducer: ee.Reducer.sum(),
+    geometry: geometry2,
+    scale: 10,
+    crs: 'EPSG:32632',
+    maxPixels: 1e13
+  });
+  
+var burnedArea = areas.getNumber('high_severityArea');
+var totalArea = areas.getNumber('totalArea');
+var percentage = high_severityArea.divide(totalArea).multiply(100);
+
+print('high_severityArea (Hectares)', high_severityArea.divide(10000));
+print('Total Area (Hectares)', totalArea.divide(10000));
+print('high_severityArea Fraction (%)', percentage);
 
 
-//--Histogram of NBR
+//--Histogram of NBR-----------------------------------------------------------------
 /* create a histogram of the NBR index values to visualize
    the distribution of burned and unburned pixels:*/
 var histogram_burnSeverity_thresh = ui.Chart.image.histogram({

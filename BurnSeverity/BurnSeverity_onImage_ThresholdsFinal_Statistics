@@ -92,7 +92,7 @@ var dnbr_1= clipped_dNBR.updateMask(burnSeverity.eq(1));
 var dnbr_0= clipped_dNBR.updateMask(burnSeverity.eq(0));
 
 
-print(dnbr_6);
+
 
 //--Histogram of NBR
 /* create a histogram of the NBR index values to visualize

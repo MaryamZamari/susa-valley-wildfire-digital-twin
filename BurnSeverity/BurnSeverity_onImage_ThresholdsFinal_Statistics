@@ -129,11 +129,11 @@ Map.centerObject(geometry);
 //Map.add(histogram_burnSeverity);
 
 //---Visualise Burn Severity Masks
-Map.addLayer(dnbr_0, {palette: ['#FFFFFF', '#00FF00']}, 'Enhanced regrowth high'); // Category 0
-Map.addLayer(dnbr_1, {palette: ['#FFFFFF', '#00FF00']}, 'Enhanced regrowth low'); // Category 1
-Map.addLayer(dnbr_2, {palette: ['#FFFFFF', '#FFFF00']}, 'Unburned'); // Category 2
-Map.addLayer(dnbr_3, {palette: ['#FFFFFF', '#FFA500']}, 'Low severity'); // Category 3
-Map.addLayer(dnbr_4, {palette: ['#FFFFFF', '#FF8C00']}, 'Moderate-low severity'); // Category 4
-Map.addLayer(dnbr_5, {palette: ['#FFFFFF', '#FF4500']}, 'Moderate-high severity'); // Category 5
+Map.addLayer(dnbr_0, {palette: ['#FFFFFF', '#00FF00']}, 'Enhanced regrowth high_masked'); // Category 0
+Map.addLayer(dnbr_1, {palette: ['#FFFFFF', '#00FF00']}, 'Enhanced regrowth low_masked'); // Category 1
+Map.addLayer(dnbr_2, {palette: ['#FFFFFF', '#FFFF00']}, 'Unburned_masked'); // Category 2
+Map.addLayer(dnbr_3, {palette: ['#FFFFFF', '#FFA500']}, 'Low severity_masked'); // Category 3
+Map.addLayer(dnbr_4, {palette: ['#FFFFFF', '#FF8C00']}, 'Moderate-low severity_masked'); // Category 4
+Map.addLayer(dnbr_5, {palette: ['#FFFFFF', '#FF4500']}, 'Moderate-high severity_masked'); // Category 5
 Map.addLayer(dnbr_6 , {min: -1, max: 1, palette: ['#FFFFFF', '#FF5733']}, 'dNBR_masked');
 

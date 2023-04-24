@@ -119,7 +119,7 @@ var highSeverityAreaImage = totalAreaImage
   .rename('high_severityArea');
   
 var areas = totalAreaImage
-  .addBands(dnbr_6)
+  .addBands(highSeverityAreaImage)
   .reduceRegion({
     reducer: ee.Reducer.sum(),
     geometry: geometry2,

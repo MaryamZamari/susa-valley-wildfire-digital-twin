@@ -42,7 +42,6 @@ var delta_nbr = prefire_nbr.subtract(postfire_nbr).rename('dNBR');
 
 // Clip the dNBR image to your geometry
 var clipped_dNBR = delta_nbr.clip(geometry);
-print("delta_nbr", delta_nbr);
 
 //thresholds lt
 var threshold_enhanced_regrowth_high = -0.251;  
@@ -91,7 +90,6 @@ var dnbr_3= clipped_dNBR.updateMask(burnSeverity.eq(3));
 var dnbr_1= clipped_dNBR.updateMask(burnSeverity.eq(1));
 var dnbr_0= clipped_dNBR.updateMask(burnSeverity.eq(0)); */
 
-print(dnbr_6); 
 //----------Area ----------------
 //-------Merging the masked images (merging the two bands in 1 band)--
 

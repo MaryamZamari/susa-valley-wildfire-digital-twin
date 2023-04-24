@@ -104,7 +104,6 @@ print(dnbr_6);
     */                            
 //------Mergine the complete image into 1 band
 var imageMerged= clipped_dNBR
-                    .select('B8', 'B12')
                     .reduce(ee.Reducer.sum())
                     .toFloat()
                     .rename('imageMerged');
@@ -128,13 +127,22 @@ var areas = totalAreaImage
     maxPixels: 1e13
   });
   
-var burnedArea = areas.getNumber('high_severityArea');
+var high_severityArea = areas.getNumber('high_severityArea');
 var totalArea = areas.getNumber('totalArea');
 var percentage = high_severityArea.divide(totalArea).multiply(100);
 
 print('high_severityArea (Hectares)', high_severityArea.divide(10000));
 print('Total Area (Hectares)', totalArea.divide(10000));
 print('high_severityArea Fraction (%)', percentage);
+
+print('Band Names:', clipped_dNBR.bandNames());
+
+
+
+
+
+
+
 
 
 //--Histogram of NBR-----------------------------------------------------------------
@@ -172,9 +180,6 @@ Map.centerObject(geometry);
 //Map.add(histogram_burnSeverity);
 
 //---Visualise Burn Severity Masks
-Map.addLayer(dnbr_0, {palette: ['#FFFFFF', '#00FF00']}, 'Enhanced regrowth high_masked'); // Category 0
-Map.addLayer(dnbr_1, {palette: ['#FFFFFF', '#00FF00']}, 'Enhanced regrowth low_masked'); // Category 1
-Map.addLayer(dnbr_2, {palette: ['#FFFFFF', '#FFFF00']}, 'Unburned_masked'); // Category 2
 Map.addLayer(dnbr_3, {palette: ['#FFFFFF', '#FFA500']}, 'Low severity_masked'); // Category 3
 Map.addLayer(dnbr_4, {palette: ['#FFFFFF', '#FF8C00']}, 'Moderate-low severity_masked'); // Category 4
 Map.addLayer(dnbr_5, {palette: ['#FFFFFF', '#FF4500']}, 'Moderate-high severity_masked'); // Category 5

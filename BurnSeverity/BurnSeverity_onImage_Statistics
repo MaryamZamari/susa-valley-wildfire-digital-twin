@@ -118,7 +118,7 @@ var highSeverityAreaImage = totalAreaImage
   .updateMask(dnbr_6)
   .rename('high_severityArea');
   
-var areas = totalAreaImage
+var areas6 = totalAreaImage
   .addBands(highSeverityAreaImage)
   .reduceRegion({
     reducer: ee.Reducer.sum(),
@@ -133,7 +133,7 @@ var moderateHighSeverityAreaImg = totalAreaImage
   .updateMask(dnbr_5)
   .rename('moderateHighSeverityArea');
   
-var areas = totalAreaImage
+var areas5 = totalAreaImage
   .addBands(moderateHighSeverityAreaImg)
   .reduceRegion({
     reducer: ee.Reducer.sum(),
@@ -148,7 +148,7 @@ var moderateLowSeverityAreaImage = totalAreaImage
   .updateMask(dnbr_4)
   .rename('moderateLowSeverityArea');
   
-var areas = totalAreaImage
+var areas4 = totalAreaImage
   .addBands(moderateLowSeverityAreaImage)
   .reduceRegion({
     reducer: ee.Reducer.sum(),
@@ -163,7 +163,7 @@ var lowSeverityAreaImage = totalAreaImage
   .updateMask(dnbr_3)
   .rename('lowSeverityArea');
   
-var areas = totalAreaImage
+var areas3 = totalAreaImage
   .addBands(lowSeverityAreaImage)
   .reduceRegion({
     reducer: ee.Reducer.sum(),
@@ -174,28 +174,24 @@ var areas = totalAreaImage
   });
   
 ///----6------------------  
-var high_severityArea = areas.getNumber('high_severityArea');
-var totalArea = areas.getNumber('totalArea');
+var high_severityArea = areas6.getNumber('high_severityArea');
+var totalArea = areas6.getNumber('totalArea');
 var percentage_6 = high_severityArea.divide(totalArea).multiply(100);
 
 ///----5------------------  
-var moderateHighSeverityArea = areas.getNumber('moderateHighSeverityArea');
-var totalArea = areas.getNumber('totalArea');
+var moderateHighSeverityArea = areas5.getNumber('moderateHighSeverityArea');
 var percentage_5 = moderateHighSeverityArea.divide(totalArea).multiply(100);
 
 ///----4------------------  
-var moderateLowSeverityArea = areas.getNumber('moderateLowSeverityArea');
-var totalArea = areas.getNumber('totalArea');
+var moderateLowSeverityArea = areas4.getNumber('moderateLowSeverityArea');
 var percentage_4 = moderateLowSeverityArea.divide(totalArea).multiply(100);
 
 ///----3------------------  
-var lowSeverityArea = areas.getNumber('lowSeverityArea');
-var totalArea = areas.getNumber('totalArea');
+var lowSeverityArea = areas3.getNumber('lowSeverityArea');
 var percentage_3 = lowSeverityArea.divide(totalArea).multiply(100);
 
 //------6---------------------
 print('high_severityArea (Hectares)', high_severityArea.divide(10000));
-print('Total Area (Hectares)', totalArea.divide(10000));
 print('high_severityArea Fraction (%)', percentage_6);
 
 //------5---------------------

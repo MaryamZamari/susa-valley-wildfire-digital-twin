@@ -36,6 +36,7 @@ var thresh_LowBurn= -0.5;
 var thresh_VeryLowBurn= -0.4; 
 var thresh_NoBurnOrVeryLowSeverityBurn= -0.1; 
 var thresh_NoBurnOrLowSeverityBurn = 0; 
+var thresh_NoBurn = 1;
 
 // defining the NBR image based on the threshholds and values_3,2,1,0 are values for visualisation
 var nbr_classified = bandIndexImg.expression(
@@ -47,7 +48,8 @@ var nbr_classified = bandIndexImg.expression(
     ": (b('NBR') <= thresh_VeryLowBurn) ? 5" +
     ": (b('NBR') <= thresh_NoBurnOrVeryLowSeverityBurn) ? 6" +
     ": (b('NBR') <= thresh_NoBurnOrLowSeverityBurn) ? 7" +
-      ":8" //unclassified 
+     ": (b('NBR') <= thresh_NoBurn) ? 8" +
+      ":9" //unclassified 
   , {
      thresh_SevereBurn : thresh_SevereBurn ,
      thresh_ModeratetoSevereBurn : thresh_ModeratetoSevereBurn ,
@@ -57,6 +59,7 @@ var nbr_classified = bandIndexImg.expression(
      thresh_VeryLowBurn : thresh_VeryLowBurn,
      thresh_NoBurnOrVeryLowSeverityBurn : thresh_NoBurnOrVeryLowSeverityBurn,
      thresh_NoBurnOrLowSeverityBurn : thresh_NoBurnOrLowSeverityBurn,
+     thresh_NoBurn: thresh_NoBurn,
     })
     .rename(['NBR_ClassifiedSeverity']);
 
@@ -95,20 +98,9 @@ var title = ui.Label({
 
 panel.add(title)
 
-var color = ['#000000','#a50026','#d73027','#f46d43', '#fdae61', '#fee08b', '#ffffbf', '#d9ef8b', '#a6d96a', '#66bd63', '#1a9850', '#006837'];
+var color = ['#8B0000','#FF0000','#FF4500', '#FFA500', '#FFD700', '#FFFF00', '#90EE90', '#008000', 'white']
+var lc_class = ['Severe burn', 'Moderate to severe burn', 'Moderate burn', 'Moderate to low burn', 'Low burn', 'Very low burn', 'No burn or very low severity burn', 'No burn or low severity burn'  ]
 
-var lc_class = ['little/no vegetation cover,i.e bare soil, water bodies, or urban areas',
-                'sparse vegetation i.e grasslands or shrublands',
-                'sparse vegetation/degraded land/recently grown',
-                'moderate vegetation cover,',
-                'areas with moderate to high vegetation cover,i.e grasslands',
-                'areas with high vegetation cover',
-                'areas with very high vegetation cover',
-                'very dense vegetation cover',
-                'extremely high vegetation cover',
-                'extremely dense vegetation cover',
-                'near-optimal vegetation density and productivity',
-                'optimal vegetation density and productivity']
 
 //---------Add Legend-----------------------
 
@@ -135,7 +127,7 @@ var list_legend = function(color, description) {
   })
 }
 
-for(var a = 0; a <= 11; a++){
+for(var a = 0; a <= 8; a++){
   panel.add(list_legend(color[a], lc_class[a]))
 }
 

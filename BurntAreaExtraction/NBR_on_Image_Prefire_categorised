@@ -22,7 +22,10 @@ var bandIndexImg = image.expression(bandIndexExp).rename('NBR');
 
 //---------------------Visualisation phase ----------------------------------------------
 // Visualization parameters for NDVI.
-var nbrVis = {min: -1, max: 1 , palette:['red','orange','green']};  
+//var nbrVis = {min: -1, max: 1 , palette:['red','orange','green']};  
+// Visualization parameters for NDVI.
+var nbrVis = {min: 0, max: 8 , palette:['#8B0000','#FF0000','#FF4500', '#FFA500', '#FFD700', '#FFFF00', '#90EE90', '#008000']};  
+
 //-------------------
 //--------thresholds (lt)----------------------------
 var thresh_SevereBurn = -0.9; 
@@ -59,10 +62,10 @@ var nbr_classified = bandIndexImg.expression(
 
 
 
-
 print(image);
 Map.centerObject(geometry);
-Map.addLayer(bandIndexImg , nbrVis, 'NBR1');
+//Map.addLayer(bandIndexImg , nbrVis, 'NBR1'); 
+Map.addLayer(nbr_classified , nbrVis, 'NBR1');
 Map.addLayer(geometry);
 
 Export.image.toDrive({

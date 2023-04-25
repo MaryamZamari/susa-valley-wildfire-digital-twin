@@ -96,7 +96,7 @@ var histogram_ndvi_classified = ui.Chart.image.histogram({
   minBucketWidth: 0.01,
 })
   .setOptions({
-    title: 'NDVI Histogram based on Thresholds',
+    title: 'NDVI Histogram based on Thresholds_Prefire',
     hAxis: { title: 'NDVI category' },
     vAxis: { title: 'Pixel Count' }
 });

@@ -71,6 +71,22 @@ var ndvi_classified = bandIndexImg.expression(
 // Visualization parameters for NDVI.
 var ndviVis = {min: 0, max: 11 , palette:['#000000','#a50026','#d73027', '#f46d43', '#fdae61', '#fee08b', '#ffffbf', '#d9ef8b', '#a6d96a', '	#66bd63', '#1a9850', '#006837']};  
 
+//--------
+/* create a histogram of the NBR index values to visualize
+   the distribution of burned and unburned pixels:*/
+var histogram_ndvi_classified = ui.Chart.image.histogram({
+  image: ndvi_classified,
+  region: geometry2,
+  scale: 10,
+  maxBuckets: 50,
+  minBucketWidth: 0.01,
+})
+  .setOptions({
+    title: 'NDVI Histogram based on Thresholds',
+    hAxis: { title: 'Burn Severity category' },
+    vAxis: { title: 'Pixel Count' }
+});
+
 
 print(image);
 Map.centerObject(geometry);

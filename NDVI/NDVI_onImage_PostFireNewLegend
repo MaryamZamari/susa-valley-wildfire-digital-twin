@@ -6,9 +6,23 @@ var geometry =
         [[[7.003083958928165, 45.21869339705463],
           [7.003083958928165, 45.110246992050875],
           [7.219377293889102, 45.110246992050875],
-          [7.219377293889102, 45.21869339705463]]], null, false);
+          [7.219377293889102, 45.21869339705463]]], null, false),
+    geometry2 = 
+    /* color: #7aa93d */
+    /* shown: false */
+    /* displayProperties: [
+      {
+        "type": "rectangle"
+      }
+    ] */
+    ee.Geometry.Polygon(
+        [[[7.011323522807711, 45.20994425310098],
+          [7.011323522807711, 45.11601945581964],
+          [7.214570593120211, 45.11601945581964],
+          [7.214570593120211, 45.20994425310098]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
-
+ geometry2 = 
+    geometry2;
 
 //For NDVI I would need the same time of the year(Preferably)--> Dates: 
 var image = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20180619T103019_20180619T103559_T32TLR') //Pre_Fire image

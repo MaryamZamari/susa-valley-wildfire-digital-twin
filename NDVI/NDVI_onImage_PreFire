@@ -97,7 +97,7 @@ var histogram_ndvi_classified = ui.Chart.image.histogram({
 })
   .setOptions({
     title: 'NDVI Histogram based on Thresholds',
-    hAxis: { title: 'Burn Severity category' },
+    hAxis: { title: 'NDVI category' },
     vAxis: { title: 'Pixel Count' }
 });
 

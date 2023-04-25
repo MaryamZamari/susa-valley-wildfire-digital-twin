@@ -107,6 +107,7 @@ Map.centerObject(geometry);
 //Map.addLayer(bandIndexImg , nbrVis, 'NDVI1');
 Map.addLayer(ndvi_classified , ndviVis, 'NDVI2');
 Map.addLayer(geometry);
+Map.add(histogram_ndvi_classified);
 
 Export.image.toDrive({
   image: bandIndexImg /*image*/,

@@ -190,21 +190,19 @@ var percentage_3 = lowSeverityArea.divide(totalArea).multiply(100);
 
 //------6---------------------
 print('high_severityArea (Hectares)', high_severityArea.divide(10000));
+print('Total Area (Hectares)', totalArea.divide(10000));
 print('high_severityArea Fraction (%)', percentage_6);
 
 //------5---------------------
 print('moderateHighSeverityArea (Hectares)', moderateHighSeverityArea.divide(10000));
-print('Total Area (Hectares)', totalArea.divide(10000));
 print('moderateHighSeverityArea Fraction (%)', percentage_5);
 
 //------4---------------------
 print('moderateLowSeverityArea (Hectares)', moderateLowSeverityArea.divide(10000));
-print('Total Area (Hectares)', totalArea.divide(10000));
 print('moderateLowSeverityArea Fraction (%)', percentage_4);
 
 //------3---------------------
 print('lowSeverityArea (Hectares)', lowSeverityArea.divide(10000));
-print('Total Area (Hectares)', totalArea.divide(10000));
 print('lowSeverityArea Fraction (%)', percentage_3);
 
 

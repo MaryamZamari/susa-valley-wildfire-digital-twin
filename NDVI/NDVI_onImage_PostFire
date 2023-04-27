@@ -29,9 +29,9 @@ var nbrVis = {min: -1, max: 1 , palette:['#000000','#a50026','#d73027', '#f46d43
 //---------------------Test For Categories------------------------------
 //--------
 /* create a histogram of the NBR index values to visualize
-   the distribution of burned and unburned pixels:*/
+   the distribution of burned and unburned pixels:
 var histogram_burnSeverity_thresh = ui.Chart.image.histogram({
-  image: burnSeverity,
+  image: bandIndexImg,
   region: geometry2,
   scale: 10,
   maxBuckets: 50,
@@ -42,7 +42,7 @@ var histogram_burnSeverity_thresh = ui.Chart.image.histogram({
     hAxis: { title: 'Burn Severity category' },
     vAxis: { title: 'Pixel Count' }
 });
-
+*/
 
 print(image);
 Map.centerObject(geometry);

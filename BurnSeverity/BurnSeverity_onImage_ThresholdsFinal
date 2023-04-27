@@ -82,7 +82,12 @@ Map.addLayer(geometry);
 //Map.addLayer(delta_nbr);
 Map.centerObject(geometry);
 
-
+Export.image.toDrive({
+  image: burnSeverity /*image*/,
+  description: 'S2SrHarmonized-20170619T103021_20170619T103806_T32TLR_BurnSeverity',
+  scale: 10,
+  region: geometry,
+})
 //---------Add Legend-----------------------
 var panel = ui.Panel({
   style: {

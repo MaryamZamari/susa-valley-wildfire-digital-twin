@@ -34,7 +34,7 @@ Map.addLayer(geometry);
 
 Export.image.toDrive({
   image: bandIndexImg /*image*/,
-  description: 'S2SrHarmonized-20170619T103021_20170619T103806_T32TLR_NDVI_Postfire_Present',
+  description: 'S2SrHarmonized-20170619T103021_20170619T103806_T32TLR_NDVI_Present',
   scale: 10,
   region: geometry,
 })

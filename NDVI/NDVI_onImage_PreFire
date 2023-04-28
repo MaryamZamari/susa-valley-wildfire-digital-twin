@@ -79,7 +79,7 @@ var ndvi_classified = bandIndexImg.expression(
 
 
 // Display the burn severity map       )       
-//var visNdvi = {min: 0, max: 6, palette: ['#0066ff', '#d9d9d9', '#f7e9b2', '#a6d887', '#6abf49', '#006400']};
+var visNdvi = {min: 0, max: 6, palette: ['#0066ff', '#d9d9d9', '#f7e9b2', '#a6d887', '#6abf49', '#006400']};
 
 //---------------------Visualisation phase ----------------------------------------------
 // Visualization parameters for NDVI.
@@ -87,7 +87,7 @@ var ndviVis = {min: 0, max: 11 , palette:['#000000','#a50026','#d73027', '#f46d4
 
 //--------
 /* create a histogram of the NBR index values to visualize
-   the distribution of burned and unburned pixels:*/
+   the distribution of burned and unburned pixels:
 var histogram_ndvi_classified = ui.Chart.image.histogram({
   image: ndvi_classified,
   region: geometry2,
@@ -99,12 +99,12 @@ var histogram_ndvi_classified = ui.Chart.image.histogram({
     title: 'NDVI Histogram based on Thresholds_Prefire',
     hAxis: { title: 'NDVI category' },
     vAxis: { title: 'Pixel Count' }
-});
+});*/
 
 
 print(image);
 Map.centerObject(geometry);
-//Map.addLayer(bandIndexImg , nbrVis, 'NDVI1');
+Map.addLayer(bandIndexImg , nbrVi, 'NDVI1');
 Map.addLayer(ndvi_classified , ndviVis, 'NDVI2');
 Map.addLayer(geometry);
 Map.add(histogram_ndvi_classified);

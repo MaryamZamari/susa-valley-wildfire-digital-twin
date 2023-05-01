@@ -76,7 +76,7 @@ var burnSeverity = clipped_dNBR.expression(
 
 
 // Display the burn severity map       )       
-var visBurnSeverity = {min: 0, max: 7, palette: ['#778835', '#a7c050', '#0be344', '#f8fc11', '#f8b140', '#f8671a', 'a600d4', 'Grey']};
+var visBurnSeverity = {min: 0, max: 7, palette: ['#778835', '#a7c050', '#0be344', '#f8fc11', '#f8b140', '#f8671a', '#a600d4', 'Grey']};
 Map.addLayer(burnSeverity, visBurnSeverity, 'Burn Severity');
 Map.addLayer(geometry);
 //Map.addLayer(delta_nbr);

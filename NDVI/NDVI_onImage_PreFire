@@ -101,10 +101,11 @@ var histogram_ndvi_classified = ui.Chart.image.histogram({
 });*/
 
 
-print(image);
-Map.centerObject(geometry);
-Map.addLayer(bandIndexImg , ndviVis_1, 'NDVI1');
+//Map.centerObject(geometry);
+//Map.addLayer(bandIndexImg , ndviVis_1, 'NDVI1');
 Map.addLayer(ndvi_classified , ndviVis, 'NDVI2');
+
+Map.addLayer(image);
 Map.addLayer(geometry);
 //Map.add(histogram_ndvi_classified);
 

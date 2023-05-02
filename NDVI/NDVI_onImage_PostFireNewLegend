@@ -27,7 +27,7 @@ var geometry =
 //For NDVI I would need the same time of the year(Preferably)--> Dates: 
 var image = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20180619T103019_20180619T103559_T32TLR') //Pre_Fire image
                         // .mosaic().clip(geometry) 
-                         .select(['B4','B8']); 
+                         .select(['B4','B8','B3','B2']); 
 
 //---------------------------------------------------------
 
@@ -96,7 +96,7 @@ var ndviVis = {min: 0, max: 11 , palette:['#000000','#a50026','#d73027', '#f46d4
 //---------------------Test For Categories------------------------------s
 /* create a histogram of the NBR index values to visualize
    the distribution of burned and unburned pixels:*/
-var histogram_ndvi_classified = ui.Chart.image.histogram({
+/* var histogram_ndvi_classified = ui.Chart.image.histogram({
   image: ndvi_classified,
   region: geometry2,
   scale: 10,
@@ -108,15 +108,16 @@ var histogram_ndvi_classified = ui.Chart.image.histogram({
     hAxis: { title: 'NDVI category' },
     vAxis: { title: 'Pixel Count' }
 });
+*/
 
 
-
-print(image);
-Map.centerObject(geometry);
+//print(image);
+//Map.centerObject(geometry);
 Map.addLayer(ndvi_classified , ndviVis , 'NDVI1');
+Map.addLayer(image);
 Map.addLayer(geometry);
-Map.add(histogram_ndvi_classified);
-//Map.addLayer(image);
+//Map.add(histogram_ndvi_classified);
+
 
 Export.image.toDrive({
   image: bandIndexImg /*image*/,

@@ -7,7 +7,10 @@ var geometry =
           [7.003083958928165, 45.110246992050875],
           [7.219377293889102, 45.110246992050875],
           [7.219377293889102, 45.21869339705463]]], null, false),
-    geometry2 = /* color: #d63000 */ee.Geometry.Polygon(
+    geometry2 = 
+    /* color: #d63000 */
+    /* shown: false */
+    ee.Geometry.Polygon(
         [[[7.011323522807711, 45.20994425310098],
           [7.011323522807711, 45.11601945581964],
           [7.214570593120211, 45.11601945581964],
@@ -19,7 +22,7 @@ geometry2 =
 //PostFire_Present2022 (for NDVI) : Dates: '2022-05-01','2022-06-20'       _ Image: '20220618T102559_20220618T103528_T32TLR'
 var image = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20220618T102559_20220618T103528_T32TLR') //Present image
                         // .mosaic().clip(geometry) 
-                         .select(['B4','B8']); 
+                         .select(['B4','B8','B3','B2']); 
 
 //----------------------------------------------------------
 
@@ -103,8 +106,9 @@ var histogram_ndvi_classified = ui.Chart.image.histogram({
 print(image);
 Map.centerObject(geometry);
 Map.addLayer(ndvi_classified , ndviVis, 'NDVI1');
+Map.addLayer(image);
 Map.addLayer(geometry);
-Map.add(histogram_ndvi_classified);
+//Map.add(histogram_ndvi_classified);
 
 Export.image.toDrive({
   image: bandIndexImg /*image*/,

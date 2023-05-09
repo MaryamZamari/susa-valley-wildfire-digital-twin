@@ -45,12 +45,19 @@ var clipped_dNBR = delta_nbr.clip(geometry);
 print("delta_nbr", delta_nbr);
 
 //thresholds lt
-var threshold_enhanced_regrowth_high = -0.251;  
+/*var threshold_enhanced_regrowth_high = -0.251;  
 var threshold_enhanced_regrowth_low = -0.101 ; 
 var threshold_unburned= 0.1;//0.99;
 var threshold_low_severity= 0.27;
 var threshold_moderate_low_severity= 0.44;
 var threshold_moderate_high_severity= 0.66;
+var threshold_high_severity= 1;//;*/
+var threshold_enhanced_regrowth_high = -0.3;  
+var threshold_enhanced_regrowth_low = -0.1 ; 
+var threshold_unburned= 0.3;//0.99;
+var threshold_low_severity= 0.4;
+var threshold_moderate_low_severity= 0.5;
+var threshold_moderate_high_severity= 0.7;
 var threshold_high_severity= 1;//;
 
 

@@ -240,8 +240,8 @@ var histogram_burnSeverity = ui.Chart.image.histogram({
 
 // Display the burn severity map       )       
 Map.centerObject(geometry);
-//Map.add(histogram_burnSeverity_thresh);
-//Map.add(histogram_burnSeverity);
+Map.add(histogram_burnSeverity_thresh);
+Map.add(histogram_burnSeverity);
 
 //---Visualise Burn Severity Masks
 //Map.addLayer(dnbr_3, {palette: ['#FFFFFF', '#FFA500']}, 'Low severity_masked'); // Category 3

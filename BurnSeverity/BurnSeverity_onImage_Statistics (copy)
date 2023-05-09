@@ -203,7 +203,7 @@ print('moderateLowSeverityArea Fraction (%)', percentage_4);
 
 //------3---------------------
 print('lowSeverityArea (Hectares)', lowSeverityArea.divide(10000));
-print('lowSeverityArea Fraction (%)', percentage_3);
+print('lowSeverityArea Fraction (%)', percentage_3); //high
 
 
 

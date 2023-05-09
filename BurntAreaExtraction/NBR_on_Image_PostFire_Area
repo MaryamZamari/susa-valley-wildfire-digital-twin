@@ -42,7 +42,12 @@ var projectionb8 = image.select(['B8']).projection();
 var projectionb12 = image.select(['B12']).projection();
 //---------------------------------------------------------
 // Define the threshold values for each category
-var burnedThreshold = -0.2;
+/* var burnedAreas = -0.251;//: NBR < -0.251;
+ var unburnedAreas = -0.101;//: NBR > -0.101;
+ var healthyVegetation= 0.1; //: NBR > 0.1; */
+
+
+var burnedThreshold = -0.1;//-0.2;
 var unburnedThreshold = 0.2;
 
 // Expression using image band indices to calculate NBR
@@ -55,8 +60,7 @@ var nbrVis = {min: -1, max: 1 , palette:['red','orange','green']};
 
 //-------Area Calculation----------------------
 var thresh_burned = -0.1; //lt
-var thresh_unburned= 0.1; //lt
-var thresh_healthyGreen= 0.1; //gt
+
 
 //------------------------------QUANTIFICATION OF STATISTICS------------------
 // Create binary masks for NBR pixel categories

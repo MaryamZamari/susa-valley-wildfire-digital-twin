@@ -15,43 +15,12 @@ var geometry =
                         // .mosaic().clip(geometry) 
                          .select(['B12','B8','B4', 'QA60','B3','B2']); 
 
-//--------TEST----------
-
-
-// Load the Global Surface Water dataset.
-var waterDataset = ee.Image('JRC/GSW1_3/GlobalSurfaceWater').clip(geometry);
-
-// Select the occurrence layer.
-var waterOccurrence = waterDataset.select('occurrence');
-
-// Threshold the water occurrence to create a water mask.
-var waterMask = waterOccurrence.lt(50);
-
-// Dilate the water mask to include nearby pixels.
-waterMask = waterMask.focal_max(100, 'circle', 'meters');
-
-// Load the NLCD land cover dataset.
-
-
-// Select the most recent NLCD image.
-var nlcdImage = nlcd.sort('system:index', false).first();
-
-// Select the land cover band.
-var landCover = nlcdImage.select('landcover');
-
-// Define a land cover mask.
-var landCoverMask = landCover.neq(11).and(landCover.neq(12)).and(landCover.neq(90));
-
-// Combine the water mask and land cover mask.
-var finalMask = waterMask.or(landCoverMask);
-
-//End Test part-------------------------------------
 
 //---------------------------------------------------------
 // Expression using image band indices to calculate NBR
 var bandIndexExp = '(b("B8") - b("B12")) / (b("B8") + b("B12"))';
 var bandIndexImg = image.expression(bandIndexExp).rename('NBR');
-var nbrMasked = bandIndexImg.updateMask(finalMask.not());
+
 //---------------------TEST -----------------------------------
 
 //---------------------Visualisation phase ----------------------------------------------

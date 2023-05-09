@@ -58,8 +58,7 @@ var threshold_unburned= 0.3;//0.99;
 var threshold_low_severity= 0.4;
 var threshold_moderate_low_severity= 0.5;
 var threshold_moderate_high_severity= 0.7;
-var threshold_high_severity= 1;//;
-
+var threshold_high_severity= 1;
 
 // defining the burn severity image based on the threshholds and values_3,2,1,0 are values for visualisation
 var burnSeverity = clipped_dNBR.expression(

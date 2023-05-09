@@ -38,24 +38,25 @@ var bandIndexImg = image.expression(bandIndexExp).rename('NBR');
  
 // defining the burn severity image based on the threshholds and values_3,2,1,0 are values for visualisation
 var NBRimage = bandIndexImg.expression(
-      "(b('dNBR') <= burnedAreas) ? 0" + 
-    ": (b('dNBR') >= unburnedAreas) ? 1" +  // Moderate-high burn severity
-    ": (b('dNBR') >= healthyVegetation) ? 2" +  // Moderate-low burn severity
+      "(b('NBR') <= burnedAreas) ? 0" + 
+    ": (b('NBR') >= unburnedAreas) ? 1" +  // Moderate-high burn severity
+    ": (b('NBR') >= healthyVegetation) ? 2" +  // Moderate-low burn severity
           ":3" 
   , {
      burnedAreas : burnedAreas ,  
      unburnedAreas : unburnedAreas , 
      healthyVegetation : healthyVegetation ,
     
-  }).rename(['burnedAreas']);
+  }).rename(['burnedAreasNBR']);
 //---------------------Visualisation phase ----------------------------------------------
 // Visualization parameters for NDVI.
 var nbrVis = {min: -1, max: 1 , palette:['red','orange','green']};  
+var nbrVis1 = {min: 0, max: 3, palette: ['red','orange','green', 'Grey']};
 
 Map.centerObject(geometry);
-Map.addLayer(image);
+//Map.addLayer(image);
 Map.addLayer(bandIndexImg , nbrVis, 'NBR1');
-Map.addLayer(NBRimage);
+Map.addLayer(NBRimage, nbrVis1, 'NBR2');
 Map.addLayer(geometry);
 
 

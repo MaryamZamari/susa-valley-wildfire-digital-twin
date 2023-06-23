@@ -19,7 +19,7 @@ var endDate = ee.Date('2017-07-10');
 
 var sentinel2 = ee.ImageCollection('COPERNICUS/S2_HARMONIZED')
                   .filterDate(startDate, endDate)
-                  .filterBounds(geometry)
+                  //.filterBounds(geometry)
                   // Pre-filter to get less cloudy granules.
                   .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 20))
                    .select(['B4','B3','B2','B8','B12'])
@@ -49,18 +49,20 @@ var image_2022 = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20220618T102559_2022
 //var ndvi_prefire = image_prefire.normalizedDifference(['B8', 'B4']).rename('NDVI');
 
 var ndvi_prefire = medianWithTime.normalizedDifference(['B8_median', 'B4_median']).rename('NDVI');
+//var ndvi_prefire = medianWithTime.normalizedDifference(['B8', 'B4']).rename('NDVI');
 var ndvi_postfire = image_postfire.normalizedDifference(['B8', 'B4']).rename('NDVI');
 var ndvi_2022 = image_2022.normalizedDifference(['B8', 'B4']).rename('NDVI');
 
-print(ndvi_prefire);
-
+print(ndvi_prefire); 
+print('ndvi_2022: ' , ndvi_2022);
 // Reduce the NDVI image to a mean value for each image.
 var ndvi_prefire_mean = ndvi_prefire.reduceRegion({
   reducer: ee.Reducer.mean(),
-  geometry: geometry, //ndvi_prefire.geometry(),
+  geometry: ndvi_prefire.geometry(),
   scale: 10,
   maxPixels: 1e9
 }); 
+
 var ndvi_postfire_mean = ndvi_postfire.reduceRegion({
   reducer: ee.Reducer.mean(),
   geometry: ndvi_postfire.geometry(),

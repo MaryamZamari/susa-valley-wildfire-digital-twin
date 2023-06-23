@@ -25,9 +25,24 @@ var geometry =
         geometry2;
         
 //For NDVI I would need the same time of the year(Preferably)---> Dates: 
-var image_prefire = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20170619T103021_20170619T103806_T32TLR') //Pre_Fire image
-                         .select(['B4','B8']); 
-                         
+/*var image_prefire = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20170619T103021_20170619T103806_T32TLR') //Pre_Fire image
+                         .select(['B4','B8']); */
+          
+     //prefire based on median -----------------------     
+var sentinel2 = ee.ImageCollection('COPERNICUS/S2_HARMONIZED')
+                  .filterDate('2017-06-20', '2017-07-10')
+                  .filterBounds(geometry2)
+                  // Pre-filter to get less cloudy granules.
+                  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 20))
+                   .select(['B4','B3','B2','B8','B12']);
+                 
+var s2_median = sentinel2.reduce(ee.Reducer.median())
+//---------------------------------------------------------
+// Expression using image band indices to calculate prefire  NDVI
+var bandIndexExp = '(b("B8_median") - b("B4_median")) / (b("B8_median") + b("B4_median"))';
+var NDVI_prefire = s2_median.expression(bandIndexExp).rename('NDVI');
+
+
 var image_postfire = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20180619T103019_20180619T103559_T32TLR') //Pre_Fire image
                          .select(['B4','B8']); 
                          
@@ -36,7 +51,7 @@ var image_2022 = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20220618T102559_2022
 
 //---------- Expression using image band indices to calculate NBR-----------------------
 var bandIndexExp = '(b("B8") - b("B4")) / (b("B8") + b("B4"))';
-var NDVI_prefire = image_prefire.expression(bandIndexExp).rename('NDVI');
+//var NDVI_prefire = image_prefire.expression(bandIndexExp).rename('NDVI');
 var NDVI_postfire = image_postfire.expression(bandIndexExp).rename('NDVI');
 var NDVI_2022 = image_2022.expression(bandIndexExp).rename('NDVI');
 

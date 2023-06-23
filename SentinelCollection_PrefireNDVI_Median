@@ -1,0 +1,72 @@
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var dataset = ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED"),
+    roi = 
+    /* color: #e9e9e9 */
+    /* shown: false */
+    /* displayProperties: [
+      {
+        "type": "rectangle"
+      }
+    ] */
+    ee.Geometry.Polygon(
+        [[[7.003083958928165, 45.21869339705463],
+          [7.003083958928165, 45.110246992050875],
+          [7.219377293889102, 45.110246992050875],
+          [7.219377293889102, 45.21869339705463]]], null, false),
+    geometry = 
+    /* color: #f2ffeb */
+    /* shown: false */
+    ee.Geometry.Polygon(
+        [[[7.003083958928165, 45.21869339705463],
+          [7.003083958928165, 45.110246992050875],
+          [7.219377293889102, 45.110246992050875],
+          [7.219377293889102, 45.21869339705463]]], null, false);
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
+//S2-SR dataset for all datasets except the Prefire NDVI image : var dataset = ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED")
+
+/*var Index[2]PostFireimage(For NBR) = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20171116T103311_20171116T103542_T32TLR'); //'2017-10-30','2017-11-20' dates
+//PreFire_Dates (For NBR and NDVI): '2017-04-01','2017-06-20' _ Image:  '20170619T103021_20170619T103806_T32TLR'
+//PostFire (for NDVI) : Dates:  '2018-05-01','2018-06-20'   -Image: '20180619T103019_20180619T103559_T32TLR'
+//PostFire_Present2022 (for NDVI) : Dates: '2022-05-01','2022-06-20'       _ Image: '20220618T102559_20220618T103528_T32TLR'
+
+*/ 
+
+// Map the function over a month of data and take the median.
+// Load Sentinel-2 TOA reflectance data (adjusted for processing changes
+// that occurred after 2022-01-25).
+var sentinel2 = ee.ImageCollection('COPERNICUS/S2_HARMONIZED')
+                  .filterDate('2017-06-20', '2017-07-10')
+                  .filterBounds(roi)
+                  // Pre-filter to get less cloudy granules.
+                  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 20))
+                   .select(['B4','B3','B2','B8','B12']);
+                 
+var s2_median = sentinel2.reduce(ee.Reducer.median());
+/*
+//S2-SR dataset for all datasets except the Prefire NDVI image
+var sentinel2= dataset
+                  .filterDate('2017-04-01','2017-05-30')
+                  .filterBounds(roi)
+                  // Pre-filter to get less cloudy granules.
+                  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE',20))
+                  .select(['B4','B3','B2','B8','B12']);
+*/
+
+
+print(sentinel2);
+print(s2_median);
+
+Map.centerObject(geometry);
+//Map.addLayer(sentinel2);
+Map.addLayer(s2_median);
+
+Export.image.toDrive({
+  image: sentinel2,
+  description: 'sentinel-image20180420',
+  scale: 10,
+  region: roi,
+})
+
+
+
+ 

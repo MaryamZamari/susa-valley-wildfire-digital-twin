@@ -53,7 +53,7 @@ var sentinel2= dataset
 */
 
 
-print(sentinel2);
+//print(sentinel2);
 print(s2_median);
 
 Map.centerObject(geometry);

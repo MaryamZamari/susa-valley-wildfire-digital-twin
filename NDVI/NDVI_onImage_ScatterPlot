@@ -34,6 +34,20 @@ var medianWithTime = image_prefire.set('system:time_start', startTime);
 // Print the median image with the defined start time
 print('Median with start time:', medianWithTime);
 
+// Calculate the median image
+var image_prefire = sentinel2.reduce(ee.Reducer.median());
+
+// Get the coordinates from one of the images
+var referenceImage = ee.Image('COPERNICUS/S2_HARMONIZED/' + '20170704T103019_20170704T103637_T32TLR');//sentinel2.first(); // Choose a reference image from the collection
+var coordinates = referenceImage.geometry();
+
+// Set the coordinates of the median image
+var image_prefire_withCoordinates = image_prefire.set('coordinates', coordinates);
+
+// Calculate NDVI on the median image with updated coordinates
+var ndvi_prefire = image_prefire_withCoordinates.normalizedDifference(['B8_median', 'B4_median']).rename('NDVI');
+
+
 //---------------------------------------------------------
 
 
@@ -44,7 +58,7 @@ var image_postfire = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20180619T103019_
 var image_2022 = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20220618T102559_20220618T103528_T32TLR')     //present image
                          .select(['B4','B8'])
                          .set('system:time_start', ee.Date('2022-06-18').millis());
-     print(image_2022);                    
+     print('image_2022', image_2022);                    
 // Function to calculate NDVI.
 //var ndvi_prefire = image_prefire.normalizedDifference(['B8', 'B4']).rename('NDVI');
 

@@ -34,14 +34,23 @@ var dataset = ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED"),
 // Map the function over a month of data and take the median.
 // Load Sentinel-2 TOA reflectance data (adjusted for processing changes
 // that occurred after 2022-01-25).
-var sentinel2 = ee.ImageCollection('COPERNICUS/S2_HARMONIZED')
+/*var sentinel2 = ee.ImageCollection('COPERNICUS/S2_HARMONIZED')
                   .filterDate('2017-06-20', '2017-07-10')
                   .filterBounds(roi)
                   // Pre-filter to get less cloudy granules.
                   .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 20))
+                   .select(['B4','B3','B2','B8','B12']); */
+                   
+  var sentinel2 = ee.ImageCollection('COPERNICUS/S2_HARMONIZED')
+                  .filterDate('2018-06-07', '2018-07-30')
+                  .filterBounds(roi)
+                  // Pre-filter to get less cloudy granules.
+                  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 20))
                    .select(['B4','B3','B2','B8','B12']);
+                   
+                   
 print('sentinel2 collection: ' , sentinel2);       
-var s2_median = sentinel2.reduce(ee.Reducer.median());
+//var s2_median = sentinel2.reduce(ee.Reducer.median());
 /*
 //S2-SR dataset for all datasets except the Prefire NDVI image
 var sentinel2= dataset
@@ -54,11 +63,11 @@ var sentinel2= dataset
 
 
 //print(sentinel2);
-print(s2_median);
+//print(s2_median);
 
 Map.centerObject(geometry);
-//Map.addLayer(sentinel2);
-Map.addLayer(s2_median);
+Map.addLayer(sentinel2);
+//Map.addLayer(s2_median);
 
 Export.image.toDrive({
   image: sentinel2,

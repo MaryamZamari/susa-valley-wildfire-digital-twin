@@ -16,20 +16,20 @@ var geometry =
 //PostFire(For NDVI): Dates: '2018-05-01','2018-06-20'  _ Image: '20180619T103019_20180619T103559_T32TLR'_ Index:6
 //PostFire_Present2022 (for NDVI) : Dates: '2022-05-01','2022-06-20'_ Image: '20220618T102559_20220618T103528_T32TLR'
  
-var image1 = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20170706T102021_20170706T102301_T32TLR');//.select('B11')
+//var image1 = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20170706T102021_20170706T102301_T32TLR');//.select('B11')
 var image2 = ee.Image('COPERNICUS/S2_HARMONIZED/' + '20170704T103019_20170704T103637_T32TLR');
 // var image2=ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20170619T103021_20170619T103806_T32TLR');
  
  
 //print(image);
 Map.centerObject(geometry);
-Map.addLayer(image1);
+//Map.addLayer(image1);
 Map.addLayer(image2);
 //Map.addLayer(image2);
 Map.addLayer(geometry);
 
 Export.image.toDrive({
-  image: image,
+  image: image2,
   description: 'S2SrHarmonized-20171116T103311_20171116T103542_T32TLR_B11',
  // description:'S2SrHarmonized-20170619T103021_20170619T103806_T32TLR',
   scale: 10,

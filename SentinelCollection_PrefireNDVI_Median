@@ -40,7 +40,7 @@ var sentinel2 = ee.ImageCollection('COPERNICUS/S2_HARMONIZED')
                   // Pre-filter to get less cloudy granules.
                   .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 20))
                    .select(['B4','B3','B2','B8','B12']);
-                 
+print('sentinel2 collection: ' , sentinel2);       
 var s2_median = sentinel2.reduce(ee.Reducer.median());
 /*
 //S2-SR dataset for all datasets except the Prefire NDVI image

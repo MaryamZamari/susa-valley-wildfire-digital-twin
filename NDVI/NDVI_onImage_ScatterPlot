@@ -6,7 +6,8 @@ var geometry =
         [[[7.003083958928165, 45.21869339705463],
           [7.003083958928165, 45.110246992050875],
           [7.219377293889102, 45.110246992050875],
-          [7.219377293889102, 45.21869339705463]]], null, false);
+          [7.219377293889102, 45.21869339705463]]], null, false),
+    imageObject = ee.Image("image_prefire_withCoordinatesAndTime");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // Load the three images.
 /*var image_prefire = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20170619T103021_20170619T103806_T32TLR')  //Pre_Fire image
@@ -43,6 +44,8 @@ var image_prefire_withCoordinatesAndTime = medianWithTime.copyProperties(referen
 // Print the median image with the defined start time
 print('Median with start time:', medianWithTime);
 print('image_prefire_withCoordinatesAndTime:', image_prefire_withCoordinatesAndTime);
+var imageObjectPrefire = ee.Image(image_prefire_withCoordinatesAndTime);  // Convert the element to an image
+print('imageObject:', imageObjectPrefire);
 //end prefire extraction ---------
 
 var image_postfire = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20180619T103019_20180619T103559_T32TLR') //Postfire_Fire image
@@ -56,15 +59,19 @@ var image_2022 = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20220618T102559_2022
      
 //------------------------------calculate NDVI----------------------------------------
 //var ndvi_prefire = image_prefire.normalizedDifference(['B8', 'B4']).rename('NDVI');
-
-// Calculate NDVI on the median image with updated coordinates
-var ndvi_prefire = image_prefire_withCoordinatesAndTime.normalizedDifference(['B8_median', 'B4_median']).rename('NDVI');
 //var ndvi_prefire = medianWithTime.normalizedDifference(['B8_median', 'B4_median']).rename('NDVI');
 //var ndvi_prefire = medianWithTime.normalizedDifference(['B8', 'B4']).rename('NDVI');
+
+
+// Calculate NDVI on the median image with updated coordinates
+var ndvi_prefire = imageObjectPrefire.normalizedDifference(['B8_median', 'B4_median']).rename('NDVI');
+
+// Calculate NDVI
+
 var ndvi_postfire = image_postfire.normalizedDifference(['B8', 'B4']).rename('NDVI');
 var ndvi_2022 = image_2022.normalizedDifference(['B8', 'B4']).rename('NDVI');
 
-print('ndvi_prefire', ndvi_prefire); 
+//print('ndvi_prefire', ndvi_prefire); 
 print('ndvi_2022: ' , ndvi_2022);
 // Reduce the NDVI image to a mean value for each image.
 var ndvi_prefire_mean = ndvi_prefire.reduceRegion({

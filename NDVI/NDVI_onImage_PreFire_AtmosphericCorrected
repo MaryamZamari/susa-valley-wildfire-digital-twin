@@ -105,10 +105,10 @@ Map.centerObject(geometry);
 
 Map.addLayer(geometry);
 //Map.addLayer(table);
-Map.add(histogram_ndvi_classified);
+//Map.add(histogram_ndvi_classified);
 
 Export.image.toDrive({
-  image: ndvi_classified ,
+  image: bandIndexImg ,
   description: 'S2Harmonized-20170704T103019_20170704T103637_T32TLR_NDVI_Prefire_TOA_thresh',
   scale: 10,
   region: geometry,

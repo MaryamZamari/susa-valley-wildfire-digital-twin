@@ -81,7 +81,7 @@ var ndviVis = {min: 0, max: 11 , palette:['#000000','#a50026','#d73027', '#f46d4
 //--------
 // create a histogram of the NBR index values to visualize
  //  the distribution of burned and unburned pixels:
-var histogram_ndvi_classified = ui.Chart.image.histogram({
+/*var histogram_ndvi_classified = ui.Chart.image.histogram({
   image: ndvi_classified,
   region: geometry,
   scale: 50,
@@ -91,9 +91,9 @@ var histogram_ndvi_classified = ui.Chart.image.histogram({
   .setOptions({
     title: 'NDVI Histogram based on Thresholds_Prefire',
     hAxis: { title: 'NDVI category' },
-    vAxis: { title: 'Pixel Count' , /* 'viewWindow': {'min': 0, 'max': 800000}*/ }
+    vAxis: { title: 'Pixel Count' ,  'viewWindow': {'min': 0, 'max': 800000} }
 }); 
-
+*/
 
 Map.centerObject(geometry);
 //Map.addLayer(bandIndexImg , ndviVis_1, 'NDVI1');
@@ -107,14 +107,14 @@ Map.addLayer(geometry);
 //Map.addLayer(table);
 Map.add(histogram_ndvi_classified);
 
-/*Export.image.toDrive({
-  image: bandIndexImg ,
-  description: 'S2Harmonized-20170704T103019_20170704T103637_T32TLR_NDVI_Prefire',
+Export.image.toDrive({
+  image: ndvi_classified ,
+  description: 'S2Harmonized-20170704T103019_20170704T103637_T32TLR_NDVI_Prefire_TOA_thresh',
   scale: 10,
   region: geometry,
 })
 
-*/
+
 //---------Add Legend-----------------------
 /*var panel = ui.Panel({
   style: {

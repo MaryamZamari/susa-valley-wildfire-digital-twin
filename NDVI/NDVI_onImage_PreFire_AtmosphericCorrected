@@ -19,11 +19,12 @@ var geometry =
 var siac = require('users/marcyinfeng/utils:SIAC');            
 var imageBOA = siac.get_sur(imageTOA);
 var imageBoaSelect= imageBOA.select("B8" , "B12", "B4", "B3", "B2");
+var imageBoaSelect_Clipped= imageBoaSelect.clip(geometry);
 //---------------------------------------------------------
 // Expression using image band indices to calculate NDVI
 
 var bandIndexExp = '(b("B8") - b("B4")) / (b("B8") + b("B4"))';
-var bandIndexImg = imageBoaSelect.expression(bandIndexExp).rename('NDVI');
+var bandIndexImg = imageBoaSelect_Clipped.expression(bandIndexExp).rename('NDVI');
 
 //--------thresholds (lt)----------------------------
 var threshold_noVegetation= -0.2; //areas with little to no vegetation cover, such as bare soil, water bodies, or urban areas.
@@ -80,23 +81,23 @@ var ndviVis = {min: 0, max: 11 , palette:['#000000','#a50026','#d73027', '#f46d4
 //--------
 // create a histogram of the NBR index values to visualize
  //  the distribution of burned and unburned pixels:
-/*var histogram_ndvi_classified = ui.Chart.image.histogram({
+var histogram_ndvi_classified = ui.Chart.image.histogram({
   image: ndvi_classified,
-  region: geometry2,
-  scale: 10,
+  region: geometry,
+  scale: 50,
   maxBuckets: 50,
   minBucketWidth: 0.01,
 })
   .setOptions({
     title: 'NDVI Histogram based on Thresholds_Prefire',
     hAxis: { title: 'NDVI category' },
-    vAxis: { title: 'Pixel Count' , 'viewWindow': {'min': 0, 'max': 800000}}
-}); */
+    vAxis: { title: 'Pixel Count' , /* 'viewWindow': {'min': 0, 'max': 800000}*/ }
+}); 
 
 
 Map.centerObject(geometry);
 //Map.addLayer(bandIndexImg , ndviVis_1, 'NDVI1');
-Map.addLayer(ndvi_classified , ndviVis, 'NDVI2');
+//Map.addLayer(ndvi_classified , ndviVis, 'NDVI2');
 
 //Map.addLayer(image);
 //Map.addLayer(imageTOA);
@@ -104,7 +105,7 @@ Map.addLayer(ndvi_classified , ndviVis, 'NDVI2');
 
 Map.addLayer(geometry);
 //Map.addLayer(table);
-//Map.add(histogram_ndvi_classified);
+Map.add(histogram_ndvi_classified);
 
 /*Export.image.toDrive({
   image: bandIndexImg ,

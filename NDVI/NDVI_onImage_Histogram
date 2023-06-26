@@ -44,7 +44,7 @@ var image_2022 = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20220618T102559_2022
 
 //---------- Expression using image band indices to calculate NBR-----------------------
 var bandIndexExp = '(b("B8") - b("B4")) / (b("B8") + b("B4"))';
-//var NDVI_prefire = image_prefire.expression(bandIndexExp).rename('NDVI');
+var NDVI_prefire = image_prefire.expression(bandIndexExp).rename('NDVI');
 var NDVI_postfire = image_postfire.expression(bandIndexExp).rename('NDVI');
 var NDVI_2022 = image_2022.expression(bandIndexExp).rename('NDVI');
 

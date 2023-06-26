@@ -14,11 +14,11 @@ var imageTOA = ee.Image('COPERNICUS/S2_HARMONIZED/' + '20170704T103019_20170704T
   //Importing the SIAC atmospheric correction module
 var siac = require('users/marcyinfeng/utils:SIAC');            
 var imageBOA = siac.get_sur(imageTOA);
-var imageBoaSelect= imageBOA.select("B4");
+var imageBoaSelect= imageBOA.select("B4", "B8");
 
 Export.image.toDrive({
   image: imageBoaSelect ,
-  description: 'S2Harmonized-20170704T103019_20170704T103637_T32TLR_NDVI_Prefire_Corrected_B4',
+  description: 'S2Harmonized-20170704T103019_20170704T103637_T32TLR_NDVI_Prefire_Corrected_B4B8',
   scale: 10,
   region: geometry,
 })

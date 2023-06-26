@@ -107,11 +107,11 @@ var histogram_ndvi_classified = ui.Chart.image.histogram({
 //Map.addLayer(ndvi_classified , ndviVis, 'NDVI2');
 
 //Map.addLayer(image);
-Map.addLayer(imageTOA);
+//Map.addLayer(imageTOA);
 //Map.addLayer(imageBOA);
 
 Map.addLayer(geometry);
-//Map.add(histogram_ndvi_classified);
+Map.add(histogram_ndvi_classified);
 
 /*Export.image.toDrive({
   image: bandIndexImg ,

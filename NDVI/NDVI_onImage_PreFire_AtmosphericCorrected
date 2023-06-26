@@ -7,10 +7,7 @@ var geometry =
           [7.003083958928165, 45.110246992050875],
           [7.219377293889102, 45.110246992050875],
           [7.219377293889102, 45.21869339705463]]], null, false),
-    geometry2 = 
-    /* color: #7aa93d */
-    /* shown: false */
-    ee.Geometry.Polygon(
+    geometry2 = /* color: #7aa93d */ee.Geometry.Polygon(
         [[[7.011323522807711, 45.20994425310098],
           [7.011323522807711, 45.11601945581964],
           [7.214570593120211, 45.11601945581964],
@@ -26,12 +23,12 @@ var geometry =
   //Importing the SIAC atmospheric correction module
 var siac = require('users/marcyinfeng/utils:SIAC');            
 var imageBOA = siac.get_sur(imageTOA);
-
+var imageBoaSelect= imageBOA.select("B8" , "B12", "B4", "B3", "B2");
 //---------------------------------------------------------
 // Expression using image band indices to calculate NDVI
 
 var bandIndexExp = '(b("B8") - b("B4")) / (b("B8") + b("B4"))';
-var bandIndexImg = imageBOA.expression(bandIndexExp).rename('NDVI');
+var bandIndexImg = imageBoaSelect.expression(bandIndexExp).rename('NDVI');
 
 //--------thresholds (lt)----------------------------
 var threshold_noVegetation= -0.2; //areas with little to no vegetation cover, such as bare soil, water bodies, or urban areas.
@@ -83,7 +80,7 @@ var ndvi_classified = bandIndexImg.expression(
 //var ndviVis_1 = {min: -1, max: 1 , palette:['#000000','#a50026','#d73027', '#f46d43', '#fdae61', '#fee08b', '#ffffbf', '#d9ef8b', '#a6d96a', '	#66bd63', '#1a9850', '#006837']}; 
 //---------------------Visualisation phase ----------------------------------------------
 // Visualization parameters for NDVI.
-var ndviVis = {min: 0, max: 11 , palette:['#000000','#a50026','#d73027', '#f46d43', '#fdae61', '#fee08b', '#ffffbf', '#d9ef8b', '#a6d96a', '	#66bd63', '#1a9850', '#006837']};  
+//var ndviVis = {min: 0, max: 11 , palette:['#000000','#a50026','#d73027', '#f46d43', '#fdae61', '#fee08b', '#ffffbf', '#d9ef8b', '#a6d96a', '	#66bd63', '#1a9850', '#006837']};  
 
 //--------
 // create a histogram of the NBR index values to visualize
@@ -113,16 +110,16 @@ var histogram_ndvi_classified = ui.Chart.image.histogram({
 Map.addLayer(geometry);
 Map.add(histogram_ndvi_classified);
 
-/*Export.image.toDrive({
+Export.image.toDrive({
   image: bandIndexImg ,
   description: 'S2Harmonized-20170704T103019_20170704T103637_T32TLR_NDVI_Prefire',
   scale: 10,
   region: geometry,
 })
-*/
+
 
 //---------Add Legend-----------------------
-var panel = ui.Panel({
+/*var panel = ui.Panel({
   style: {
     position: 'bottom-left',
     padding: '5px;'
@@ -182,4 +179,4 @@ for(var a = 0; a <= 11; a++){
   panel.add(list_legend(color[a], lc_class[a]))
 }
 
-Map.add(panel)
+Map.add(panel) */

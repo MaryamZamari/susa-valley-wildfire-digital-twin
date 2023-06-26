@@ -1,17 +1,51 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var geometry = 
-    /* color: #ffffff */
+var geometry = /* color: #ffffff */ee.Geometry({
+      "type": "GeometryCollection",
+      "geometries": [
+        {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                7.028489842717227,
+                45.21869339705463
+              ],
+              [
+                7.028833165471133,
+                45.11509275182575
+              ],
+              [
+                7.209764256779727,
+                45.11460819436321
+              ],
+              [
+                7.209764256779727,
+                45.218935234003915
+              ]
+            ]
+          ],
+          "geodesic": false,
+          "evenOdd": true
+        },
+        {
+          "type": "Point",
+          "coordinates": [
+            7.061792149846133,
+            45.15887441223034
+          ]
+        }
+      ],
+      "coordinates": []
+    }),
+    geometry2 = 
+    /* color: #7aa93d */
     /* shown: false */
     ee.Geometry.Polygon(
-        [[[7.003083958928165, 45.21869339705463],
-          [7.003083958928165, 45.110246992050875],
-          [7.219377293889102, 45.110246992050875],
-          [7.219377293889102, 45.21869339705463]]], null, false),
-    geometry2 = /* color: #7aa93d */ee.Geometry.Polygon(
         [[[7.011323522807711, 45.20994425310098],
           [7.011323522807711, 45.11601945581964],
           [7.214570593120211, 45.11601945581964],
-          [7.214570593120211, 45.20994425310098]]], null, false);
+          [7.214570593120211, 45.20994425310098]]], null, false),
+    table = ee.FeatureCollection("users/ZamariMaryam/EMSR253_02SUSA_DEL_v2_area_of_interest_a");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
  geometry2 = 
@@ -77,15 +111,15 @@ var ndvi_classified = bandIndexImg.expression(
 
 
 // Display the burn severity map       )       
-//var ndviVis_1 = {min: -1, max: 1 , palette:['#000000','#a50026','#d73027', '#f46d43', '#fdae61', '#fee08b', '#ffffbf', '#d9ef8b', '#a6d96a', '	#66bd63', '#1a9850', '#006837']}; 
+var ndviVis_1 = {min: -1, max: 1 , palette:['#000000','#a50026','#d73027', '#f46d43', '#fdae61', '#fee08b', '#ffffbf', '#d9ef8b', '#a6d96a', '	#66bd63', '#1a9850', '#006837']}; 
 //---------------------Visualisation phase ----------------------------------------------
 // Visualization parameters for NDVI.
-//var ndviVis = {min: 0, max: 11 , palette:['#000000','#a50026','#d73027', '#f46d43', '#fdae61', '#fee08b', '#ffffbf', '#d9ef8b', '#a6d96a', '	#66bd63', '#1a9850', '#006837']};  
+var ndviVis = {min: 0, max: 11 , palette:['#000000','#a50026','#d73027', '#f46d43', '#fdae61', '#fee08b', '#ffffbf', '#d9ef8b', '#a6d96a', '	#66bd63', '#1a9850', '#006837']};  
 
 //--------
 // create a histogram of the NBR index values to visualize
  //  the distribution of burned and unburned pixels:
-var histogram_ndvi_classified = ui.Chart.image.histogram({
+/*var histogram_ndvi_classified = ui.Chart.image.histogram({
   image: ndvi_classified,
   region: geometry2,
   scale: 10,
@@ -96,28 +130,29 @@ var histogram_ndvi_classified = ui.Chart.image.histogram({
     title: 'NDVI Histogram based on Thresholds_Prefire',
     hAxis: { title: 'NDVI category' },
     vAxis: { title: 'Pixel Count' , 'viewWindow': {'min': 0, 'max': 800000}}
-});
+}); */
 
 
-//Map.centerObject(geometry);
+Map.centerObject(geometry);
 //Map.addLayer(bandIndexImg , ndviVis_1, 'NDVI1');
-//Map.addLayer(ndvi_classified , ndviVis, 'NDVI2');
+Map.addLayer(ndvi_classified , ndviVis, 'NDVI2');
 
 //Map.addLayer(image);
 //Map.addLayer(imageTOA);
 //Map.addLayer(imageBOA);
 
 Map.addLayer(geometry);
-Map.add(histogram_ndvi_classified);
+Map.addLayer(table);
+//Map.add(histogram_ndvi_classified);
 
-Export.image.toDrive({
+/*Export.image.toDrive({
   image: bandIndexImg ,
   description: 'S2Harmonized-20170704T103019_20170704T103637_T32TLR_NDVI_Prefire',
   scale: 10,
   region: geometry,
 })
 
-
+*/
 //---------Add Legend-----------------------
 /*var panel = ui.Panel({
   style: {

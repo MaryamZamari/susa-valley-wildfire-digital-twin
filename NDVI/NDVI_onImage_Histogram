@@ -3,26 +3,15 @@ var geometry =
     /* color: #ffffff */
     /* shown: false */
     ee.Geometry.Polygon(
-        [[[7.003083958928165, 45.21869339705463],
-          [7.003083958928165, 45.110246992050875],
-          [7.219377293889102, 45.110246992050875],
-          [7.219377293889102, 45.21869339705463]]], null, false),
-    geometry2 = 
-    /* color: #7aa93d */
-    /* shown: false */
-    /* displayProperties: [
-      {
-        "type": "rectangle"
-      }
-    ] */
-    ee.Geometry.Polygon(
-        [[[7.011323522807711, 45.20994425310098],
-          [7.011323522807711, 45.11601945581964],
-          [7.214570593120211, 45.11601945581964],
-          [7.214570593120211, 45.20994425310098]]], null, false);
+        [[[7.028489842717227, 45.21869339705463],
+          [7.028833165471133, 45.11509275182575],
+          [7.209764256779727, 45.11460819436321],
+          [7.209764256779727, 45.218935234003915]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
- geometry2 = 
-        geometry2;
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
+
         
 //For NDVI I would need the same time of the year(Preferably)---> Dates: 
 /*var image_prefire = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20170619T103021_20170619T103806_T32TLR') //Pre_Fire image
@@ -33,8 +22,17 @@ var geometry =
 //---------------------------------------------------------
 // Expression using image band indices to calculate prefire  NDVI
 
-var image_prefire = ee.Image('COPERNICUS/S2_HARMONIZED/' + '20170704T103019_20170704T103637_T32TLR') //Pre_Fire image
-                         .select(['B4','B8']);
+//var image_prefire = ee.Image('COPERNICUS/S2_HARMONIZED/' + '20170704T103019_20170704T103637_T32TLR') //Pre_Fire image
+//                         .select(['B4','B8']);
+
+ var imageTOA = ee.Image('COPERNICUS/S2_HARMONIZED/' + '20170704T103019_20170704T103637_T32TLR');
+           
+       
+  //Importing the SIAC atmospheric correction module
+var siac = require('users/marcyinfeng/utils:SIAC');            
+var imageBOA = siac.get_sur(imageTOA);
+var imageBoaSelect= imageBOA.select("B8" , "B12", "B4", "B3", "B2");
+var image_prefire= imageBoaSelect.clip(geometry);
 
 var image_postfire = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20180619T103019_20180619T103559_T32TLR') //Pre_Fire image
                          .select(['B4','B8']); 
@@ -51,8 +49,8 @@ var NDVI_2022 = image_2022.expression(bandIndexExp).rename('NDVI');
 //---Histogram-------------
 var histo_NDVI_prefire = ui.Chart.image.histogram({
   image: NDVI_prefire,
-  region: geometry2,
-  scale: 10,
+  region: geometry,
+  scale: 50,
   maxBuckets: 50,
   minBucketWidth: 0.01,
 })
@@ -64,7 +62,7 @@ var histo_NDVI_prefire = ui.Chart.image.histogram({
 
 var histo_NDVI_postfire = ui.Chart.image.histogram({
   image: NDVI_postfire,
-  region: geometry2,
+  region: geometry,
   scale: 10,
   maxBuckets: 50,
   minBucketWidth: 0.01,
@@ -77,7 +75,7 @@ var histo_NDVI_postfire = ui.Chart.image.histogram({
 
 var histo_NDVI_2022 = ui.Chart.image.histogram({
   image: NDVI_2022,
-  region: geometry2,
+  region: geometry,
   scale: 10,
   maxBuckets: 50,
   minBucketWidth: 0.01,

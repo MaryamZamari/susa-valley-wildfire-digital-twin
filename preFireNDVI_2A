@@ -1,0 +1,94 @@
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var image = ee.Image("users/ZamariMaryam/S2Harmonized-20170704T103019_20170704T103637_T32TLR_NDVI_Prefire_Corrected_B4B8"),
+    geometry = /* color: #7aa93d */ee.Geometry.Polygon(
+        [[[7.011323522807711, 45.20994425310098],
+          [7.011323522807711, 45.11601945581964],
+          [7.214570593120211, 45.11601945581964],
+          [7.214570593120211, 45.20994425310098]]], null, false);
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
+
+// Expression using image band indices to calculate NDVI
+print(image);
+var image = image.select("b1", "b2");
+var bandIndexExp = '(b("b1") - b("b2")) / (b("b1") + b("b2"))';
+var bandIndexImg = image.expression(bandIndexExp).rename('NDVI');
+
+//--------thresholds (lt)----------------------------
+var threshold_noVegetation= -0.2; //areas with little to no vegetation cover, such as bare soil, water bodies, or urban areas.
+var threshold_sparseGrassland= 0;
+var threshold_degradedLandsRecentDisturbed= 0.1;
+var threshold_moderateVegCover= 0.2; //croplands, grasslands, or forests with low leaf density.
+var threshold_moderateHighVegCover= 0.3; //such as grasslands, forests, or croplands with moderate leaf density.
+var threshold_highVegCover= 0.4; //high vegetation cover dense forests, croplands with high leaf density, or wetlands.
+var threshold_veryHighVegCover= 0.5; //mature forests, dense wetlands, or highly productive croplands.
+var threshold_extremHighVegCover= 0.6; //extremely high vegetation cover, such as dense tropical rainforests or other ecosystems with high biomass.
+var threshold_veryDenseVegCover= 0.7; //very dense vegetation cover, such as old-growth forests or other ecosystems with high biomass.
+var threshold_extremDenseVegCover= 0.8; //extremely dense vegetation cover, such as old-growth forests or other high biomass ecosystems.
+var threshold_nearOptimalVegCover= 0.9; //near-optimal vegetation density and productivity, such as highly productive croplands or other ecosystems with high biomass.
+var threshold_optimalVegCover= 1.0 ; //optimal vegetation density and productivity, such as highly productive croplands or other ecosystems with high biomass.
+
+// defining the NDVI image based on the threshholds and values_3,2,1,0 are values for visualisation
+var ndvi_classified = bandIndexImg.expression(
+  "(b('NDVI') < threshold_noVegetation) ? 0" +  // 
+    ": (b('NDVI') <= threshold_sparseGrassland) ? 1" +  // 
+    ": (b('NDVI') <= threshold_degradedLandsRecentDisturbed) ? 2" +  // 
+    ": (b('NDVI') <= threshold_moderateVegCover) ? 3" + 
+    ": (b('NDVI') <= threshold_moderateHighVegCover) ? 4" +
+    ": (b('NDVI') <= threshold_highVegCover) ? 5" +
+    ": (b('NDVI') <= threshold_veryHighVegCover) ? 6" +
+    ": (b('NDVI') <= threshold_extremHighVegCover) ? 7" +
+    ": (b('NDVI') <= threshold_veryDenseVegCover) ? 8" +
+    ": (b('NDVI') <= threshold_extremDenseVegCover) ? 9" +
+    ": (b('NDVI') <= threshold_nearOptimalVegCover) ? 10" +
+    ": (b('NDVI') <= threshold_optimalVegCover) ? 11" +
+      ":12" //unclassified 
+  , {
+
+     threshold_noVegetation : threshold_noVegetation ,
+     threshold_sparseGrassland : threshold_sparseGrassland ,
+     threshold_degradedLandsRecentDisturbed : threshold_degradedLandsRecentDisturbed ,
+     threshold_moderateVegCover : threshold_moderateVegCover ,
+     threshold_moderateHighVegCover : threshold_moderateHighVegCover,
+     threshold_highVegCover:threshold_highVegCover,
+     threshold_veryHighVegCover:threshold_veryHighVegCover,
+     threshold_extremHighVegCover:threshold_extremHighVegCover,
+     threshold_veryDenseVegCover:threshold_veryDenseVegCover,
+     threshold_extremDenseVegCover:threshold_extremDenseVegCover,
+     threshold_nearOptimalVegCover: threshold_nearOptimalVegCover,
+     threshold_optimalVegCover: threshold_optimalVegCover, 
+    }).rename(['NDVI']);
+
+
+// Display the burn severity map       )       
+var ndviVis_1 = {min: -1, max: 1 , palette:['#000000','#a50026','#d73027', '#f46d43', '#fdae61', '#fee08b', '#ffffbf', '#d9ef8b', '#a6d96a', '	#66bd63', '#1a9850', '#006837']}; 
+//---------------------Visualisation phase ----------------------------------------------
+// Visualization parameters for NDVI.
+var ndviVis = {min: 0, max: 11 , palette:['#000000','#a50026','#d73027', '#f46d43', '#fdae61', '#fee08b', '#ffffbf', '#d9ef8b', '#a6d96a', '	#66bd63', '#1a9850', '#006837']};  
+
+//--------
+// create a histogram of the NBR index values to visualize
+ //  the distribution of burned and unburned pixels:
+var histogram_ndvi_classified = ui.Chart.image.histogram({
+  image: ndvi_classified,
+  region: geometry,
+  scale: 10,
+  maxBuckets: 50,
+  minBucketWidth: 0.01,
+})
+  .setOptions({
+    title: 'NDVI Histogram based on Thresholds_Prefire',
+    hAxis: { title: 'NDVI category' },
+    vAxis: { title: 'Pixel Count' , 'viewWindow': {'min': 0, 'max': 800000}}
+});
+
+
+//Map.centerObject(geometry);
+//Map.addLayer(bandIndexImg , ndviVis_1, 'NDVI1');
+Map.addLayer(ndvi_classified , ndviVis, 'NDVI2');
+
+//Map.centerObject(geometry);
+Map.addLayer(bandIndexImg , ndviVis_1, 'NDVI1');
+Map.addLayer(ndvi_classified , ndviVis, 'NDVI2');
+
+Map.addLayer(geometry);
+//Map.add(histogram_ndvi_classified);

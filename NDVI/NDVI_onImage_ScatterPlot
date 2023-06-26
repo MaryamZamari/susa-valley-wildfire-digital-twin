@@ -6,47 +6,12 @@ var geometry =
         [[[7.003083958928165, 45.21869339705463],
           [7.003083958928165, 45.110246992050875],
           [7.219377293889102, 45.110246992050875],
-          [7.219377293889102, 45.21869339705463]]], null, false),
-    imageObject = ee.Image("image_prefire_withCoordinatesAndTime");
+          [7.219377293889102, 45.21869339705463]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // Load the three images.
-/*var image_prefire = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20170619T103021_20170619T103806_T32TLR')  //Pre_Fire image
+var image_prefire = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20170619T103021_20170619T103806_T32TLR')  //Pre_Fire image
                          .select(['B4','B8'])
-                         .set('system:time_start', ee.Date('2017-06-19').millis()); */
-//level C1: TOA
-// Define the start and end dates for the time period covered by the collection
-var startDate = ee.Date('2017-06-20');
-var endDate = ee.Date('2017-07-10');
-
-var sentinel2 = ee.ImageCollection('COPERNICUS/S2_HARMONIZED')
-                  .filterDate(startDate, endDate)
-                  //.filterBounds(geometry)
-                  // Pre-filter to get less cloudy granules.
-                  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 20))
-                   .select(['B4','B3','B2','B8','B12'])
-                   .set('system:time_start', ee.Date('2022-06-18').millis());
-                   
-// Calculate the median image           
-var image_prefire = sentinel2.reduce(ee.Reducer.median());
-
-// Set the system:time_start property to the start date of the time period covered by the collection
-var startTime = startDate.millis();
-var medianWithTime = image_prefire.set('system:time_start', startTime);
-
-// Get the coordinates from one of the images
-var referenceImage = ee.Image('COPERNICUS/S2_HARMONIZED/' + '20170704T103019_20170704T103637_T32TLR');//sentinel2.first(); // Choose a reference image from the collection
-var coordinates = referenceImage.geometry();
-print('reference image:', referenceImage);
-// Set the coordinates of the median image
-//var image_prefire_withCoordinatesAndTime = medianWithTime.set('coordinates', coordinates);
-var image_prefire_withCoordinatesAndTime = medianWithTime.copyProperties(referenceImage, ['system:footprint']);
-
-// Print the median image with the defined start time
-print('Median with start time:', medianWithTime);
-print('image_prefire_withCoordinatesAndTime:', image_prefire_withCoordinatesAndTime);
-var imageObjectPrefire = ee.Image(image_prefire_withCoordinatesAndTime);  // Convert the element to an image
-print('imageObject:', imageObjectPrefire);
-//end prefire extraction ---------
+                         .set('system:time_start', ee.Date('2017-06-19').millis());
 
 var image_postfire = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20180619T103019_20180619T103559_T32TLR') //Postfire_Fire image
                          .select(['B4','B8'])
@@ -55,32 +20,19 @@ var image_postfire = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20180619T103019_
 var image_2022 = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20220618T102559_20220618T103528_T32TLR')     //present image
                          .select(['B4','B8'])
                          .set('system:time_start', ee.Date('2022-06-18').millis());
-     print('image_2022', image_2022);  
-     
-//------------------------------calculate NDVI----------------------------------------
-//var ndvi_prefire = image_prefire.normalizedDifference(['B8', 'B4']).rename('NDVI');
-//var ndvi_prefire = medianWithTime.normalizedDifference(['B8_median', 'B4_median']).rename('NDVI');
-//var ndvi_prefire = medianWithTime.normalizedDifference(['B8', 'B4']).rename('NDVI');
-
-
-// Calculate NDVI on the median image with updated coordinates
-var ndvi_prefire = imageObjectPrefire.normalizedDifference(['B8_median', 'B4_median']).rename('NDVI');
-
-// Calculate NDVI
-
+                         
+// Function to calculate NDVI.
+var ndvi_prefire = image_prefire.normalizedDifference(['B8', 'B4']).rename('NDVI');
 var ndvi_postfire = image_postfire.normalizedDifference(['B8', 'B4']).rename('NDVI');
 var ndvi_2022 = image_2022.normalizedDifference(['B8', 'B4']).rename('NDVI');
 
-//print('ndvi_prefire', ndvi_prefire); 
-print('ndvi_2022: ' , ndvi_2022);
 // Reduce the NDVI image to a mean value for each image.
 var ndvi_prefire_mean = ndvi_prefire.reduceRegion({
   reducer: ee.Reducer.mean(),
   geometry: ndvi_prefire.geometry(),
   scale: 10,
   maxPixels: 1e9
-}); 
-
+});
 var ndvi_postfire_mean = ndvi_postfire.reduceRegion({
   reducer: ee.Reducer.mean(),
   geometry: ndvi_postfire.geometry(),
@@ -95,7 +47,7 @@ var ndvi_2022_mean = ndvi_2022.reduceRegion({
 });
 
 var features = ee.FeatureCollection([
-  ee.Feature(null, {'system:time_start': medianWithTime.get('system:time_start'), 'ndvi': ndvi_prefire_mean.get('NDVI')}),
+  ee.Feature(null, {'system:time_start': image_prefire.get('system:time_start'), 'ndvi': ndvi_prefire_mean.get('NDVI')}),
   ee.Feature(null, {'system:time_start': image_postfire.get('system:time_start'), 'ndvi': ndvi_postfire_mean.get('NDVI')}),
   ee.Feature(null, {'system:time_start': image_2022.get('system:time_start'), 'ndvi': ndvi_2022_mean.get('NDVI')})
 ]);

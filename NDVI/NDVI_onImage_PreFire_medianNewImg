@@ -23,14 +23,14 @@ var geometry =
                         // .mosaic().clip(geometry) 
                          .select(['B4','B8','B3','B2']); 
   */
-  var imageTOA = ee.Image('COPERNICUS/S2_HARMONIZED/' + '20170704T103019_20170704T103637_T32TLR')
-                   .select(['B4','B3','B2','B8','B12']);
+  var imageTOA = ee.Image('COPERNICUS/S2_HARMONIZED/' + '20170704T103019_20170704T103637_T32TLR');
+              //     .select(['B4','B3','B2','B8','B12', 'B11']);
        
   //Importing the SIAC atmospheric correction module
 var siac = require('users/marcyinfeng/utils:SIAC');            
 var imageBOA = siac.get_sur(imageTOA);
 
-print('image TOA: ' , imageBOA);
+print('image BOA: ' , imageBOA);
 //level C1: TOA
 /*var sentinel2 = ee.ImageCollection('COPERNICUS/S2_HARMONIZED')
                   .filterDate('2017-06-20', '2017-07-10')
@@ -44,7 +44,7 @@ var s2_median = sentinel2.reduce(ee.Reducer.median()) */
 // Expression using image band indices to calculate NDVI
 //var bandIndexExp = '(b("B8_median") - b("B4_median")) / (b("B8_median") + b("B4_median"))';
 var bandIndexExp = '(b("B8") - b("B4")) / (b("B8") + b("B4"))';
-var bandIndexImg = imageTOA.expression(bandIndexExp).rename('NDVI');
+var bandIndexImg = imageBOA.expression(bandIndexExp).rename('NDVI');
 
 //--------thresholds (lt)----------------------------
 var threshold_noVegetation= -0.2; //areas with little to no vegetation cover, such as bare soil, water bodies, or urban areas.
@@ -120,18 +120,19 @@ Map.addLayer(bandIndexImg , ndviVis_1, 'NDVI1');
 Map.addLayer(ndvi_classified , ndviVis, 'NDVI2');
 
 //Map.addLayer(image);
-Map.addLayer(imageTOA);
+//Map.addLayer(imageTOA);
 Map.addLayer(imageBOA);
 
 Map.addLayer(geometry);
-Map.add(histogram_ndvi_classified);
+//Map.add(histogram_ndvi_classified);
 
-Export.image.toDrive({
-  image: bandIndexImg /*image*/,
+/*Export.image.toDrive({
+  image: bandIndexImg ,
   description: 'S2Harmonized-20170704T103019_20170704T103637_T32TLR_NDVI_Prefire',
   scale: 10,
   region: geometry,
 })
+*/
 
 //---------Add Legend-----------------------
 var panel = ui.Panel({

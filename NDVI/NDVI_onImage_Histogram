@@ -8,9 +8,7 @@ var geometry =
           [7.209764256779727, 45.11460819436321],
           [7.209764256779727, 45.218935234003915]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
-/**** Start of imports. If edited, may not auto-convert in the playground. ****/
 
-/***** End of imports. If edited, may not auto-convert in the playground. *****/
 
         
 //For NDVI I would need the same time of the year(Preferably)---> Dates: 
@@ -76,7 +74,7 @@ var histo_NDVI_postfire = ui.Chart.image.histogram({
 var histo_NDVI_2022 = ui.Chart.image.histogram({
   image: NDVI_2022,
   region: geometry,
-  scale: 10,
+  scale: 8,
   maxBuckets: 50,
   minBucketWidth: 0.01,
 })

@@ -38,6 +38,8 @@ var ndvi_prefire_mean = ndvi_prefire.reduceRegion({
   maxPixels: 1e9
 }); 
 
+print(ndvi_prefire_mean);
+
 var ndvi_postfire_mean = ndvi_postfire.reduceRegion({
   reducer: ee.Reducer.mean(),
   geometry: ndvi_postfire.geometry(),

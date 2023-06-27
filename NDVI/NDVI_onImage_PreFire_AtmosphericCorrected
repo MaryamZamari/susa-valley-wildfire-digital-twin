@@ -78,11 +78,11 @@ var ndviVis_1 = {min: -1, max: 1 , palette:['#000000','#a50026','#d73027', '#f46
 // Visualization parameters for NDVI.
 var ndviVis = {min: 0, max: 11 , palette:['#000000','#a50026','#d73027', '#f46d43', '#fdae61', '#fee08b', '#ffffbf', '#d9ef8b', '#a6d96a', '	#66bd63', '#1a9850', '#006837']};  
 
-//-------- ,  /*'viewWindow': {'min': 0, 'max': 800000}*/
-// create a histogram of the NBR index values to visualize
+//--------
+// create a histogram of the NBR index values to visualize  /*'viewWindow': {'min': 0, 'max': 800000}*/
  //  the distribution of burned and unburned pixels:
-/* var histogram_ndvi_classified = ui.Chart.image.histogram({
-  image: bandIndexImg,
+/*var histogram_ndvi_classified = ui.Chart.image.histogram({
+  image: ndvi_classified,
   region: geometry,
   scale: 50,
   maxBuckets: 50,
@@ -91,21 +91,19 @@ var ndviVis = {min: 0, max: 11 , palette:['#000000','#a50026','#d73027', '#f46d4
   .setOptions({
     title: 'NDVI Histogram based on Thresholds_Prefire',
     hAxis: { title: 'NDVI category' },
-    vAxis: { title: 'Pixel Count'  }
-}); */
-
-var histogram_ndvi = ui.Chart.image.histogram({
-  image: bandIndexImg,
-  region: geometry,
-  scale: 40,
-  maxBuckets: 50,
-  minBucketWidth: 0.01,
-})
-  .setOptions({
-    title: 'NDVI Histogram based on Thresholds_Prefire',
-    hAxis: { title: 'NDVI category' },
-    vAxis: { title: 'Pixel Count'/*, 'viewWindow': {'min': 0, 'max': 250000} */   }
+    vAxis: { title: 'Pixel Count' ,  }
 }); 
+*/
+
+// Reduce the NDVI image to a mean value for each image.
+var ndvi_prefire_mean = bandIndexImg.reduceRegion({
+  reducer: ee.Reducer.mean(),
+  geometry: geometry(),
+  scale: 10,
+  maxPixels: 1e9
+}); 
+
+print(ndvi_prefire_mean);
 
 Map.centerObject(geometry);
 //Map.addLayer(bandIndexImg , ndviVis_1, 'NDVI1');
@@ -117,19 +115,14 @@ Map.centerObject(geometry);
 
 Map.addLayer(geometry);
 //Map.addLayer(table);
-//Map.add(histogram_ndvi_classified);
-Map.add(histogram_ndvi);
+Map.add(histogram_ndvi_classified);
 
-/* Export.image.toDrive({
+/*Export.image.toDrive({
   image: bandIndexImg ,
   description: 'S2Harmonized-20170704T103019_20170704T103637_T32TLR_NDVI_Prefire_TOA_thresh',
   scale: 10,
   region: geometry,
-}) */
-
-Map.addLayer(geometry);
-//Map.addLayer(table);
-
+})*/
 
 
 //---------Add Legend-----------------------

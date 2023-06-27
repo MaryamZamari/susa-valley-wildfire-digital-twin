@@ -81,7 +81,7 @@ var ndviVis = {min: 0, max: 11 , palette:['#000000','#a50026','#d73027', '#f46d4
 //--------
 // create a histogram of the NBR index values to visualize
  //  the distribution of burned and unburned pixels:
-/*var histogram_ndvi_classified = ui.Chart.image.histogram({
+var histogram_ndvi_classified = ui.Chart.image.histogram({
   image: ndvi_classified,
   region: geometry,
   scale: 50,
@@ -91,9 +91,9 @@ var ndviVis = {min: 0, max: 11 , palette:['#000000','#a50026','#d73027', '#f46d4
   .setOptions({
     title: 'NDVI Histogram based on Thresholds_Prefire',
     hAxis: { title: 'NDVI category' },
-    vAxis: { title: 'Pixel Count' ,  'viewWindow': {'min': 0, 'max': 800000} }
+    vAxis: { title: 'Pixel Count' ,  /*'viewWindow': {'min': 0, 'max': 800000}*/ }
 }); 
-*/
+
 
 Map.centerObject(geometry);
 //Map.addLayer(bandIndexImg , ndviVis_1, 'NDVI1');
@@ -105,7 +105,7 @@ Map.centerObject(geometry);
 
 Map.addLayer(geometry);
 //Map.addLayer(table);
-//Map.add(histogram_ndvi_classified);
+Map.add(histogram_ndvi_classified);
 
 Export.image.toDrive({
   image: bandIndexImg ,

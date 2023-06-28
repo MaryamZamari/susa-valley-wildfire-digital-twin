@@ -19,7 +19,7 @@ var dataset = ee.Image("MODIS/MOD44W/MOD44W_005_2000_02_24"),
 var dataset = ee.ImageCollection('ESA/CCI/FireCCI/5_1')
                   .filterDate('2017-11-01', '2017-11-15');
 var burnedArea = dataset.select('BurnDate');
-
+print(dataset);
 // Use a circular palette to assign colors to date of first detection
 var baVis = {
   min: 1,

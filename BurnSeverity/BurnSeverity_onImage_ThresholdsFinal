@@ -24,7 +24,7 @@ var geometry =
 geometry2 = 
     geometry2;
           
-// importing pre-fire and post-fire NBR images (the same dates for which NBR was calculated).
+// importing pre-fire and post-fire NBR images (the same dates for which NBR was calculated).a
 var prefire_image = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20170619T103021_20170619T103806_T32TLR')
                       .select('B8', 'B12');
                         

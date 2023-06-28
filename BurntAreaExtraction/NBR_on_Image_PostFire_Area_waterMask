@@ -12,7 +12,7 @@ var geoCEMS =
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 //1.loading waterMasks
 //2.Create an empty image with the desired projection and scale
-var emptyImage1 = ee.Image().byte();
+/*var emptyImage1 = ee.Image().byte();
 
 // Paint the waterways onto the image
 var waterMaskRaster1 = emptyImage1.paint({
@@ -36,7 +36,7 @@ var waterMaskRaster2 = emptyImage2.paint({
 
 // Combine the water masks by adding them
 var combinedWaterMask = ee.ImageCollection([waterMaskRaster1, waterMaskRaster2]).mosaic();
-Map.addLayer(combinedWaterMask, {palette: 'blue'}, 'Water Mask');
+Map.addLayer(combinedWaterMask, {palette: 'blue'}, 'Water Mask');*/
 /*var waterMask1Raster = waterMaskRaster1.reduceToImage({
   properties: ['obj_type'], // Use the property that indicates water presence
   reducer: ee.Reducer.first(), // Use a reducer to convert features to pixels
@@ -62,7 +62,7 @@ var projectionb8 = image.select(['B8']).projection();
 var projectionb12 = image.select(['B12']).projection();
 
 //apply the waterMask to the image
-var maskedImage = image.multiply(combinedWaterMask);
+//var maskedImage = image.multiply(combinedWaterMask);
 
 //---------------------------------------------------------
 //thresholds for burned areas
@@ -71,7 +71,7 @@ var unburnedThreshold = 0.2;
 
 // Expression using image band indices to calculate NBR
 var bandIndexExp = '(b("B8") - b("B12")) / (b("B8") + b("B12"))';
-var bandIndexImg = maskedImage.expression(bandIndexExp).rename('NBR');
+var bandIndexImg = image.expression(bandIndexExp).rename('NBR');
 
 //---------------------Visualisation phase ----------------------------------------------
 // Visualization parameters for NDVI.
@@ -96,7 +96,7 @@ var burnedNBRImageMerged = burnedNBRImage
                                 .rename('burnedNBRImageMerged');
                                 
 //------Mergine the complete image into 1 band
-var imageMerged= maskedImage
+var imageMerged= image
                     .select('B8', 'B12')
                     .reduce(ee.Reducer.sum())
                     .toFloat()

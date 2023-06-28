@@ -1,28 +1,14 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var geometry = 
-    /* color: #ffffff */
+var geoCEMS = 
+    /* color: #ffc82d */
     /* shown: false */
     ee.Geometry.Polygon(
-        [[[7.003083958928165, 45.21869339705463],
-          [7.003083958928165, 45.110246992050875],
-          [7.219377293889102, 45.110246992050875],
-          [7.219377293889102, 45.21869339705463]]], null, false),
-    geometry2 = 
-    /* color: #7aa93d */
-    /* shown: false */
-    /* displayProperties: [
-      {
-        "type": "rectangle"
-      }
-    ] */
-    ee.Geometry.Polygon(
-        [[[7.011323522807711, 45.20994425310098],
-          [7.011323522807711, 45.11601945581964],
-          [7.214570593120211, 45.11601945581964],
-          [7.214570593120211, 45.20994425310098]]], null, false);
+        [[[7.029021402162807, 45.21972611576043],
+          [7.029021402162807, 45.1146736921262],
+          [7.2092658479635885, 45.1146736921262],
+          [7.2092658479635885, 45.21972611576043]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
-geometry2 = 
-    geometry2;
+
           
 // importing pre-fire and post-fire NBR images (the same dates for which NBR was calculated).a
 var prefire_image = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20170619T103021_20170619T103806_T32TLR')
@@ -41,7 +27,7 @@ var postfire_nbr = postfire_image.expression(bandIndexExp).rename('NBR_Postfire'
 var delta_nbr = prefire_nbr.subtract(postfire_nbr).rename('dNBR');
 
 // Clip the dNBR image to your geometry
-var clipped_dNBR = delta_nbr.clip(geometry);
+var clipped_dNBR = delta_nbr.clip(geoCEMS);
 print("delta_nbr", delta_nbr);
 
 //thresholds lt
@@ -61,7 +47,7 @@ var threshold_moderate_high_severity= 0.7;
 var threshold_high_severity= 1;
 
 // defining the burn severity image based on the threshholds and values_3,2,1,0 are values for visualisation
-var burnSeverity = clipped_dNBR.expression(
+var burnSeverity = delta_nbr.expression(
       "(b('dNBR') <= threshold_enhanced_regrowth_high) ? 0" + 
     ": (b('dNBR') <= threshold_enhanced_regrowth_low) ? 1" +  // Moderate-high burn severity
     ": (b('dNBR') <= threshold_unburned) ? 2" +  // Moderate-low burn severity
@@ -84,15 +70,15 @@ var burnSeverity = clipped_dNBR.expression(
 // Display the burn severity map       )       
 var visBurnSeverity = {min: 0, max: 7, palette: ['#778835', '#a7c050', '#0be344', '#f8fc11', '#f8b140', '#f8671a', '#a600d4', 'Grey']};
 Map.addLayer(burnSeverity, visBurnSeverity, 'Burn Severity');
-Map.addLayer(geometry);
+Map.addLayer(geoCEMS);
 //Map.addLayer(delta_nbr);
-Map.centerObject(geometry);
+Map.centerObject(geoCEMS);
 
 Export.image.toDrive({
   image: burnSeverity /*image*/,
   description: 'S2SrHarmonized-20170619T103021_20170619T103806_T32TLR_BurnSeverity',
   scale: 10,
-  region: geometry,
+  region: geoCEMS,
 })
 //---------Add Legend-----------------------
 var panel = ui.Panel({

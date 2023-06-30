@@ -19,10 +19,19 @@ var geometry =
         [[[7.011323522807711, 45.20994425310098],
           [7.011323522807711, 45.11601945581964],
           [7.214570593120211, 45.11601945581964],
-          [7.214570593120211, 45.20994425310098]]], null, false);
+          [7.214570593120211, 45.20994425310098]]], null, false),
+    geometry3 = 
+    /* color: #0B4A8B */
+    /* shown: false */
+    ee.Geometry.Polygon(
+        [[[7.029021402162807, 45.21972611576043],
+          [7.029021402162807, 45.1146736921262],
+          [7.2092658479635885, 45.1146736921262],
+          [7.2092658479635885, 45.21972611576043]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
  geometry2 = 
     geometry2;
+ var CEMS=  geometry3;
 
 //For NDVI I would need the same time of the year(Preferably)--> Dates: 
 var image = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20180619T103019_20180619T103559_T32TLR') //Pre_Fire image
@@ -114,16 +123,16 @@ var ndviVis = {min: 0, max: 11 , palette:['#000000','#a50026','#d73027', '#f46d4
 //print(image);
 //Map.centerObject(geometry);
 Map.addLayer(ndvi_classified , ndviVis , 'NDVI1');
-Map.addLayer(image);
-Map.addLayer(geometry);
+//Map.addLayer(image);
+Map.addLayer(CEMS);
 //Map.add(histogram_ndvi_classified);
 
 
 Export.image.toDrive({
   image: bandIndexImg /*image*/,
-  description: 'S2SrHarmonized-20170619T103021_20170619T103806_T32TLR_NDVI_Prefire',
+  description: 'S2SrHarmonized-20180619T103019_20180619T103559_T32TLR_postfire_NDVICEMS',
   scale: 10,
-  region: geometry,
+  region: CEMS,
 })
 
 //---------Add Legend-----------------------
@@ -189,4 +198,4 @@ for(var a = 0; a <= 11; a++){
   panel.add(list_legend(color[a], lc_class[a]))
 }
 
-Map.add(panel)
+//Map.add(panel)

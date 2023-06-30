@@ -7,7 +7,10 @@ var geometry =
           [7.028833165471133, 45.11509275182575],
           [7.209764256779727, 45.11460819436321],
           [7.209764256779727, 45.218935234003915]]], null, false),
-    geometry2 = /* color: #98ff00 */ee.Geometry.Polygon(
+    geometry2 = 
+    /* color: #98ff00 */
+    /* shown: false */
+    ee.Geometry.Polygon(
         [[[7.029021402162807, 45.21972611576043],
           [7.029021402162807, 45.1146736921262],
           [7.2092658479635885, 45.1146736921262],
@@ -24,12 +27,12 @@ var CEMS=    geometry2;
 var siac = require('users/marcyinfeng/utils:SIAC');            
 var imageBOA = siac.get_sur(imageTOA);
 var imageBoaSelect= imageBOA.select("B8" , "B12", "B4", "B3", "B2");
-var imageBoaSelect_Clipped= imageBoaSelect.clip(geometry);
+//var imageBoaSelect_Clipped= imageBoaSelect.clip(geometry);
 //---------------------------------------------------------
 // Expression using image band indices to calculate NDVI
 
 var bandIndexExp = '(b("B8") - b("B4")) / (b("B8") + b("B4"))';
-var bandIndexImg = imageBoaSelect_Clipped.expression(bandIndexExp).rename('NDVI');
+var bandIndexImg = imageBoaSelect.expression(bandIndexExp).rename('NDVI');
 
 //--------thresholds (lt)----------------------------
 var threshold_noVegetation= -0.2; //areas with little to no vegetation cover, such as bare soil, water bodies, or urban areas.
@@ -101,33 +104,33 @@ var ndviVis = {min: 0, max: 11 , palette:['#000000','#a50026','#d73027', '#f46d4
 */
 
 // Reduce the NDVI image to a mean value for each image.
-var ndvi_prefire_mean = bandIndexImg.reduceRegion({
+/*var ndvi_prefire_mean = bandIndexImg.reduceRegion({
   reducer: ee.Reducer.mean(),
   geometry: geometry(),
   scale: 10,
   maxPixels: 1e9
-}); 
+}); */
 
-print(ndvi_prefire_mean);
+//print(ndvi_prefire_mean);
 
-Map.centerObject(geometry);
+Map.centerObject(CEMS);
 //Map.addLayer(bandIndexImg , ndviVis_1, 'NDVI1');
-//Map.addLayer(ndvi_classified , ndviVis, 'NDVI2');
+Map.addLayer(ndvi_classified , ndviVis, 'NDVI2');
 
 //Map.addLayer(image);
 //Map.addLayer(imageTOA);
 //Map.addLayer(imageBOA);
 
-Map.addLayer(geometry);
+Map.addLayer(CEMS);
 //Map.addLayer(table);
-Map.add(histogram_ndvi_classified);
+//Map.add(histogram_ndvi_classified);
 
-/*Export.image.toDrive({
+Export.image.toDrive({
   image: bandIndexImg ,
-  description: 'S2Harmonized-20170704T103019_20170704T103637_T32TLR_NDVI_Prefire_TOA_thresh',
+  description: 'S2Harmonized-20170704T103019_20170704T103637_T32TLR_NDVI_Prefire_TOA_thresh_CEMS',
   scale: 10,
-  region: geometry,
-})*/
+  region: CEMS,
+})
 
 
 //---------Add Legend-----------------------

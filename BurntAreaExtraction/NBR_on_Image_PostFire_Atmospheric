@@ -8,63 +8,49 @@ var geometry =
           [7.219377293889102, 45.110246992050875],
           [7.219377293889102, 45.21869339705463]]], null, false),
     waterDataset = ee.Image("JRC/GSW1_0/GlobalSurfaceWater"),
-    nlcd = ee.ImageCollection("USGS/NLCD");
+    nlcd = ee.ImageCollection("USGS/NLCD"),
+    geometry2 = 
+    /* color: #ffc82d */
+    /* shown: false */
+    ee.Geometry.Polygon(
+        [[[7.029021402162807, 45.21972611576043],
+          [7.029021402162807, 45.1146736921262],
+          [7.2092658479635885, 45.1146736921262],
+          [7.2092658479635885, 45.21972611576043]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
-
- var image = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20171116T103311_20171116T103542_T32TLR') //Post_Fire image
+var geoCEMS = 
+    /* color: #ffc82d */
+    /* shown: false */
+    geometry2;
+ var imageTOA = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20171116T103311_20171116T103542_T32TLR') //Post_Fire image
                         // .mosaic().clip(geometry) 
-                         .select(['B12','B8','B4', 'QA60','B3','B2']); 
+                         ; 
 
 //--------TEST---------.
-
-
-// Load the Global Surface Water dataset.
-var waterDataset = ee.Image('JRC/GSW1_3/GlobalSurfaceWater').clip(geometry);
-
-// Select the occurrence layer.
-var waterOccurrence = waterDataset.select('occurrence');
-
-// Threshold the water occurrence to create a water mask.
-var waterMask = waterOccurrence.lt(50);
-
-// Dilate the water mask to include nearby pixels.
-waterMask = waterMask.focal_max(100, 'circle', 'meters');
-
-// Load the NLCD land cover dataset.
-
-
-// Select the most recent NLCD image.
-var nlcdImage = nlcd.sort('system:index', false).first();
-
-// Select the land cover band.
-var landCover = nlcdImage.select('landcover');
-
-// Define a land cover mask.
-var landCoverMask = landCover.neq(11).and(landCover.neq(12)).and(landCover.neq(90));
-
-// Combine the water mask and land cover mask.
-var finalMask = waterMask.or(landCoverMask);
-
-//End Test part-------------------------------------
+  //Importing the SIAC atmospheric correction module
+var siac = require('users/marcyinfeng/utils:SIAC');            
+var imageBOA = siac.get_sur(imageTOA);
+var imageBoaSelect= imageBOA.select("B8" , "B12", "B4", "B3", "B2");
 
 //---------------------------------------------------------
 // Expression using image band indices to calculate NBR
 var bandIndexExp = '(b("B8") - b("B12")) / (b("B8") + b("B12"))';
-var bandIndexImg = image.expression(bandIndexExp).rename('NBR');
-var nbrMasked = bandIndexImg.updateMask(finalMask.not());
+var bandIndexImg = imageBoaSelect.expression(bandIndexExp).rename('NBR');
+
 //---------------------TEST -----------------------------------
 
 //---------------------Visualisation phase ----------------------------------------------
 // Visualization parameters for NDVI.
 var nbrVis = {min: -1, max: 1 , palette:['red','orange','green']};  
 
-print(image);
-Map.centerObject(geometry);
-Map.addLayer(image);
-Map.addLayer(bandIndexImg , nbrVis, 'NBR1');
-//Map.addLayer(image); 
+print(imageBoaSelect);
+Map.centerObject(geometry2);
+
+//Map.addLayer(bandIndexImg , nbrVis, 'NBR1');
+Map.addLayer(imageBoaSelect); 
+Map.addLayer(imageTOA); 
 //Map.addLayer(bandIndexImg);
-Map.addLayer(geometry);
+Map.addLayer(geometry2);
 //Map.centerObject(geometry);
 
 

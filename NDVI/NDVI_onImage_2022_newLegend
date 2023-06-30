@@ -14,11 +14,28 @@ var geometry =
         [[[7.011323522807711, 45.20994425310098],
           [7.011323522807711, 45.11601945581964],
           [7.214570593120211, 45.11601945581964],
-          [7.214570593120211, 45.20994425310098]]], null, false);
+          [7.214570593120211, 45.20994425310098]]], null, false),
+    geometry3 = 
+    /* color: #ffc82d */
+    /* shown: false */
+    ee.Geometry.Polygon(
+        [[[7.029021402162807, 45.21972611576043],
+          [7.029021402162807, 45.1146736921262],
+          [7.2092658479635885, 45.1146736921262],
+          [7.2092658479635885, 45.21972611576043]]], null, false),
+    CEMS = 
+    /* color: #00ffff */
+    /* shown: false */
+    ee.Geometry.Polygon(
+        [[[7.029021402162807, 45.21972611576043],
+          [7.029021402162807, 45.1146736921262],
+          [7.2092658479635885, 45.1146736921262],
+          [7.2092658479635885, 45.21972611576043]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 geometry2 = 
      geometry2;
 
+ 
 //PostFire_Present2022 (for NDVI) : Dates: '2022-05-01','2022-06-20'       _ Image: '20220618T102559_20220618T103528_T32TLR'
 var image = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20220618T102559_20220618T103528_T32TLR') //Present image
                         // .mosaic().clip(geometry) 
@@ -104,17 +121,17 @@ var histogram_ndvi_classified = ui.Chart.image.histogram({
 
 
 print(image);
-Map.centerObject(geometry);
+Map.centerObject(CEMS);
 Map.addLayer(ndvi_classified , ndviVis, 'NDVI1');
-Map.addLayer(image);
-Map.addLayer(geometry);
-Map.add(histogram_ndvi_classified);
+//Map.addLayer(image);
+Map.addLayer(CEMS);
+//Map.add(histogram_ndvi_classified);
 
 Export.image.toDrive({
   image: bandIndexImg /*image*/,
-  description: 'S2SrHarmonized-20170619T103021_20170619T103806_T32TLR_NDVI_Postfire_Present',
+  description: 'S2SrHarmonized-20220618T102559_20220618T103528_T32TLR_NDVI_Present_CEMS',
   scale: 10,
-  region: geometry,
+  region: CEMS,
 })
 
 
@@ -181,4 +198,4 @@ for(var a = 0; a <= 11; a++){
   panel.add(list_legend(color[a], lc_class[a]))
 }
 
-Map.add(panel)
+//Map.add(panel)

@@ -122,8 +122,8 @@ var histogram_ndvi_classified = ui.Chart.image.histogram({
 
 print(image);
 Map.centerObject(CEMS);
-Map.addLayer(ndvi_classified , ndviVis, 'NDVI1');
-//Map.addLayer(image);
+//Map.addLayer(ndvi_classified , ndviVis, 'NDVI1');
+Map.addLayer(image);
 Map.addLayer(CEMS);
 //Map.add(histogram_ndvi_classified);
 

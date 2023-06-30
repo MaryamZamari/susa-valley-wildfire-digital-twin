@@ -21,7 +21,7 @@ var geometry =
           [7.214570593120211, 45.11601945581964],
           [7.214570593120211, 45.20994425310098]]], null, false),
     geometry3 = 
-    /* color: #0B4A8B */
+    /* color: #0b4a8b */
     /* shown: false */
     ee.Geometry.Polygon(
         [[[7.029021402162807, 45.21972611576043],
@@ -34,15 +34,18 @@ var geometry =
  var CEMS=  geometry3;
 
 //For NDVI I would need the same time of the year(Preferably)--> Dates: 
-var image = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20180619T103019_20180619T103559_T32TLR') //Pre_Fire image
+var imageTOA = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20180619T103019_20180619T103559_T32TLR') //Pre_Fire image
                         // .mosaic().clip(geometry) 
-                         .select(['B4','B8','B3','B2']); 
-
+                         ; 
+  //Importing the SIAC atmospheric correction module
+var siac = require('users/marcyinfeng/utils:SIAC');            
+var imageBOA = siac.get_sur(imageTOA);
+var imageBoaSelect= imageBOA.select("B8" , "B12", "B4", "B3", "B2");
 //---------------------------------------------------------
 
 // Expression using image band indices to calculate NBR
 var bandIndexExp = '(b("B8") - b("B4")) / (b("B8") + b("B4"))';
-var bandIndexImg = image.expression(bandIndexExp).rename('NDVI');
+var bandIndexImg = imageBoaSelect.expression(bandIndexExp).rename('NDVI');
 
 
 //---------------------Visualisation phase ----------------------------------------------
@@ -123,7 +126,7 @@ var ndviVis = {min: 0, max: 11 , palette:['#000000','#a50026','#d73027', '#f46d4
 //print(image);
 //Map.centerObject(geometry);
 Map.addLayer(ndvi_classified , ndviVis , 'NDVI1');
-//Map.addLayer(image);
+Map.addLayer(imageBoaSelect);
 Map.addLayer(CEMS);
 //Map.add(histogram_ndvi_classified);
 

@@ -81,7 +81,7 @@ Map.addLayer(geoCEMS);
 
 Export.image.toDrive({
   image: bandIndexImg /*image*/,
-  description: 'S2SrHarmonized-20170619T103021_20170619T103806_T32TLR_NBR',
+  description: 'S2SrHarmonized-20170619T103021_20170619T103806_T32TLR_PrefireNBR_newBoundary',
   scale: 10,
   region: geoCEMS,
 })

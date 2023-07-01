@@ -114,8 +114,8 @@ var ndviVis = {min: 0, max: 11 , palette:['#000000','#a50026','#d73027', '#f46d4
 //print(ndvi_prefire_mean);
 
 Map.centerObject(CEMS);
-//Map.addLayer(bandIndexImg , ndviVis_1, 'NDVI1');
-Map.addLayer(ndvi_classified , ndviVis, 'NDVI2');
+Map.addLayer(bandIndexImg , ndviVis_1, 'NDVI1');
+//Map.addLayer(ndvi_classified , ndviVis, 'NDVI2');
 
 //Map.addLayer(image);
 //Map.addLayer(imageTOA);

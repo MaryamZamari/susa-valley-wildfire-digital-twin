@@ -1,12 +1,17 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var geometry = /* color: #efefef */ee.Geometry.Polygon(
-        [[[7.003083958928165, 45.21869339705463],
-          [7.003083958928165, 45.110246992050875],
-          [7.219377293889102, 45.110246992050875],
-          [7.219377293889102, 45.21869339705463]]], null, false);
+var geometry = /* color: #fdfff1 */ee.Geometry.Polygon(
+        [[[7.029021402162807, 45.21972611576043],
+          [7.029021402162807, 45.1146736921262],
+          [7.2092658479635885, 45.1146736921262],
+          [7.2092658479635885, 45.21972611576043]]], null, false),
+    affectedAreaCEMS = ee.FeatureCollection("users/ZamariMaryam/EMSR253_02SUSA_DEL_v2_observed_event_a");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
-
+var geoCEMS = 
+    /* color: #ffc82d */
+    /* shown: false */
+    geometry;
 // Visualize FireCCI51 for one year
+
 
 
 var dataset = ee.ImageCollection('ESA/CCI/FireCCI/5_1')
@@ -28,4 +33,5 @@ var maxBA = burnedArea.max();
 
 Map.centerObject(geometry);
 Map.addLayer(maxBA, baVis, 'Burned Area');
+Map.addLayer(affectedAreaCEMS);
 

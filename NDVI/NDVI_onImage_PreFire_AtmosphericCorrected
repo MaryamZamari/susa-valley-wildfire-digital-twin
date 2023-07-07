@@ -122,7 +122,7 @@ Map.addLayer(bandIndexImg , ndviVis_1, 'NDVI1');
 
 //Map.addLayer(image);
 //Map.addLayer(imageTOA);
-//Map.addLayer(imageBOA);
+Map.addLayer(imageBOA);
 
 Map.addLayer(CEMS);
 //Map.addLayer(table);

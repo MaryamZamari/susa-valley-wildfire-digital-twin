@@ -8,46 +8,10 @@ var geoCEMS =
           [7.2092658479635885, 45.1146736921262],
           [7.2092658479635885, 45.21972611576043]]], null, false),
     waterBodies = ee.FeatureCollection("users/ZamariMaryam/EMSR253_02SUSA_DEL_v2_hydrography_a"),
-    waterWays = ee.FeatureCollection("users/ZamariMaryam/EMSR253_02SUSA_DEL_v2_hydrography_l");
+    waterWays = ee.FeatureCollection("users/ZamariMaryam/EMSR253_02SUSA_DEL_v2_hydrography_l"),
+    affectedAreaCEMS = ee.FeatureCollection("users/ZamariMaryam/EMSR253_02SUSA_DEL_v2_observed_event_a");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
-//1.loading waterMasks
-//2.Create an empty image with the desired projection and scale
-/*var emptyImage1 = ee.Image().byte();
 
-// Paint the waterways onto the image
-var waterMaskRaster1 = emptyImage1.paint({
-  featureCollection: waterBodies,
-  color: 1,  // Set the pixel value to 1 to represent water
-});
-
-var emptyImage2 = ee.Image().byte();
-
-// Paint the waterways onto the image
-var waterMaskRaster2 = emptyImage2.paint({
-  featureCollection: waterWays,
-  color: 1,  // Set the pixel value to 1 to represent water
-});
-
-//var combinedWaterMask = waterMaskRaster2.and(waterMaskRaster1);
-
-// Display the water mask raster
-//Map.addLayer(waterMaskRaster1, {palette: 'blue'}, 'Water Mask');
-//Map.addLayer(waterMaskRaster2, {palette: 'blue'}, 'Water Mask');
-
-// Combine the water masks by adding them
-var combinedWaterMask = ee.ImageCollection([waterMaskRaster1, waterMaskRaster2]).mosaic();
-Map.addLayer(combinedWaterMask, {palette: 'blue'}, 'Water Mask');*/
-/*var waterMask1Raster = waterMaskRaster1.reduceToImage({
-  properties: ['obj_type'], // Use the property that indicates water presence
-  reducer: ee.Reducer.first(), // Use a reducer to convert features to pixels
-});
-
-var waterMask2Raster = waterMaskRaster2.reduceToImage({
-  properties: ['obj_type'], // Use the property that indicates water presence
-  reducer: ee.Reducer.first(), // Use a reducer to convert features to pixels
-}); */
-
-// Combine multiple water masks (if applicable): If you have multiple water masks, you can combine them using logical operators such as and or or. For example:
 
 
 //--------------------------------------------------------------------------------
@@ -143,7 +107,8 @@ Map.addLayer(bandIndexImg , nbrVis, 'NBR1');
 Map.addLayer(geoCEMS);
 
 //Map.centerObject(geometry);
-
+Map.addLayer(affectedAreaCEMS);
+//Map.centerObject(affectedAreaCEMS);
 
 
 //-----------download task----------------------------

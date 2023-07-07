@@ -27,11 +27,12 @@ var geometry =
         [[[7.029021402162807, 45.21972611576043],
           [7.029021402162807, 45.1146736921262],
           [7.2092658479635885, 45.1146736921262],
-          [7.2092658479635885, 45.21972611576043]]], null, false);
+          [7.2092658479635885, 45.21972611576043]]], null, false),
+    affectedAreaCEMS = ee.FeatureCollection("users/ZamariMaryam/EMSR253_02SUSA_DEL_v2_observed_event_a");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 geometry2 = 
     geometry2;
-           
+          
 // importing pre-fire and post-fire NBR images (the same dates for which NBR was calculated).a
 var prefire_image = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20170619T103021_20170619T103806_T32TLR')
                       .select('B8', 'B12');
@@ -92,8 +93,8 @@ var burnSeverity = delta_nbr.expression(
 // Display the burn severity map       )       
 var visBurnSeverity = {min: 0, max: 7, palette: ['#778835', '#a7c050', '#0be344', '#f8fc11', '#f8b140', '#f8671a', '#a600d4', 'Grey']};
 Map.addLayer(burnSeverity, visBurnSeverity, 'Burn Severity');
-Map.addLayer(CEMS);
-
+Map.addLayer(CEMS);  
+Map.addLayer(affectedAreaCEMS); 
 Map.centerObject(CEMS);
 
 Export.image.toDrive({

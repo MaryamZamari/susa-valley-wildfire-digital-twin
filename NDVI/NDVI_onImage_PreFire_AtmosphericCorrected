@@ -14,11 +14,14 @@ var geometry =
         [[[7.029021402162807, 45.21972611576043],
           [7.029021402162807, 45.1146736921262],
           [7.2092658479635885, 45.1146736921262],
-          [7.2092658479635885, 45.21972611576043]]], null, false);
+          [7.2092658479635885, 45.21972611576043]]], null, false),
+    table = ee.FeatureCollection("users/ZamariMaryam/EMSR253_02SUSA_DEL_v2_observed_event_a");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 var CEMS=    geometry2;
  geometry = 
     geometry;
+    
+  
 
   var imageTOA = ee.Image('COPERNICUS/S2_HARMONIZED/' + '20170704T103019_20170704T103637_T32TLR');
            
@@ -124,6 +127,8 @@ Map.addLayer(bandIndexImg , ndviVis_1, 'NDVI1');
 Map.addLayer(CEMS);
 //Map.addLayer(table);
 //Map.add(histogram_ndvi_classified);
+Map.addLayer(table);
+Map.centerObject(table);
 
 Export.image.toDrive({
   image: bandIndexImg ,

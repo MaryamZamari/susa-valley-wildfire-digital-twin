@@ -8,10 +8,8 @@ var geoCEMS =
           [7.2092658479635885, 45.1146736921262],
           [7.2092658479635885, 45.21972611576043]]], null, false),
     waterBodies = ee.FeatureCollection("users/ZamariMaryam/EMSR253_02SUSA_DEL_v2_hydrography_a"),
-    waterWays = ee.FeatureCollection("users/ZamariMaryam/EMSR253_02SUSA_DEL_v2_hydrography_l"),
-    affectedAreaCEMS = ee.FeatureCollection("users/ZamariMaryam/EMSR253_02SUSA_DEL_v2_observed_event_a");
+    waterWays = ee.FeatureCollection("users/ZamariMaryam/EMSR253_02SUSA_DEL_v2_hydrography_l");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
-
 
 
 //--------------------------------------------------------------------------------
@@ -107,8 +105,7 @@ Map.addLayer(bandIndexImg , nbrVis, 'NBR1');
 Map.addLayer(geoCEMS);
 
 //Map.centerObject(geometry);
-Map.addLayer(affectedAreaCEMS);
-//Map.centerObject(affectedAreaCEMS);
+
 
 
 //-----------download task----------------------------

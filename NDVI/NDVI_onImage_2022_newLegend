@@ -30,10 +30,12 @@ var geometry =
         [[[7.029021402162807, 45.21972611576043],
           [7.029021402162807, 45.1146736921262],
           [7.2092658479635885, 45.1146736921262],
-          [7.2092658479635885, 45.21972611576043]]], null, false);
+          [7.2092658479635885, 45.21972611576043]]], null, false),
+    affectedAreaCEMS = ee.FeatureCollection("users/ZamariMaryam/EMSR253_02SUSA_DEL_v2_observed_event_a");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 geometry2 = 
      geometry2;
+
 
  
 //PostFire_Present2022 (for NDVI) : Dates: '2022-05-01','2022-06-20'       _ Image: '20220618T102559_20220618T103528_T32TLR'
@@ -122,10 +124,12 @@ var histogram_ndvi_classified = ui.Chart.image.histogram({
 
 print(image);
 Map.centerObject(CEMS);
-//Map.addLayer(ndvi_classified , ndviVis, 'NDVI1');
-Map.addLayer(image);
+Map.addLayer(ndvi_classified , ndviVis, 'NDVI1');
+//Map.addLayer(image);
 Map.addLayer(CEMS);
 //Map.add(histogram_ndvi_classified);
+Map.addLayer(affectedAreaCEMS);
+Map.centerObject(affectedAreaCEMS);
 
 Export.image.toDrive({
   image: bandIndexImg /*image*/,

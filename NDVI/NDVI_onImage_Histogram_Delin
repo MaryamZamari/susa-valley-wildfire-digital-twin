@@ -41,14 +41,14 @@ var image_2022 = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20220618T102559_2022
 
 //---------- Expression using image band indices to calculate NBR-----------------------
 var bandIndexExp = '(b("B8") - b("B4")) / (b("B8") + b("B4"))';
-var NDVI_prefire = image_prefire.expression(bandIndexExp).rename('NDVI');
+var NDVI_prefire = imageTOA.expression(bandIndexExp).rename('NDVI');
 var NDVI_postfire = image_postfire.expression(bandIndexExp).rename('NDVI');
 var NDVI_2022 = image_2022.expression(bandIndexExp).rename('NDVI');
 
 //---Histogram-------------
 var histo_NDVI_prefire = ui.Chart.image.histogram({
   image: NDVI_prefire,
-  region: geometry,
+  region: affectedAreaCEMS,
   scale: 50,
   maxBuckets: 50,
   minBucketWidth: 0.01,
@@ -56,12 +56,12 @@ var histo_NDVI_prefire = ui.Chart.image.histogram({
   .setOptions({
     title: 'NDVI Histogram_Prefire',
     hAxis: { title: 'NDVI' },
-    vAxis: { title: 'Pixel Count' , viewWindow: {'min': 0, 'max': 250000}}
+    vAxis: { title: 'Pixel Count', viewWindow: {'min': 0, 'max': 20000} }
 });
 
 var histo_NDVI_postfire = ui.Chart.image.histogram({
   image: NDVI_postfire,
-  region: geometry,
+  region: affectedAreaCEMS,
   scale: 10,
   maxBuckets: 50,
   minBucketWidth: 0.01,
@@ -69,12 +69,12 @@ var histo_NDVI_postfire = ui.Chart.image.histogram({
   .setOptions({
     title: 'NDVI Histogram_Postfire',
     hAxis: { title: 'NDVI' },
-    vAxis: { title: 'Pixel Count' , viewWindow: {'min': 0, 'max': 250000}}
+    vAxis: { title: 'Pixel Count' , viewWindow: {'min': 0, 'max': 20000}}
 });
 
 var histo_NDVI_2022 = ui.Chart.image.histogram({
   image: NDVI_2022,
-  region: geometry,
+  region: affectedAreaCEMS,
   scale: 8,
   maxBuckets: 50,
   minBucketWidth: 0.01,
@@ -82,7 +82,7 @@ var histo_NDVI_2022 = ui.Chart.image.histogram({
   .setOptions({
     title: 'NDVI Histogram_2022',
     hAxis: { title: 'NDVI' },
-    vAxis: { title: 'Pixel Count' , viewWindow: {'min': 0, 'max': 250000}}
+    vAxis: { title: 'Pixel Count', viewWindow: {'min': 0, 'max': 20000} }
 });
 
 

@@ -107,18 +107,18 @@ var ndvi_classified = bandIndexImg.expression(
 var ndviVis = {min: 0, max: 11 , palette:['#000000','#a50026','#d73027', '#f46d43', '#fdae61', '#fee08b', '#ffffbf', '#d9ef8b', '#a6d96a', '	#66bd63', '#1a9850', '#006837']};  
 //----------------------
 /* create a histogram of the NBR index values to visualize
-   the distribution of burned and unburned pixels:*/
+   the distribution of burned and unburned pixels:  */
 var histogram_ndvi_classified = ui.Chart.image.histogram({
   image: ndvi_classified,
-  region: geometry2,
-  scale: 10,
+  region: affectedAreaCEMS,
+  scale: 10,    
   maxBuckets: 50,
   minBucketWidth: 0.01,
 })
   .setOptions({
     title: 'NDVI Histogram based on Thresholds_2022',
-    hAxis: { title: 'NDVI category' },
-    vAxis: { title: 'Pixel Count' , 'viewWindow': {'min': 0, 'max': 800000}}
+    hAxis: { title: 'NDVI category' },    
+    vAxis: { title: 'Pixel Count'  , 'viewWindow': {'min': 0, 'max': 120000} }
 });
 
 
@@ -127,7 +127,7 @@ Map.centerObject(CEMS);
 Map.addLayer(ndvi_classified , ndviVis, 'NDVI1');
 //Map.addLayer(image);
 Map.addLayer(CEMS);
-//Map.add(histogram_ndvi_classified);
+Map.add(histogram_ndvi_classified);
 Map.addLayer(affectedAreaCEMS);
 Map.centerObject(affectedAreaCEMS);
 

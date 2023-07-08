@@ -120,7 +120,7 @@ var histogram_ndvi_classified = ui.Chart.image.histogram({
 //Map.centerObject(geometry);
 Map.addLayer(ndvi_classified , ndviVis , 'NDVI1');
 //Map.addLayer(image);
-Map.addLayer(geometry);
+Map.addLayer(CEMS);
 //Map.add(histogram_ndvi_classified);
 Map.addLayer(affectedAreaCEMS);
 Map.centerObject(affectedAreaCEMS);
@@ -195,4 +195,4 @@ for(var a = 0; a <= 11; a++){
   panel.add(list_legend(color[a], lc_class[a]))
 }
 
-Map.add(panel)
+//Map.add(panel)

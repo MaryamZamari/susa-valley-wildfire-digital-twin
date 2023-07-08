@@ -49,7 +49,7 @@ var NDVI_2022 = image_2022.expression(bandIndexExp).rename('NDVI');
 var histo_NDVI_prefire = ui.Chart.image.histogram({
   image: NDVI_prefire,
   region: affectedAreaCEMS,
-  scale: 50,
+  scale: 10,
   maxBuckets: 50,
   minBucketWidth: 0.01,
 })

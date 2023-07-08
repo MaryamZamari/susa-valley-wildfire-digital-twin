@@ -111,7 +111,7 @@ var histogram_ndvi_classified = ui.Chart.image.histogram({
   .setOptions({
     title: 'NDVI Histogram based on Thresholds_Postfire',
     hAxis: { title: 'NDVI category' },
-    vAxis: { title: 'Pixel Count' }
+    vAxis: { title: 'Pixel Count' , 'viewWindow': {'min': 0, 'max': 120000} }
 });
 
 
@@ -121,7 +121,7 @@ var histogram_ndvi_classified = ui.Chart.image.histogram({
 Map.addLayer(ndvi_classified , ndviVis , 'NDVI1');
 //Map.addLayer(image);
 Map.addLayer(geometry);
-//Map.add(histogram_ndvi_classified);
+Map.add(histogram_ndvi_classified);
 Map.addLayer(affectedAreaCEMS);
 Map.centerObject(affectedAreaCEMS);
 

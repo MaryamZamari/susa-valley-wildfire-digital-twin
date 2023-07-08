@@ -91,6 +91,19 @@ var burnSeverity = delta_nbr.expression(
 
 
 //histogram
+var histogram_burnSeverity = ui.Chart.image.histogram({
+  image: delta_nbr,
+  region: affectedAreaCEMS,
+  scale: 10,
+  maxBuckets: 50,
+  minBucketWidth: 0.01,
+})
+  .setOptions({
+    title: 'Burn Severity Histogram',
+    hAxis: { title: 'NDVI category' },
+    vAxis: { title: 'Pixel Count' }
+}); 
+
 var histogram_burnSeverity_thresh = ui.Chart.image.histogram({
   image: burnSeverity,
   region: affectedAreaCEMS,
@@ -104,12 +117,14 @@ var histogram_burnSeverity_thresh = ui.Chart.image.histogram({
     vAxis: { title: 'Pixel Count' , 'viewWindow': {'min': 0, 'max': 120000} }
 }); 
 
+
 // Display the burn severity map       )       
 var visBurnSeverity = {min: 0, max: 7, palette: ['#778835', '#a7c050', '#0be344', '#f8fc11', '#f8b140', '#f8671a', '#a600d4', 'Grey']};
 Map.addLayer(burnSeverity, visBurnSeverity, 'Burn Severity');
 Map.addLayer(CEMS);  
 Map.addLayer(affectedAreaCEMS); 
 Map.add(histogram_burnSeverity_thresh); 
+Map.add(histogram_burnSeverity); 
 Map.centerObject(CEMS);
 
 Export.image.toDrive({

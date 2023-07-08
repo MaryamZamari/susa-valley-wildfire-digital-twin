@@ -7,7 +7,7 @@ var geometry =
           [7.003083958928165, 45.110246992050875],
           [7.219377293889102, 45.110246992050875],
           [7.219377293889102, 45.21869339705463]]], null, false),
-    imageObject = ee.Image("image_prefire_withCoordinatesAndTime");
+    affectedAreaCEMS = ee.FeatureCollection("users/ZamariMaryam/EMSR253_02SUSA_DEL_v2_observed_event_a");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // Load the three images.
 //level C1: TOA
@@ -24,6 +24,9 @@ var image_2022 = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20220618T102559_2022
                          .set('system:time_start', ee.Date('2022-06-18').millis());
      print('image_2022', image_2022);  
      
+//locad delinieation map
+
+     
 //------------------------------calculate NDVI----------------------------------------
 var ndvi_prefire = image_prefire.normalizedDifference(['B8', 'B4']).rename('NDVI');
 var ndvi_postfire = image_postfire.normalizedDifference(['B8', 'B4']).rename('NDVI');
@@ -33,7 +36,7 @@ var ndvi_2022 = image_2022.normalizedDifference(['B8', 'B4']).rename('NDVI');
 // Reduce the NDVI image to a mean value for each image.
 var ndvi_prefire_mean = ndvi_prefire.reduceRegion({
   reducer: ee.Reducer.mean(),
-  geometry: ndvi_prefire.geometry(),
+  geometry: affectedAreaCEMS,
   scale: 10,
   maxPixels: 1e9
 }); 
@@ -42,13 +45,13 @@ print(ndvi_prefire_mean);
 
 var ndvi_postfire_mean = ndvi_postfire.reduceRegion({
   reducer: ee.Reducer.mean(),
-  geometry: ndvi_postfire.geometry(),
+  geometry: affectedAreaCEMS,
   scale: 10,
   maxPixels: 1e9
 });
 var ndvi_2022_mean = ndvi_2022.reduceRegion({
   reducer: ee.Reducer.mean(),
-  geometry: ndvi_2022.geometry(),
+  geometry: affectedAreaCEMS,
   scale: 10,
   maxPixels: 1e9
 });

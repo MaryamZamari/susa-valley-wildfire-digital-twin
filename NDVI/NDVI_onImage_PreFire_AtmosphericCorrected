@@ -15,13 +15,15 @@ var geometry =
           [7.029021402162807, 45.1146736921262],
           [7.2092658479635885, 45.1146736921262],
           [7.2092658479635885, 45.21972611576043]]], null, false),
-    table = ee.FeatureCollection("users/ZamariMaryam/EMSR253_02SUSA_DEL_v2_observed_event_a");
+    table = ee.FeatureCollection("users/ZamariMaryam/EMSR253_02SUSA_DEL_v2_observed_event_a"),
+    affectedAreaCEMS = ee.FeatureCollection("users/ZamariMaryam/EMSR253_02SUSA_DEL_v2_observed_event_a");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 var CEMS=    geometry2;
  geometry = 
     geometry;
     
   
+
 
   var imageTOA = ee.Image('COPERNICUS/S2_HARMONIZED/' + '20170704T103019_20170704T103637_T32TLR');
            
@@ -92,9 +94,9 @@ var ndviVis = {min: 0, max: 11 , palette:['#000000','#a50026','#d73027', '#f46d4
 //--------
 // create a histogram of the NBR index values to visualize  /*'viewWindow': {'min': 0, 'max': 800000}*/
  //  the distribution of burned and unburned pixels:
-/*var histogram_ndvi_classified = ui.Chart.image.histogram({
+var histogram_ndvi_classified = ui.Chart.image.histogram({
   image: ndvi_classified,
-  region: geometry,
+  region: affectedAreaCEMS,
   scale: 50,
   maxBuckets: 50,
   minBucketWidth: 0.01,
@@ -104,7 +106,7 @@ var ndviVis = {min: 0, max: 11 , palette:['#000000','#a50026','#d73027', '#f46d4
     hAxis: { title: 'NDVI category' },
     vAxis: { title: 'Pixel Count' ,  }
 }); 
-*/
+
 
 // Reduce the NDVI image to a mean value for each image.
 /*var ndvi_prefire_mean = bandIndexImg.reduceRegion({
@@ -117,18 +119,19 @@ var ndviVis = {min: 0, max: 11 , palette:['#000000','#a50026','#d73027', '#f46d4
 //print(ndvi_prefire_mean);
 
 Map.centerObject(CEMS);
-Map.addLayer(bandIndexImg , ndviVis_1, 'NDVI1');
-//Map.addLayer(ndvi_classified , ndviVis, 'NDVI2');
+//Map.addLayer(bandIndexImg , ndviVis_1, 'NDVI1');
+Map.addLayer(ndvi_classified , ndviVis, 'NDVI2');
 
 //Map.addLayer(image);
 //Map.addLayer(imageTOA);
-Map.addLayer(imageBOA);
+//Map.addLayer(imageBOA);
 
 Map.addLayer(CEMS);
 //Map.addLayer(table);
-//Map.add(histogram_ndvi_classified);
+Map.add(histogram_ndvi_classified);
 Map.addLayer(table);
 Map.centerObject(table);
+Map.addLayer(affectedAreaCEMS);
 
 Export.image.toDrive({
   image: bandIndexImg ,

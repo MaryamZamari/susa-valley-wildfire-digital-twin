@@ -37,7 +37,7 @@ var imageBoaSelect= imageBOA.select("B8" , "B12", "B4", "B3", "B2");
 // Expression using image band indices to calculate NDVI
 
 var bandIndexExp = '(b("B8") - b("B4")) / (b("B8") + b("B4"))';
-var bandIndexImg = imageBoaSelect.expression(bandIndexExp).rename('NDVI');
+var bandIndexImg = imageTOA.expression(bandIndexExp).rename('NDVI');
 
 //--------thresholds (lt)----------------------------
 var threshold_noVegetation= -0.2; //areas with little to no vegetation cover, such as bare soil, water bodies, or urban areas.
@@ -97,14 +97,14 @@ var ndviVis = {min: 0, max: 11 , palette:['#000000','#a50026','#d73027', '#f46d4
 var histogram_ndvi_classified = ui.Chart.image.histogram({
   image: ndvi_classified,
   region: affectedAreaCEMS,
-  scale: 50,
+  scale: 10,
   maxBuckets: 50,
   minBucketWidth: 0.01,
 })
   .setOptions({
     title: 'NDVI Histogram based on Thresholds_Prefire',
     hAxis: { title: 'NDVI category' },
-    vAxis: { title: 'Pixel Count' ,  }
+    vAxis: { title: 'Pixel Count' , 'viewWindow': {'min': 0, 'max': 120000} }
 }); 
 
 

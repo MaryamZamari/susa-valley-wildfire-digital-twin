@@ -27,7 +27,8 @@ var geometry =
         [[[7.029021402162807, 45.21972611576043],
           [7.029021402162807, 45.1146736921262],
           [7.2092658479635885, 45.1146736921262],
-          [7.2092658479635885, 45.21972611576043]]], null, false);
+          [7.2092658479635885, 45.21972611576043]]], null, false),
+    affectedAreaCEMS = ee.FeatureCollection("users/ZamariMaryam/EMSR253_02SUSA_DEL_v2_observed_event_a");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 geometry2 = 
     geometry2;
@@ -222,7 +223,7 @@ print('lowSeverityArea Fraction (%)', percentage_3); //high
    the distribution of burned and unburned pixels:*/
 var histogram_burnSeverity_thresh = ui.Chart.image.histogram({
   image: burnSeverity,
-  region: geoCEMS,
+  region: affectedAreaCEMS,
   scale: 10,
   maxBuckets: 50,
   minBucketWidth: 0.01,
@@ -235,7 +236,7 @@ var histogram_burnSeverity_thresh = ui.Chart.image.histogram({
 
 var histogram_burnSeverity = ui.Chart.image.histogram({
   image: delta_nbr,
-  region: geoCEMS,
+  region: affectedAreaCEMS,
   scale: 10,
   maxBuckets: 50,
   minBucketWidth: 0.01,

@@ -75,7 +75,7 @@ var histo_NDVI_postfire = ui.Chart.image.histogram({
 var histo_NDVI_2022 = ui.Chart.image.histogram({
   image: NDVI_2022,
   region: affectedAreaCEMS,
-  scale: 8,
+  scale: 10,
   maxBuckets: 50,
   minBucketWidth: 0.01,
 })

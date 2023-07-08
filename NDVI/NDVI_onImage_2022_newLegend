@@ -127,7 +127,7 @@ Map.centerObject(CEMS);
 Map.addLayer(ndvi_classified , ndviVis, 'NDVI1');
 //Map.addLayer(image);
 Map.addLayer(CEMS);
-Map.add(histogram_ndvi_classified);
+//Map.add(histogram_ndvi_classified);
 Map.addLayer(affectedAreaCEMS);
 Map.centerObject(affectedAreaCEMS);
 

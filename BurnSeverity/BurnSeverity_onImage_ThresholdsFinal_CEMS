@@ -114,7 +114,7 @@ var histogram_burnSeverity_thresh = ui.Chart.image.histogram({
   .setOptions({
     title: 'Burn Severity Histogram based on Thresholds',
     hAxis: { title: 'NDVI category' },
-    vAxis: { title: 'Pixel Count' , 'viewWindow': {'min': 0, 'max': 120000} }
+    vAxis: { title: 'Pixel Count'  }
 }); 
 
 

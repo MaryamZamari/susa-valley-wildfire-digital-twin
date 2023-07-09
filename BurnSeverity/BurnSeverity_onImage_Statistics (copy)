@@ -19,11 +19,13 @@ var geometry =
         [[[7.011323522807711, 45.20994425310098],
           [7.011323522807711, 45.11601945581964],
           [7.214570593120211, 45.11601945581964],
-          [7.214570593120211, 45.20994425310098]]], null, false);
+          [7.214570593120211, 45.20994425310098]]], null, false),
+    affectedAreaCEMS = ee.FeatureCollection("users/ZamariMaryam/EMSR253_02SUSA_DEL_v2_observed_event_a");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 geometry2 = 
     geometry2;
-    
+
+
 // importing pre-fire and post-fire NBR images (the same dates for which NBR was calculated).
 var prefire_image = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20170619T103021_20170619T103806_T32TLR')
                       .select('B8', 'B12');
@@ -46,7 +48,7 @@ var clipped_dNBR = delta_nbr.clip(geometry);
 //thresholds lt
 var threshold_enhanced_regrowth_high = -0.3;  
 var threshold_enhanced_regrowth_low = -0.1 ; 
-var threshold_unburned= 0.3;//0.99;
+var threshold_unburned= 0;//0.99;
 var threshold_low_severity= 0.4;
 var threshold_moderate_low_severity= 0.5;
 var threshold_moderate_high_severity= 0.7;
@@ -120,7 +122,7 @@ var areas6 = totalAreaImage
   .addBands(highSeverityAreaImage)
   .reduceRegion({
     reducer: ee.Reducer.sum(),
-    geometry: geometry2,
+    geometry: affectedAreaCEMS,
     scale: 10,
     crs: 'EPSG:32632',
     maxPixels: 1e13
@@ -135,7 +137,7 @@ var areas5 = totalAreaImage
   .addBands(moderateHighSeverityAreaImg)
   .reduceRegion({
     reducer: ee.Reducer.sum(),
-    geometry: geometry2,
+    geometry: affectedAreaCEMS,
     scale: 10,
     crs: 'EPSG:32632',
     maxPixels: 1e13
@@ -150,7 +152,7 @@ var areas4 = totalAreaImage
   .addBands(moderateLowSeverityAreaImage)
   .reduceRegion({
     reducer: ee.Reducer.sum(),
-    geometry: geometry2,
+    geometry: affectedAreaCEMS,
     scale: 10,
     crs: 'EPSG:32632',
     maxPixels: 1e13
@@ -165,7 +167,7 @@ var areas3 = totalAreaImage
   .addBands(lowSeverityAreaImage)
   .reduceRegion({
     reducer: ee.Reducer.sum(),
-    geometry: geometry2,
+    geometry: affectedAreaCEMS,
     scale: 10,
     crs: 'EPSG:32632',
     maxPixels: 1e13
@@ -214,7 +216,7 @@ print('lowSeverityArea Fraction (%)', percentage_3); //high
    the distribution of burned and unburned pixels:*/
 var histogram_burnSeverity_thresh = ui.Chart.image.histogram({
   image: burnSeverity,
-  region: geometry2,
+  region: affectedAreaCEMS,
   scale: 10,
   maxBuckets: 50,
   minBucketWidth: 0.01,
@@ -227,7 +229,7 @@ var histogram_burnSeverity_thresh = ui.Chart.image.histogram({
 
 var histogram_burnSeverity = ui.Chart.image.histogram({
   image: delta_nbr,
-  region: geometry2,
+  region: affectedAreaCEMS,
   scale: 10,
   maxBuckets: 50,
   minBucketWidth: 0.01,

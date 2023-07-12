@@ -7,10 +7,14 @@ var geoCEMS =
           [7.029021402162807, 45.1146736921262],
           [7.2092658479635885, 45.1146736921262],
           [7.2092658479635885, 45.21972611576043]]], null, false),
-    waterBodies = ee.FeatureCollection("users/ZamariMaryam/EMSR253_02SUSA_DEL_v2_hydrography_a"),
-    waterWays = ee.FeatureCollection("users/ZamariMaryam/EMSR253_02SUSA_DEL_v2_hydrography_l");
+    affectedAreaCEMS = ee.FeatureCollection("users/ZamariMaryam/EMSR253_02SUSA_DEL_v2_observed_event_a");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
+
+// Cut the polygon inside the main geometry
+
+var resultGeometry = geoCEMS.difference(affectedAreaCEMS, ee.ErrorMargin(1e-3));
+print(resultGeometry);
 
 //--------------------------------------------------------------------------------
 //load Image
@@ -96,17 +100,18 @@ print('Projection B12: ', projectionb12);
 
 
 //----------------visualisation commands------------
-print(image);
+//print(image);
 Map.centerObject(geoCEMS);
-Map.addLayer(burnedNBRImage);
+//Map.addLayer(burnedNBRImage);
 Map.addLayer(bandIndexImg , nbrVis, 'NBR1');
 //Map.addLayer(image); 
 //Map.addLayer(bandIndexImg);
-Map.addLayer(geoCEMS);
+
 
 //Map.centerObject(geometry);
 
-
+// Add the styled feature collection to the map
+Map.addLayer(resultGeometry);
 
 //-----------download task----------------------------
 Export.image.toDrive({

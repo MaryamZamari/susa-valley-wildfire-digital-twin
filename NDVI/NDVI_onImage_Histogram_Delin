@@ -15,7 +15,10 @@ var geometry =
 //For NDVI I would need the same time of the year(Preferably)---> Dates: 
 /*var image_prefire = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20170619T103021_20170619T103806_T32TLR') //Pre_Fire image
                          .select(['B4','B8']); */
-          
+          // Cut the polygon inside the main geometry
+
+var resultGeometry = geoCEMS.difference(affectedAreaCEMS, ee.ErrorMargin(1e-3));
+print(resultGeometry);
 
 
 //---------------------------------------------------------

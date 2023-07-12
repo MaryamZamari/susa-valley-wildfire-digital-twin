@@ -94,7 +94,7 @@ var histo_NDVI_2022 = ui.Chart.image.histogram({
 print(histo_NDVI_prefire);
 print(histo_NDVI_postfire);
 print(histo_NDVI_2022);
-
+Map.addLayer(resultGeometry);
 Map.centerObject(geometry);
 
 

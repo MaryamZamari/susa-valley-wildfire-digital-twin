@@ -7,10 +7,21 @@ var geometry =
           [7.028833165471133, 45.11509275182575],
           [7.209764256779727, 45.11460819436321],
           [7.209764256779727, 45.218935234003915]]], null, false),
-    affectedAreaCEMS = ee.FeatureCollection("users/ZamariMaryam/EMSR253_02SUSA_DEL_v2_observed_event_a");
+    affectedAreaCEMS = ee.FeatureCollection("users/ZamariMaryam/EMSR253_02SUSA_DEL_v2_observed_event_a"),
+    geometry2 = 
+    /* color: #ffc82d */
+    /* shown: false */
+    ee.Geometry.Polygon(
+        [[[7.029021402162807, 45.21972611576043],
+          [7.029021402162807, 45.1146736921262],
+          [7.2092658479635885, 45.1146736921262],
+          [7.2092658479635885, 45.21972611576043]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
-
+var geoCEMS = 
+    /* color: #ffc82d */
+    /* shown: false */
+    geometry2;
         
 //For NDVI I would need the same time of the year(Preferably)---> Dates: 
 /*var image_prefire = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20170619T103021_20170619T103806_T32TLR') //Pre_Fire image

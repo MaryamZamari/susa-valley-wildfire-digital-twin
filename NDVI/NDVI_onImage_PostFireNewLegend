@@ -15,7 +15,7 @@ var geometry =
           [7.011323522807711, 45.11601945581964],
           [7.214570593120211, 45.11601945581964],
           [7.214570593120211, 45.20994425310098]]], null, false),
-    CEMS = 
+    geoCEMS = 
     /* color: #d63000 */
     /* shown: false */
     ee.Geometry.Polygon(
@@ -35,10 +35,9 @@ var geometry =
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
  geometry2 = 
     geometry2;
-    
+     var resultGeometry = geoCEMS.difference(affectedAreaCEMS, ee.ErrorMargin(1e-3));
 var geoCEMS = 
-    /* color: #ffc82d */
-    /* shown: false */
+    
     geometry3;    
     
 var resultGeometry = geoCEMS.difference(affectedAreaCEMS, ee.ErrorMargin(1e-3));
@@ -146,7 +145,7 @@ Export.image.toDrive({
   image: bandIndexImg /*image*/,
   description: 'S2SrHarmonized-20180619T103019_20180619T103559_T32TLR_NDVI_Postfire_CEMS',
   scale: 10,
-  region: CEMS,
+  region: geoCEMS,
 })
 
 //---------Add Legend-----------------------

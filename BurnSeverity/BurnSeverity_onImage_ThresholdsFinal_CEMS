@@ -20,7 +20,7 @@ var geometry =
           [7.011323522807711, 45.11601945581964],
           [7.214570593120211, 45.11601945581964],
           [7.214570593120211, 45.20994425310098]]], null, false),
-    CEMS = 
+    geoCEMS = 
     /* color: #d63000 */
     /* shown: false */
     ee.Geometry.Polygon(
@@ -32,7 +32,11 @@ var geometry =
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 geometry2 = 
     geometry2;
-          
+          // Cut the polygon inside the main geometry
+
+var resultGeometry = geoCEMS.difference(affectedAreaCEMS, ee.ErrorMargin(1e-3));
+print(resultGeometry);
+
 // importing pre-fire and post-fire NBR images (the same dates for which NBR was calculated).a
 var prefire_image = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20170619T103021_20170619T103806_T32TLR')
                       .select('B8', 'B12');
@@ -121,17 +125,18 @@ var histogram_burnSeverity_thresh = ui.Chart.image.histogram({
 // Display the burn severity map       )       
 var visBurnSeverity = {min: 0, max: 7, palette: ['#778835', '#a7c050', '#0be344', '#f8fc11', '#f8b140', '#f8671a', '#a600d4', 'Grey']};
 Map.addLayer(burnSeverity, visBurnSeverity, 'Burn Severity');
-Map.addLayer(CEMS);  
-Map.addLayer(affectedAreaCEMS); 
-Map.add(histogram_burnSeverity_thresh); 
-Map.add(histogram_burnSeverity); 
-Map.centerObject(CEMS);
+Map.addLayer(geoCEMS);  
+//Map.addLayer(affectedAreaCEMS); 
+Map.addLayer(resultGeometry);
+//Map.add(histogram_burnSeverity_thresh); 
+//Map.add(histogram_burnSeverity); 
+Map.centerObject(geoCEMS);
 
 Export.image.toDrive({
   image: burnSeverity /*image*/,
   description: 'S2SrHarmonized-20170619T103021_20170619T103806_T32TLR_BurnSeverity_newBoundary',
   scale: 10,
-  region: CEMS,
+  region: geoCEMS,
 })
 //---------Add Legend-----------------------
 var panel = ui.Panel({

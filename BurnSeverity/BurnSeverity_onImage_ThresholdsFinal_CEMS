@@ -32,7 +32,7 @@ var postfire_nbr = postfire_image.expression(bandIndexExp).rename('NBR_Postfire'
 var delta_nbr = prefire_nbr.subtract(postfire_nbr).rename('dNBR');
 
 // Clip the dNBR image to your geometry
-var clipped_dNBR = delta_nbr.clip(geometry);
+
 print("delta_nbr", delta_nbr);
 
 //thresholds lt

@@ -145,7 +145,7 @@ print(image);
 Map.centerObject(affectedAreaCEMS);
 //Map.addLayer(burnedNBRImage);
 Map.addLayer(bandIndexImg , nbrVis, 'NBR1');
-Map.addLayer(affectedAreaCEMS);
+Map.addLayer(resultGeometry);
 
 // Add the histogram chart to the map
 Map.add(histogram_NBR);

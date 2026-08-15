@@ -13,6 +13,10 @@ var affectedAreaCEMS = ee.FeatureCollection("users/ZamariMaryam/EMSR253_02SUSA_D
                         // .mosaic().clip(geometry) 
                          .select(['B12','B8']); 
 
+
+// Cut the polygon inside the main geometry
+var resultGeometry = geoCEMS.difference(affectedAreaCEMS, ee.ErrorMargin(1e-3));
+print(resultGeometry);
 //---------------------------------------------------------
 
 // Expression using image band indices to calculate NBR
@@ -30,7 +34,7 @@ var nbrVis = {min: -1, max: 1 , palette:['red','orange','green']};
    the distribution of burned and unburned pixels:*/
 var histogram_NBR = ui.Chart.image.histogram({
   image: bandIndexImg,
-  region: geometry2,
+  region: affectedAreaCEMS,
   scale: 10,
   maxBuckets: 50,
   minBucketWidth: 0.01,
@@ -42,14 +46,14 @@ var histogram_NBR = ui.Chart.image.histogram({
 });
 
 print(image);
-Map.centerObject(geometry);
+Map.centerObject(resultGeometry);
 Map.addLayer(bandIndexImg , nbrVis, 'NBR1');
-Map.addLayer(geometry);
+Map.addLayer(resultGeometry);
 Map.add(histogram_NBR)
 
 Export.image.toDrive({
   image: bandIndexImg /*image*/,
   description: 'S2SrHarmonized-20170619T103021_20170619T103806_T32TLR_NBR',
   scale: 10,
-  region: geometry,
+  region: affectedAreaCEMS,
 })

@@ -12,6 +12,9 @@ var affectedAreaCEMS = ee.FeatureCollection("users/ZamariMaryam/EMSR253_02SUSA_D
                         // .mosaic().clip(geometry) 
                          .select(['B12','B8','B4','B3','B2']); 
 
+// Cut the polygon inside the main geometry
+var resultGeometry = geoCEMS.difference(affectedAreaCEMS, ee.ErrorMargin(1e-3));
+print(resultGeometry);
 //---------------------------------------------------------
 
 // Expression using image band indices to calculate NBR

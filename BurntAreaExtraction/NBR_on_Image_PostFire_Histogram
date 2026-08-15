@@ -18,6 +18,11 @@ var BurnedRoi =
                          .select(['B12','B8'])
                           .updateMask(ee.Image('JRC/GSW1_2/GlobalSurfaceWater').select('max_extent').not()); // Mask out water areas; 
 
+// Cut the polygon inside the main geometry
+var resultGeometry = geoCEMS.difference(affectedAreaCEMS, ee.ErrorMargin(1e-3));
+print(resultGeometry);
+
+
 // Get the projection of the image
 var projectionb8 = image.select(['B8']).projection();
 var projectionb12 = image.select(['B12']).projection();

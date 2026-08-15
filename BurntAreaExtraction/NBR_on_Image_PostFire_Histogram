@@ -1,6 +1,9 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var affectedAreaCEMS = ee.FeatureCollection("users/ZamariMaryam/EMSR253_02SUSA_DEL_v2_observed_event_a"),
-    geoCEMS = /* color: #afafaf */ee.Geometry.Polygon(
+    geoCEMS = 
+    /* color: #afafaf */
+    /* shown: false */
+    ee.Geometry.Polygon(
         [[[7.029021402162807, 45.21972611576043],
           [7.029021402162807, 45.1146736921262],
           [7.2092658479635885, 45.1146736921262],

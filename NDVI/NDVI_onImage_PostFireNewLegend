@@ -14,54 +14,38 @@ var geometry =
         [[[7.011323522807711, 45.20994425310098],
           [7.011323522807711, 45.11601945581964],
           [7.214570593120211, 45.11601945581964],
-          [7.214570593120211, 45.20994425310098]]], null, false),
-    geoCEMS = 
-    /* color: #d63000 */
-    /* shown: false */
-    ee.Geometry.Polygon(
-        [[[7.029021402162807, 45.21972611576043],
-          [7.029021402162807, 45.1146736921262],
-          [7.2092658479635885, 45.1146736921262],
-          [7.2092658479635885, 45.21972611576043]]], null, false),
-    affectedAreaCEMS = ee.FeatureCollection("users/ZamariMaryam/EMSR253_02SUSA_DEL_v2_observed_event_a"),
-    geometry3 = 
-    /* color: #ffc82d */
-    /* shown: false */
-    ee.Geometry.Polygon(
-        [[[7.029021402162807, 45.21972611576043],
-          [7.029021402162807, 45.1146736921262],
-          [7.2092658479635885, 45.1146736921262],
-          [7.2092658479635885, 45.21972611576043]]], null, false);
+          [7.214570593120211, 45.20994425310098]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
-
- 
- 
- 
+//
  geometry2 = 
     geometry2;
-     var resultGeometry = geoCEMS.difference(affectedAreaCEMS, ee.ErrorMargin(1e-3));
-var geoCEMS = 
-    
-    geometry3;    
-    
-var resultGeometry = geoCEMS.difference(affectedAreaCEMS, ee.ErrorMargin(1e-3));
-print(resultGeometry);
-
-//For NDVI I would need the same time of the year(Preferably)--> Dates: 
-var image = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20180619T103019_20180619T103559_T32TLR') //Pre_Fire image
+/*var image = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20170619T103021_20170619T103806_T32TLR') //Pre_Fire image
                         // .mosaic().clip(geometry) 
                          .select(['B4','B8','B3','B2']); 
+  */
+  var imageTOA = ee.Image('COPERNICUS/S2_HARMONIZED/' + '20170704T103019_20170704T103637_T32TLR');
+              //     .select(['B4','B3','B2','B8','B12', 'B11']);
+       
+  //Importing the SIAC atmospheric correction module
+var siac = require('users/marcyinfeng/utils:SIAC');            
+var imageBOA = siac.get_sur(imageTOA);
 
+print('image BOA: ' , imageBOA);
+//level C1: TOA
+/*var sentinel2 = ee.ImageCollection('COPERNICUS/S2_HARMONIZED')
+                  .filterDate('2017-06-20', '2017-07-10')
+                  .filterBounds(geometry2)
+                  // Pre-filter to get less cloudy granules.
+                  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 20))
+                   .select(['B4','B3','B2','B8','B12']);
+                 
+var s2_median = sentinel2.reduce(ee.Reducer.median()) */
 //---------------------------------------------------------
-
-// Expression using image band indices to calculate NBR
+// Expression using image band indices to calculate NDVI
+//var bandIndexExp = '(b("B8_median") - b("B4_median")) / (b("B8_median") + b("B4_median"))';
 var bandIndexExp = '(b("B8") - b("B4")) / (b("B8") + b("B4"))';
-var bandIndexImg = image.expression(bandIndexExp).rename('NDVI');
+var bandIndexImg = imageBOA.expression(bandIndexExp).rename('NDVI');
 
-
-//---------------------Visualisation phase ----------------------------------------------
-// Visualization parameters for NDVI.
-//var nbrVis = {min: -1, max: 1 , palette:['#000000','#a50026','#d73027', '#f46d43', '#fdae61', '#fee08b', '#ffffbf', '#d9ef8b', '#a6d96a', '	#66bd63', '#1a9850', '#006837']};  
 //--------thresholds (lt)----------------------------
 var threshold_noVegetation= -0.2; //areas with little to no vegetation cover, such as bare soil, water bodies, or urban areas.
 var threshold_sparseGrassland= 0;
@@ -108,49 +92,47 @@ var ndvi_classified = bandIndexImg.expression(
     }).rename(['NDVI']);
 
 
-// Display the NDVI map       )       
-//var visNdvi = {min: 0, max: 6, palette: ['#0066ff', '#d9d9d9', '#f7e9b2', '#a6d887', '#6abf49', '#006400']};
-//Map.addLayer(bandIndexImg , ndviVis , 'NDVI1');
-
+// Display the burn severity map       )       
+var ndviVis_1 = {min: -1, max: 1 , palette:['#000000','#a50026','#d73027', '#f46d43', '#fdae61', '#fee08b', '#ffffbf', '#d9ef8b', '#a6d96a', '	#66bd63', '#1a9850', '#006837']}; 
 //---------------------Visualisation phase ----------------------------------------------
 // Visualization parameters for NDVI.
 var ndviVis = {min: 0, max: 11 , palette:['#000000','#a50026','#d73027', '#f46d43', '#fdae61', '#fee08b', '#ffffbf', '#d9ef8b', '#a6d96a', '	#66bd63', '#1a9850', '#006837']};  
 
-//---------------------Test For Categories------------------------------s
-/* create a histogram of the NBR index values to visualize
-   the distribution of burned and unburned pixels:*/
+//--------
+// create a histogram of the NBR index values to visualize
+ //  the distribution of burned and unburned pixels:
 var histogram_ndvi_classified = ui.Chart.image.histogram({
   image: ndvi_classified,
-  region: affectedAreaCEMS,
+  region: geometry2,
   scale: 10,
   maxBuckets: 50,
   minBucketWidth: 0.01,
 })
   .setOptions({
-    title: 'NDVI Histogram based on Thresholds_Postfire',
+    title: 'NDVI Histogram based on Thresholds_Prefire',
     hAxis: { title: 'NDVI category' },
-    vAxis: { title: 'Pixel Count' , 'viewWindow': {'min': 0, 'max': 120000} }
+    vAxis: { title: 'Pixel Count' , 'viewWindow': {'min': 0, 'max': 800000}}
 });
 
 
-
-//print(image);
 //Map.centerObject(geometry);
-Map.addLayer(ndvi_classified , ndviVis , 'NDVI1');
+Map.addLayer(bandIndexImg , ndviVis_1, 'NDVI1');
+Map.addLayer(ndvi_classified , ndviVis, 'NDVI2');
+
 //Map.addLayer(image);
-//Map.addLayer(CEMS);
+//Map.addLayer(imageTOA);
+Map.addLayer(imageBOA);
+
+Map.addLayer(geometry);
 //Map.add(histogram_ndvi_classified);
-//Map.addLayer(affectedAreaCEMS);
-Map.addLayer(resultGeometry);
 
-Map.centerObject(affectedAreaCEMS);
-
-Export.image.toDrive({
-  image: bandIndexImg /*image*/,
-  description: 'S2SrHarmonized-20180619T103019_20180619T103559_T32TLR_NDVI_Postfire_CEMS',
+/*Export.image.toDrive({
+  image: bandIndexImg ,
+  description: 'S2Harmonized-20170704T103019_20170704T103637_T32TLR_NDVI_Prefire',
   scale: 10,
-  region: geoCEMS,
+  region: geometry,
 })
+*/
 
 //---------Add Legend-----------------------
 var panel = ui.Panel({
@@ -173,7 +155,7 @@ panel.add(title)
 
 var color = ['#000000','#a50026','#d73027','#f46d43', '#fdae61', '#fee08b', '#ffffbf', '#d9ef8b', '#a6d96a', '#66bd63', '#1a9850', '#006837'];
 
-var lc_class = ['little/no vegetation cover,i.e bare soil, water bodies, or urban areas',
+var lc_class = ['little/vegetation cover,i.e bare soil, water bodies, or urban areas',
                 'sparse vegetation i.e grasslands or shrublands',
                 'sparse vegetation/degraded land/recently grown',
                 'moderate vegetation cover,',
@@ -185,8 +167,6 @@ var lc_class = ['little/no vegetation cover,i.e bare soil, water bodies, or urba
                 'extremely dense vegetation cover',
                 'near-optimal vegetation density and productivity',
                 'optimal vegetation density and productivity']
-
-//---------Add Legend-----------------------
 
 var list_legend = function(color, description) {
   
@@ -215,4 +195,4 @@ for(var a = 0; a <= 11; a++){
   panel.add(list_legend(color[a], lc_class[a]))
 }
 
-//Map.add(panel)
+Map.add(panel)

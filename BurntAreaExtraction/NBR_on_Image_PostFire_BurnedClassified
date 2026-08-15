@@ -59,7 +59,7 @@ var BurnedRoi =
     geometry2;
 
 geometry2 = 
-    geometry2;
+    geometry2;                                    
  var image = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20171116T103311_20171116T103542_T32TLR') //Post_Fire image
                         // .mosaic().clip(geometry) 
                          .select(['B12','B8'])
@@ -122,26 +122,7 @@ Map.addLayer(nbr_classified , nbrVis, 'NBR1');
 //Map.addLayer(geometry2);
 Map.addLayer(resultGeometry);
 
-/*
-- -1 < NBR < -0.9: Severe burn
-- -0.9 < NBR < -0.8: Moderate to severe burn
-- -0.8 < NBR < -0.7: Moderate burn
-- -0.7 < NBR < -0.6: Moderate to low burn
-- -0.6 < NBR < -0.5: Low burn
-- -0.5 < NBR < -0.4: Very low burn
-- -0.2 < NBR < -0.1: No burn or very low severity burn
-- -0.1 < NBR < 0: No burn or low severity burn        
-*/ 
 
-/*-0.9 < NBR < -1: #8B0000 (Dark Red)
--0.8 < NBR < -0.9: #FF0000 (Red)
--0.7 < NBR < -0.8: #FF4500 (Orange-Red)
--0.7 < NBR < -0.6: #FFA500 (Orange)
--0.6 < NBR < -0.5: #FFD700 (Yellow-Orange)
--0.5 < NBR < -0.4: #FFFF00 (Yellow)
--0.2 < NBR < -0.1: #90EE90 (Light Green)
--0.1 < NBR < 0: #008000 (Green) 
-*/
 
 //---------Add Legend-----------------------
 var panel = ui.Panel({

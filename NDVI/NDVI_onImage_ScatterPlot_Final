@@ -1,3 +1,21 @@
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var geometry = 
+    /* color: #ffffff */
+    /* shown: false */
+    ee.Geometry.Polygon(
+        [[[7.003083958928165, 45.21869339705463],
+          [7.003083958928165, 45.110246992050875],
+          [7.219377293889102, 45.110246992050875],
+          [7.219377293889102, 45.21869339705463]]], null, false);
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
+var geometry = 
+    /* color: #ffffff */
+    /* shown: false */
+    geometry,
+    affectedAreaCEMS = ee.FeatureCollection("users/ZamariMaryam/EMSR253_02SUSA_DEL_v2_observed_event_a");
+
+
+
 // Load the three images.
 //level C1: TOA
 var image_prefire = ee.Image('COPERNICUS/S2_HARMONIZED/' + '20170704T103019_20170704T103637_T32TLR')  //Pre_Fire image

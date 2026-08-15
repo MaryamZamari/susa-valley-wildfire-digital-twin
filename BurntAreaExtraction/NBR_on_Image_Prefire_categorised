@@ -1,32 +1,12 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var geometry = 
-    /* color: #ffc82d */
-    /* shown: false */
-    ee.Geometry.Polygon(
+var affectedAreaCEMS = ee.FeatureCollection("users/ZamariMaryam/EMSR253_02SUSA_DEL_v2_observed_event_a"),
+    geoCEMS = /* color: #98ff00 */ee.Geometry.Polygon(
         [[[7.029021402162807, 45.21972611576043],
           [7.029021402162807, 45.1146736921262],
           [7.2092658479635885, 45.1146736921262],
-          [7.2092658479635885, 45.21972611576043]]], null, false),
-    geometry2 = 
-    /* color: #ffffff */
-    /* shown: false */
-    ee.Geometry.Polygon(
-        [[[7.003083958928165, 45.21869339705463],
-          [7.003083958928165, 45.110246992050875],
-          [7.219377293889102, 45.110246992050875],
-          [7.219377293889102, 45.21869339705463]]], null, false);
+          [7.2092658479635885, 45.21972611576043]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
-var geometry = 
-    /* color: #ffffff */
-    /* shown: false */
-    geometry2,
-    geoCEMS = 
-    /* color: #ffc82d */
-    /* shown: false */
-    geometry;
-          
-          
- var image = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20170619T103021_20170619T103806_T32TLR') //Post_Fire image
+var image = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20170619T103021_20170619T103806_T32TLR') //Post_Fire image
                         // .mosaic().clip(geometry) 
                          .select(['B12','B8']); 
 

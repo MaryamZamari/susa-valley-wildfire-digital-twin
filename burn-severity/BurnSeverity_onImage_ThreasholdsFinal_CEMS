@@ -35,13 +35,6 @@ var delta_nbr = prefire_nbr.subtract(postfire_nbr).rename('dNBR');
 print("delta_nbr", delta_nbr);
 
 //thresholds lt
-/*var threshold_enhanced_regrowth_high = -0.251;  
-var threshold_enhanced_regrowth_low = -0.101 ; 
-var threshold_unburned= 0.1;//0.99;
-var threshold_low_severity= 0.27;
-var threshold_moderate_low_severity= 0.44;
-var threshold_moderate_high_severity= 0.66;
-var threshold_high_severity= 1;//;*/
 var threshold_enhanced_regrowth_high = -0.3;  
 var threshold_enhanced_regrowth_low = -0.1 ; 
 var threshold_unburned= 0.3;//0.99;
@@ -102,12 +95,8 @@ var histogram_burnSeverity_thresh = ui.Chart.image.histogram({
 // Display the burn severity map       )       
 var visBurnSeverity = {min: 0, max: 7, palette: ['#778835', '#a7c050', '#0be344', '#f8fc11', '#f8b140', '#f8671a', '#a600d4', 'Grey']};
 Map.addLayer(burnSeverity, visBurnSeverity, 'Burn Severity');
-Map.addLayer(geoCEMS);  
-//Map.addLayer(affectedAreaCEMS); 
 Map.addLayer(resultGeometry);
-//Map.add(histogram_burnSeverity_thresh); 
-//Map.add(histogram_burnSeverity); 
-Map.centerObject(geoCEMS);
+Map.centerObject(resultGeometry);
 
 Export.image.toDrive({
   image: burnSeverity /*image*/,

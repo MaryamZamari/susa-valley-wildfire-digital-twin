@@ -1,18 +1,5 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var geometry = 
-    /* color: #d63000 */
-    /* shown: false */
-    /* displayProperties: [
-      {
-        "type": "rectangle"
-      }
-    ] */
-    ee.Geometry.Polygon(
-        [[[7.019220128361758, 45.18786421842558],
-          [7.019220128361758, 45.14211379100212],
-          [7.169595494572696, 45.14211379100212],
-          [7.169595494572696, 45.18786421842558]]], null, false),
-    geometry2 = 
+var geoCEMS = 
     /* color: #ffc82d */
     /* shown: false */
     ee.Geometry.Polygon(
@@ -20,27 +7,12 @@ var geometry =
           [7.029021402162807, 45.1146736921262],
           [7.2092658479635885, 45.1146736921262],
           [7.2092658479635885, 45.21972611576043]]], null, false),
-    geometry3 = 
-    /* color: #7aa93d */
-    /* shown: false */
-    /* displayProperties: [
-      {
-        "type": "rectangle"
-      }
-    ] */
-    ee.Geometry.Polygon(
-        [[[7.011323522807711, 45.20994425310098],
-          [7.011323522807711, 45.11601945581964],
-          [7.214570593120211, 45.11601945581964],
-          [7.214570593120211, 45.20994425310098]]], null, false);
+    affectedAreaCEMS = ee.FeatureCollection("users/ZamariMaryam/EMSR253_02SUSA_DEL_v2_observed_event_a");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
-var BurnedRoi = geometry,
-    geometry2 = geometry3,
     affectedAreaCEMS = ee.FeatureCollection("users/ZamariMaryam/EMSR253_02SUSA_DEL_v2_observed_event_a"),
-    geoCEMS = geometry2;
-
-geometry2 = 
-    geometry2;                                    
+    geometry2 = 
+    geometry2;  
+    
  var image = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20171116T103311_20171116T103542_T32TLR') //Post_Fire image
                          .select(['B12','B8'])
                           .updateMask(ee.Image('JRC/GSW1_2/GlobalSurfaceWater').select('max_extent').not()); // Mask out water areas; 
@@ -99,7 +71,6 @@ var nbrVis = {min: 0, max: 8 , palette:['#8B0000','#FF0000','#FF4500', '#FFA500'
 //----------------visualisation commands------------
 Map.centerObject(geometry2);
 Map.addLayer(nbr_classified , nbrVis, 'NBR1');
-//Map.addLayer(geometry2);
 Map.addLayer(resultGeometry);
 
 

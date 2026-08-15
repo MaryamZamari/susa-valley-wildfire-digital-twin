@@ -1,0 +1,72 @@
+// Load the three images.
+//level C1: TOA
+var image_prefire = ee.Image('COPERNICUS/S2_HARMONIZED/' + '20170704T103019_20170704T103637_T32TLR')  //Pre_Fire image
+                         .select(['B4','B8'])
+                         .set('system:time_start', ee.Date('2017-07-04').millis());
+                         
+var image_postfire = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20180619T103019_20180619T103559_T32TLR') //Postfire_Fire image
+                         .select(['B4','B8'])
+                         .set('system:time_start', ee.Date('2018-06-19').millis());  
+                         
+var image_2022 = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20220618T102559_20220618T103528_T32TLR')     //present image
+                         .select(['B4','B8'])
+                         .set('system:time_start', ee.Date('2022-06-18').millis());
+     print('image_2022', image_2022);  
+     
+//locad delinieation map
+
+     
+//------------------------------calculate NDVI----------------------------------------
+var ndvi_prefire = image_prefire.normalizedDifference(['B8', 'B4']).rename('NDVI');
+var ndvi_postfire = image_postfire.normalizedDifference(['B8', 'B4']).rename('NDVI');
+var ndvi_2022 = image_2022.normalizedDifference(['B8', 'B4']).rename('NDVI');
+
+
+// Reduce the NDVI image to a mean value for each image.
+var ndvi_prefire_mean = ndvi_prefire.reduceRegion({
+  reducer: ee.Reducer.mean(),
+  geometry: affectedAreaCEMS,
+  scale: 10,
+  maxPixels: 1e9
+}); 
+
+print(ndvi_prefire_mean);
+
+var ndvi_postfire_mean = ndvi_postfire.reduceRegion({
+  reducer: ee.Reducer.mean(),
+  geometry: affectedAreaCEMS,
+  scale: 10,
+  maxPixels: 1e9
+});
+var ndvi_2022_mean = ndvi_2022.reduceRegion({
+  reducer: ee.Reducer.mean(),
+  geometry: affectedAreaCEMS,
+  scale: 10,
+  maxPixels: 1e9
+});
+
+var features = ee.FeatureCollection([
+  ee.Feature(null, {'system:time_start': image_prefire.get('system:time_start'), 'ndvi': ndvi_prefire_mean.get('NDVI')}),
+  ee.Feature(null, {'system:time_start': image_postfire.get('system:time_start'), 'ndvi': ndvi_postfire_mean.get('NDVI')}),
+  ee.Feature(null, {'system:time_start': image_2022.get('system:time_start'), 'ndvi': ndvi_2022_mean.get('NDVI')})
+]);
+
+
+print(features);
+
+// Create a chart and set the x-axis to 'system:time_start' property and y-axis to NDVI.
+var chart = ui.Chart.feature.byFeature(features, 'system:time_start')
+    .setChartType('ScatterChart')
+    .setOptions({
+      title: 'NDVI Time Series',
+      vAxis: {title: 'NDVI'},
+      hAxis: {title: 'Date', format: 'MMM-yyyy'},
+      pointSize: 15,
+      series: {
+        0: {pointShape: 'circle'},
+      }
+    });
+
+// Add the chart to the UI
+ui.root.widgets().add(chart);
+Map.centerObject(geometry);

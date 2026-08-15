@@ -13,7 +13,6 @@ var geoCEMS =
 
 
 // Cut the polygon inside the main geometry
-
 var resultGeometry = geoCEMS.difference(affectedAreaCEMS, ee.ErrorMargin(1e-3));
 print(resultGeometry);
 

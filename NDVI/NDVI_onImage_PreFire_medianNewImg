@@ -84,7 +84,7 @@ var ndviVis = {min: 0, max: 11 , palette:['#000000','#a50026','#d73027', '#f46d4
  //  the distribution of burned and unburned pixels:
 var histogram_ndvi_classified = ui.Chart.image.histogram({
   image: ndvi_classified,
-  region: geometry2,
+  region: affectedAreaCEMS,
   scale: 10,
   maxBuckets: 50,
   minBucketWidth: 0.01,

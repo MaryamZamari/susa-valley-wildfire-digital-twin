@@ -59,8 +59,6 @@ var title = ui.Label({
 
 panel.add(title)
 
-//var color = ['#8B0000','#FF0000','#FF4500', '#FFA500', '#FFD700', '#FFFF00', '#90EE90','B6D997', '#008000', 'white']
-//var lc_class = ['Severe burn', 'Moderate to severe burn', 'Moderate burn', 'Moderate to low burn', 'Low burn', 'Very low burn', 'No burn or very low severity burn', 'No burn or low severity burn', 'No burn'  ]
 var color = ['red','orange','green'];
 var lc_class = ['burned', 'Not burned', 'Healthy Vegetation'];
 

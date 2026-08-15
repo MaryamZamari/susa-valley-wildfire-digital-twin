@@ -9,9 +9,9 @@ var geoCEMS =
           [7.2092658479635885, 45.21972611576043]]], null, false),
     affectedAreaCEMS = ee.FeatureCollection("users/ZamariMaryam/EMSR253_02SUSA_DEL_v2_observed_event_a");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
-    affectedAreaCEMS = ee.FeatureCollection("users/ZamariMaryam/EMSR253_02SUSA_DEL_v2_observed_event_a"),
-    geometry2 = 
-    geometry2;  
+    affectedAreaCEMS = ee.FeatureCollection("users/ZamariMaryam/EMSR253_02SUSA_DEL_v2_observed_event_a");
+    print(resultGeometry);
+
     
  var image = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20171116T103311_20171116T103542_T32TLR') //Post_Fire image
                          .select(['B12','B8'])
@@ -69,7 +69,7 @@ var nbr_classified = bandIndexImg.expression(
 var nbrVis = {min: 0, max: 8 , palette:['#8B0000','#FF0000','#FF4500', '#FFA500', '#FFD700', '#FFFF00', '#90EE90', '#008000']};  
 
 //----------------visualisation commands------------
-Map.centerObject(geometry2);
+Map.centerObject(resultGeometry);
 Map.addLayer(nbr_classified , nbrVis, 'NBR1');
 Map.addLayer(resultGeometry);
 

@@ -91,6 +91,11 @@ var burnedArea = areas.getNumber('burnedArea');
 var totalArea = areas.getNumber('totalArea');
 var percentage = burnedArea.divide(totalArea).multiply(100);
 
+print('Burned Area (Hectares)', burnedArea.divide(10000));
+print('Total Area (Hectares)', totalArea.divide(10000));
+print('Burned Fraction (%)', percentage);
+
+
 //**************** Solution From StackoverFlow _ burned areas calculations ************
 
 

@@ -11,8 +11,11 @@ var geoCEMS =
 var affectedAreaCEMS = ee.FeatureCollection("users/ZamariMaryam/EMSR253_02SUSA_DEL_v2_observed_event_a"),
     geoCEMS ;
 
+// Cut the polygon inside the main geometry
+var resultGeometry = geoCEMS.difference(affectedAreaCEMS, ee.ErrorMargin(1e-3));
+print(resultGeometry);
 
-  var imageTOA = ee.Image('COPERNICUS/S2_HARMONIZED/' + '20170704T103019_20170704T103637_T32TLR');
+var imageTOA = ee.Image('COPERNICUS/S2_HARMONIZED/' + '20170704T103019_20170704T103637_T32TLR');
               //     .select(['B4','B3','B2','B8','B12', 'B11']);
        
        
@@ -101,21 +104,8 @@ var histogram_ndvi_classified = ui.Chart.image.histogram({
 //Map.centerObject(geometry);
 Map.addLayer(bandIndexImg , ndviVis_1, 'NDVI1');
 Map.addLayer(ndvi_classified , ndviVis, 'NDVI2');
+Map.addLayer(resultGeometry);
 
-//Map.addLayer(image);
-//Map.addLayer(imageTOA);
-Map.addLayer(imageBOA);
-
-Map.addLayer(result);
-//Map.add(histogram_ndvi_classified);
-
-/*Export.image.toDrive({
-  image: bandIndexImg ,
-  description: 'S2Harmonized-20170704T103019_20170704T103637_T32TLR_NDVI_Prefire',
-  scale: 10,
-  region: geometry,
-})
-*/
 
 //---------Add Legend-----------------------
 var panel = ui.Panel({

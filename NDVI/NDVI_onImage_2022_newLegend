@@ -1,3 +1,40 @@
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var geometry = 
+    /* color: #ffffff */
+    /* shown: false */
+    ee.Geometry.Polygon(
+        [[[7.003083958928165, 45.21869339705463],
+          [7.003083958928165, 45.110246992050875],
+          [7.219377293889102, 45.110246992050875],
+          [7.219377293889102, 45.21869339705463]]], null, false),
+    geometry2 = 
+    /* color: #d63000 */
+    /* shown: false */
+    ee.Geometry.Polygon(
+        [[[7.011323522807711, 45.20994425310098],
+          [7.011323522807711, 45.11601945581964],
+          [7.214570593120211, 45.11601945581964],
+          [7.214570593120211, 45.20994425310098]]], null, false),
+    geometry3 = 
+    /* color: #ffc82d */
+    /* shown: false */
+    ee.Geometry.Polygon(
+        [[[7.029021402162807, 45.21972611576043],
+          [7.029021402162807, 45.1146736921262],
+          [7.2092658479635885, 45.1146736921262],
+          [7.2092658479635885, 45.21972611576043]]], null, false),
+    geoCEMS = 
+    /* color: #00ffff */
+    /* shown: false */
+    ee.Geometry.Polygon(
+        [[[7.029021402162807, 45.21972611576043],
+          [7.029021402162807, 45.1146736921262],
+          [7.2092658479635885, 45.1146736921262],
+          [7.2092658479635885, 45.21972611576043]]], null, false),
+    affectedAreaCEMS = ee.FeatureCollection("users/ZamariMaryam/EMSR253_02SUSA_DEL_v2_observed_event_a");
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
+
+
 geometry2 = 
      geometry2;
 var resultGeometry = geoCEMS.difference(affectedAreaCEMS, ee.ErrorMargin(1e-3));

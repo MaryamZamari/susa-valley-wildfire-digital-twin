@@ -68,7 +68,7 @@ var imageMerged= image
                     .toFloat()
                     .rename('imageMerged');
   
-//**************** Solution From StackoverFlow ************
+//**************** Solution From StackoverFlow _ burned areas calculations ************
 var totalAreaImage = ee.Image.pixelArea()
   .updateMask(imageMerged.mask())
   .rename('totalArea');
@@ -77,22 +77,26 @@ var burnedAreaImage = totalAreaImage
   .updateMask(burnedNBRImageMerged)
   .rename('burnedArea');
   
-/*var areas = totalAreaImage
+var areas = totalAreaImage
   .addBands(burnedAreaImage)
   .reduceRegion({
     reducer: ee.Reducer.sum(),
-    geometry: geometry2,
+    geometry: geoCEMS,
     scale: 10,
     crs: 'EPSG:32632',
     maxPixels: 1e13
-  }); */
-  
-//var burnedArea = areas.getNumber('burnedArea');
-//var totalArea = areas.getNumber('totalArea');
-//var percentage = burnedArea.divide(totalArea).multiply(100);
+  }); 
 
-/* create a histogram of the NBR index values to visualize
-   the distribution of burned and unburned pixels:*/
+var burnedArea = areas.getNumber('burnedArea');
+var totalArea = areas.getNumber('totalArea');
+var percentage = burnedArea.divide(totalArea).multiply(100);
+
+//**************** Solution From StackoverFlow _ burned areas calculations ************
+
+
+
+/*============== create a histogram of the NBR index values to visualize
+   the distribution of burned and unburned pixels: ====================*/
 var histogram_NBR = ui.Chart.image.histogram({
   image: bandIndexImg,
   region: affectedAreaCEMS,
@@ -124,9 +128,6 @@ var histogram_Burned = ui.Chart.image.histogram({
 });
 
 
-//print('Burned Area (Hectares)', burnedArea.divide(10000));
-//print('Total Area (Hectares)', totalArea.divide(10000));
-//print('Burned Fraction (%)', percentage);
 
 
 

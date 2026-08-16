@@ -1,12 +1,13 @@
 // =========================================================================
 // 1. IMPORTS & GEOMETRY DEFINITION
 // =========================================================================
-var affectedAreaCEMS = ee.FeatureCollection("users/ZamariMaryam/EMSR253_02SUSA_DEL_v2_observed_event_a");
-var geoCEMS = ee.Geometry.Polygon(
-  [[[7.029021402162807, 45.21972611576043],
-    [7.029021402162807, 45.1146736921262],
-    [7.2092658479635885, 45.1146736921262],
-    [7.2092658479635885, 45.21972611576043]]], null, false);
+var geoCEMS = /* color: #d63000 */ee.Geometry.Polygon(
+        [[[7.029021402162807, 45.21972611576043],
+          [7.029021402162807, 45.1146736921262],
+          [7.2092658479635885, 45.1146736921262],
+          [7.2092658479635885, 45.21972611576043]]], null, false),
+    affectedAreaCEMS = ee.FeatureCollection("users/ZamariMaryam/EMSR253_02SUSA_DEL_v2_observed_event_a");
+
 
 // Extract outer boundary (geoCEMS minus CEMS burn event polygon)
 var resultGeometry = geoCEMS.difference(affectedAreaCEMS, ee.ErrorMargin(1e-3));

@@ -55,8 +55,10 @@ Map.addLayer(nbrPreFire, nbrVis, 'Pre-Fire NBR (Continuous)');
 Map.addLayer(resultGeometry, { color: 'black' }, 'Outside Burned Area Boundary');
 
 // =========================================================================
-// 5. DYNAMIC UI LEGEND FUNCTION
+// 5. DETAILED 12-CLASS UI LEGEND
 // =========================================================================
+
+// Define the legend creation helper function
 var buildLegend = function(titleText, colors, classes) {
   var legendPanel = ui.Panel({
     style: { position: 'bottom-left', padding: '8px' }
@@ -82,14 +84,33 @@ var buildLegend = function(titleText, colors, classes) {
     });
     legendPanel.add(row);
   }
-  return legendPanel;
+  
+  return legendPanel; // Return panel at the end of the function
 };
 
-// Add 3-class simplified legend to map
-var legendColors = ['red', 'orange', 'green'];
-var legendClasses = ['Burned / Low Index', 'Unburned / Moderate', 'Healthy Vegetation'];
-Map.add(buildLegend('Pre-Fire NBR Status', legendColors, legendClasses));
+var legendColors = [
+  '#000000', '#a50026', '#d73027', '#f46d43', 
+  '#fdae61', '#fee08b', '#ffffbf', '#d9ef8b', 
+  '#a6d96a', '#66bd63', '#1a9850', '#006837'
+];
 
+var legendClasses = [
+  'Little/no vegetation cover (bare soil, water, urban)',
+  'Sparse vegetation (grasslands, shrublands)',
+  'Sparse vegetation / degraded land',
+  'Moderate vegetation cover',
+  'Moderate to high vegetation cover',
+  'High vegetation cover',
+  'Very high vegetation cover',
+  'Very dense vegetation cover',
+  'Extremely high vegetation cover',
+  'Extremely dense vegetation cover',
+  'Near-optimal vegetation productivity',
+  'Optimal vegetation density & productivity'
+];
+
+// Build and add detailed legend panel
+Map.add(buildLegend('NBR Classification Scale', legendColors, legendClasses));
 // =========================================================================
 // 6. EXPORT TASK
 // =========================================================================

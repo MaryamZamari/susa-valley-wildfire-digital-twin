@@ -11,7 +11,7 @@ var geoCEMS = ee.Geometry.Polygon(
 var resultGeometry = geoCEMS.difference(affectedAreaCEMS, ee.ErrorMargin(1e-3));
 
 // =========================================================================
-// 2. IMAGE PREPROCESSING & ORIGINAL NBR FORMULA
+// 2. IMAGE PREPROCESSING & POST-FIRE NBR COMPUTATION
 // =========================================================================
 var waterMask = ee.Image('JRC/GSW1_2/GlobalSurfaceWater').select('max_extent').not();
 
@@ -19,13 +19,13 @@ var postFireImage = ee.Image('COPERNICUS/S2_SR_HARMONIZED/20171116T103311_201711
   .select(['B12', 'B8'])
   .updateMask(waterMask);
 
-// Note: B12 first yields (B12 - B8) / (B12 + B8), matching original visualization
+// B12 first: (B12 - B8) / (B12 + B8) to match original index orientation
 var nbrPostFire = postFireImage.normalizedDifference(['B12', 'B8']).rename('NBR');
 
 // =========================================================================
-// 3. 3-CLASS SIMPLE CLASSIFICATION (Matching Screenshot 2)
+// 3. 3-CLASS SIMPLE CLASSIFICATION
 // =========================================================================
-// Classified into: 0 = Burned (Red), 1 = Not Burned (Orange), 2 = Healthy Vegetation (Green)
+// 0 = Burned, 1 = Not burned, 2 = Healthy vegetation
 var nbrSimpleClassified = nbrPostFire.expression(
   "(b('NBR') > 0.1) ? 0" +        // Burned
   ": (b('NBR') >= -0.2) ? 1" +    // Not burned / Bare soil
@@ -34,7 +34,67 @@ var nbrSimpleClassified = nbrPostFire.expression(
 ).rename('NBR_Simple_Class');
 
 // =========================================================================
-// 4. MAP VISUALIZATION & ORIGINAL LEGEND
+// 4. STATISTICAL AREA CALCULATIONS
+// =========================================================================
+var threshBurned = 0.1;
+var burnedMask = nbrPostFire.gt(threshBurned); // Values > 0.1 indicate burned area
+
+var areaImage = ee.Image.pixelArea().rename('totalArea')
+  .addBands(ee.Image.pixelArea().updateMask(burnedMask).rename('burnedArea'));
+
+var areaStats = areaImage.reduceRegion({
+  reducer: ee.Reducer.sum(),
+  geometry: geoCEMS,
+  scale: 10,
+  crs: 'EPSG:32632',
+  maxPixels: 1e13
+});
+
+var burnedAreaHa = ee.Number(areaStats.get('burnedArea')).divide(10000);
+var totalAreaHa = ee.Number(areaStats.get('totalArea')).divide(10000);
+var burnedPercentage = burnedAreaHa.divide(totalAreaHa).multiply(100);
+
+print('=== POST-FIRE METRICS ===');
+print('Burned Area (Hectares):', burnedAreaHa);
+print('Total Area (Hectares):', totalAreaHa);
+print('Burned Fraction (%):', burnedPercentage);
+
+// =========================================================================
+// 5. HISTOGRAM CHARTS
+// =========================================================================
+// Overall Post-Fire NBR Histogram
+var histogramNBR = ui.Chart.image.histogram({
+  image: nbrPostFire,
+  region: affectedAreaCEMS,
+  scale: 10,
+  maxBuckets: 50,
+  minBucketWidth: 0.01,
+}).setOptions({
+  title: 'Post-Fire NBR Distribution (Full Event)',
+  hAxis: { title: 'NBR' },
+  vAxis: { title: 'Pixel Count' },
+  colors: ['#3182bd']
+});
+
+// Burned Pixels Subset Histogram (> 0.1 NBR)
+var histogramBurned = ui.Chart.image.histogram({
+  image: nbrPostFire.updateMask(burnedMask),
+  region: affectedAreaCEMS,
+  scale: 10,
+  maxBuckets: 50,
+  minBucketWidth: 0.01,
+}).setOptions({
+  title: 'Burned Areas Distribution (NBR > 0.1)',
+  hAxis: { title: 'NBR Value' },
+  vAxis: { title: 'Pixel Count' },
+  colors: ['#de2d26']
+});
+
+print(histogramNBR);
+print(histogramBurned);
+
+// =========================================================================
+// 6. MAP VISUALIZATION & LEGEND
 // =========================================================================
 Map.centerObject(affectedAreaCEMS, 12);
 
@@ -42,10 +102,11 @@ Map.centerObject(affectedAreaCEMS, 12);
 Map.addLayer(
   nbrPostFire, 
   {min: -0.8, max: 0.8, palette: ['green', 'yellow', 'orange', 'red']}, 
-  'Post-Fire NBR (Continuous)'
+  'Post-Fire NBR (Continuous)',
+  false
 );
 
-// Add 3-Class Layer (Screenshot 2 Style)
+// Add 3-Class Layer
 Map.addLayer(
   nbrSimpleClassified, 
   {min: 0, max: 2, palette: ['#FF0000', '#FFA500', '#008000']}, 
@@ -54,7 +115,7 @@ Map.addLayer(
 
 Map.addLayer(affectedAreaCEMS, {color: 'black'}, 'CEMS Event Boundary');
 
-// Original 3-Class Legend Builder
+// 3-Class Legend Builder
 var legendPanel = ui.Panel({
   style: { position: 'bottom-left', padding: '8px' }
 });
@@ -82,3 +143,14 @@ for (var i = 0; i < classes.length; i++) {
 }
 
 Map.add(legendPanel);
+
+// =========================================================================
+// 7. EXPORT TASK
+// =========================================================================
+Export.image.toDrive({
+  image: nbrPostFire,
+  description: 'S2_20171116_NBR_Postfire',
+  scale: 10,
+  region: geoCEMS,
+  maxPixels: 1e9
+});

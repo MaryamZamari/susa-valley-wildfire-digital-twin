@@ -21,8 +21,15 @@ var postFireImage = ee.Image('COPERNICUS/S2_SR_HARMONIZED/20171116T103311_201711
   .select(['B12', 'B8'])
   .updateMask(waterMask);
 
+var preFireImage = ee.Image('COPERNICUS/S2_SR_HARMONIZED/20171116T103311_20171116T103542_T32TLR')
+  .select(['B12', 'B8'])
+  .updateMask(waterMask);
+  
 // Calculate Post-Fire Normalized Burn Ratio (NBR)
 var nbrPostFire = postFireImage.normalizedDifference(['B8', 'B12']).rename('NBR');
+
+// Calculate Pre-Fire Normalized Burn Ratio (NBR)
+var nbrPreFire = preFireImage.normalizedDifference(['B8', 'B12']).rename('NBR');
 
 // Calculate Delta NBR (dNBR) to reveal true fire severity
 var dNBR = nbrPreFire.subtract(nbrPostFire).rename('dNBR');

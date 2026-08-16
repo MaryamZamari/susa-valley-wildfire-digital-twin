@@ -28,7 +28,7 @@ print(resultGeometry);
 var siac = require('users/marcyinfeng/utils:SIAC');            
 var imageBOA = siac.get_sur(imageTOA);
 var imageBoaSelect= imageBOA.select("B8" , "B12", "B4", "B3", "B2");
-var image_prefire= imageBoaSelect.clip(geometry);
+var image_prefire= imageBoaSelect.clip(resultGeometry);
 
 var image_postfire = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20180619T103019_20180619T103559_T32TLR') //Pre_Fire image
                          .select(['B4','B8']); 

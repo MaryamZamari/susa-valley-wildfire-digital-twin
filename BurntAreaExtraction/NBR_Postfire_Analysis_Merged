@@ -11,7 +11,7 @@ var geoCEMS = ee.Geometry.Polygon(
 var resultGeometry = geoCEMS.difference(affectedAreaCEMS, ee.ErrorMargin(1e-3));
 
 // =========================================================================
-// 2. IMAGE PREPROCESSING & POST-FIRE NBR COMPUTATION
+// 2. IMAGE PREPROCESSING & ORIGINAL NBR FORMULA
 // =========================================================================
 var waterMask = ee.Image('JRC/GSW1_2/GlobalSurfaceWater').select('max_extent').not();
 
@@ -19,100 +19,60 @@ var postFireImage = ee.Image('COPERNICUS/S2_SR_HARMONIZED/20171116T103311_201711
   .select(['B12', 'B8'])
   .updateMask(waterMask);
 
-var nbrPostFire = postFireImage.normalizedDifference(['B8', 'B12']).rename('NBR_Post');
+// Note: B12 first yields (B12 - B8) / (B12 + B8), matching original visualization
+var nbrPostFire = postFireImage.normalizedDifference(['B12', 'B8']).rename('NBR');
 
 // =========================================================================
-// 3. SINGLE-SCENE POST-FIRE CLASSIFICATION
+// 3. 3-CLASS SIMPLE CLASSIFICATION (Matching Screenshot 2)
 // =========================================================================
-var thresh_SevereBurn = -0.9; 
-var thresh_ModeratetoSevereBurn = -0.8;
-var thresh_ModerateBurn = -0.7;
-var thresh_moderateLowBurn = -0.6; 
-var thresh_LowBurn = -0.5;
-var thresh_VeryLowBurn = -0.4; 
-var thresh_NoBurnOrVeryLowSeverityBurn = -0.1; 
-var thresh_NoBurnOrLowSeverityBurn = 0; 
-
-var nbrClassified = nbrPostFire.expression(
-  "(b('NBR_Post') < thresh_SevereBurn) ? 0" +   
-  ": (b('NBR_Post') <= thresh_ModeratetoSevereBurn) ? 1" +  
-  ": (b('NBR_Post') <= thresh_ModerateBurn) ? 2" +  
-  ": (b('NBR_Post') <= thresh_moderateLowBurn) ? 3" + 
-  ": (b('NBR_Post') <= thresh_LowBurn) ? 4" +
-  ": (b('NBR_Post') <= thresh_VeryLowBurn) ? 5" +
-  ": (b('NBR_Post') <= thresh_NoBurnOrVeryLowSeverityBurn) ? 6" +
-  ": (b('NBR_Post') <= thresh_NoBurnOrLowSeverityBurn) ? 7" +
-  ": 8", 
-  {
-    thresh_SevereBurn: thresh_SevereBurn,
-    thresh_ModeratetoSevereBurn: thresh_ModeratetoSevereBurn,
-    thresh_ModerateBurn: thresh_ModerateBurn,
-    thresh_moderateLowBurn: thresh_moderateLowBurn,
-    thresh_LowBurn: thresh_LowBurn,
-    thresh_VeryLowBurn: thresh_VeryLowBurn,
-    thresh_NoBurnOrVeryLowSeverityBurn: thresh_NoBurnOrVeryLowSeverityBurn,
-    thresh_NoBurnOrLowSeverityBurn: thresh_NoBurnOrLowSeverityBurn
-  }
-).rename('NBR_ClassifiedSeverity');
+// Classified into: 0 = Burned (Red), 1 = Not Burned (Orange), 2 = Healthy Vegetation (Green)
+var nbrSimpleClassified = nbrPostFire.expression(
+  "(b('NBR') > 0.1) ? 0" +        // Burned
+  ": (b('NBR') >= -0.2) ? 1" +    // Not burned / Bare soil
+  ": 2",                          // Healthy vegetation
+  { NBR: nbrPostFire }
+).rename('NBR_Simple_Class');
 
 // =========================================================================
-// 4. STATISTICAL AREA CALCULATIONS
-// =========================================================================
-var threshBurned = -0.1;
-var burnedMask = nbrPostFire.lt(threshBurned);
-
-var areaImage = ee.Image.pixelArea().rename('totalArea')
-  .addBands(ee.Image.pixelArea().updateMask(burnedMask).rename('burnedArea'));
-
-var areaStats = areaImage.reduceRegion({
-  reducer: ee.Reducer.sum(),
-  geometry: geoCEMS,
-  scale: 10,
-  crs: 'EPSG:32632',
-  maxPixels: 1e13
-});
-
-var burnedAreaHa = ee.Number(areaStats.get('burnedArea')).divide(10000);
-var totalAreaHa = ee.Number(areaStats.get('totalArea')).divide(10000);
-var burnedPercentage = burnedAreaHa.divide(totalAreaHa).multiply(100);
-
-print('=== POST-FIRE SINGLE-SCENE METRICS ===');
-print('Burned Area (Hectares):', burnedAreaHa);
-print('Total Area (Hectares):', totalAreaHa);
-print('Burned Fraction (%):', burnedPercentage);
-
-// =========================================================================
-// 5. MAP VISUALIZATION & LEGEND
+// 4. MAP VISUALIZATION & ORIGINAL LEGEND
 // =========================================================================
 Map.centerObject(affectedAreaCEMS, 12);
 
-var nbrPalette = ['#8B0000', '#FF0000', '#FF4500', '#FFA500', '#FFD700', '#FFFF00', '#90EE90', '#008000', '#FFFFFF'];
+// Add Continuous NBR Layer
+Map.addLayer(
+  nbrPostFire, 
+  {min: -0.8, max: 0.8, palette: ['green', 'yellow', 'orange', 'red']}, 
+  'Post-Fire NBR (Continuous)'
+);
 
-Map.addLayer(nbrPostFire, {min: -1, max: 1, palette: ['red', 'orange', 'green']}, 'Post-Fire NBR (Continuous)', false);
-Map.addLayer(nbrClassified, {min: 0, max: 8, palette: nbrPalette}, 'Post-Fire NBR Classification');
-Map.addLayer(resultGeometry, {color: 'black'}, 'Outer Geometry Boundary');
+// Add 3-Class Layer (Screenshot 2 Style)
+Map.addLayer(
+  nbrSimpleClassified, 
+  {min: 0, max: 2, palette: ['#FF0000', '#FFA500', '#008000']}, 
+  'Classification (3 Classes)'
+);
 
-// Legend Builder
+Map.addLayer(affectedAreaCEMS, {color: 'black'}, 'CEMS Event Boundary');
+
+// Original 3-Class Legend Builder
 var legendPanel = ui.Panel({
   style: { position: 'bottom-left', padding: '8px' }
 });
+
 legendPanel.add(ui.Label({
-  value: 'Post-Fire NBR Classes',
+  value: 'Classification',
   style: { fontSize: '14px', fontWeight: 'bold', margin: '0 0 6px 0' }
 }));
 
-var nbrClasses = [
-  'Severe burn', 'Moderate to severe burn', 'Moderate burn', 
-  'Moderate to low burn', 'Low burn', 'Very low burn', 
-  'No burn / Very low', 'No burn / Low', 'Unclassified / Unburned'
-];
+var classes = ['Burned', 'Not burned', 'Healthy vegetation'];
+var colors = ['#FF0000', '#FFA500', '#008000'];
 
-for (var i = 0; i < nbrPalette.length; i++) {
+for (var i = 0; i < classes.length; i++) {
   var colorBox = ui.Label({
-    style: { backgroundColor: nbrPalette[i], padding: '8px', margin: '0 6px 4px 0' }
+    style: { backgroundColor: colors[i], padding: '8px', margin: '0 6px 4px 0' }
   });
   var description = ui.Label({
-    value: nbrClasses[i],
+    value: classes[i],
     style: { margin: '2px 0 0 0', fontSize: '12px' }
   });
   legendPanel.add(ui.Panel({

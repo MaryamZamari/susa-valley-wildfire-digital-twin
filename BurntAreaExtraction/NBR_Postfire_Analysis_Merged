@@ -8,38 +8,34 @@ var geoCEMS = ee.Geometry.Polygon(
     [7.2092658479635885, 45.1146736921262],
     [7.2092658479635885, 45.21972611576043]]], null, false);
 
-// Extract outer area geometry (geoCEMS minus CEMS burn event polygon)
 var resultGeometry = geoCEMS.difference(affectedAreaCEMS, ee.ErrorMargin(1e-3));
 
 // =========================================================================
-// 2. IMAGE PREPROCESSING & NBR COMPUTATION
+// 2. IMAGE PREPROCESSING & NBR / dNBR COMPUTATION
 // =========================================================================
-// Load post-fire Sentinel-2 Surface Reflectance scene & mask out water bodies
 var waterMask = ee.Image('JRC/GSW1_2/GlobalSurfaceWater').select('max_extent').not();
 
+// Load scenes
 var postFireImage = ee.Image('COPERNICUS/S2_SR_HARMONIZED/20171116T103311_20171116T103542_T32TLR')
   .select(['B12', 'B8'])
   .updateMask(waterMask);
 
-var preFireImage = ee.Image('COPERNICUS/S2_SR_HARMONIZED/20171116T103311_20171116T103542_T32TLR')
+var preFireImage = ee.Image('COPERNICUS/S2_SR_HARMONIZED/20170619T103021_20170619T103806_T32TLR')
   .select(['B12', 'B8'])
   .updateMask(waterMask);
-  
-// Calculate Post-Fire Normalized Burn Ratio (NBR)
-var nbrPostFire = postFireImage.normalizedDifference(['B8', 'B12']).rename('NBR');
 
-// Calculate Pre-Fire Normalized Burn Ratio (NBR)
-var nbrPreFire = preFireImage.normalizedDifference(['B8', 'B12']).rename('NBR');
+// Compute NBR
+var nbrPostFire = postFireImage.normalizedDifference(['B8', 'B12']).rename('NBR_Post');
+var nbrPreFire = preFireImage.normalizedDifference(['B8', 'B12']).rename('NBR_Pre');
 
-// Calculate Delta NBR (dNBR) to reveal true fire severity
+// Compute Delta NBR
 var dNBR = nbrPreFire.subtract(nbrPostFire).rename('dNBR');
 
-
 // =========================================================================
-// 3. SEVERITY THRESHOLD CLASSIFICATION
+// 3. SEVERITY CLASSIFICATIONS (BOTH UNCOMMENTED & DEFINED)
 // =========================================================================
 
-/*
+// A. Post-Fire Single Scene NBR Classification
 var thresh_SevereBurn = -0.9; 
 var thresh_ModeratetoSevereBurn = -0.8;
 var thresh_ModerateBurn = -0.7;
@@ -50,14 +46,14 @@ var thresh_NoBurnOrVeryLowSeverityBurn = -0.1;
 var thresh_NoBurnOrLowSeverityBurn = 0; 
 
 var nbrClassified = nbrPostFire.expression(
-  "(b('NBR') < thresh_SevereBurn) ? 0" +   
-  ": (b('NBR') <= thresh_ModeratetoSevereBurn) ? 1" +  
-  ": (b('NBR') <= thresh_ModerateBurn) ? 2" +  
-  ": (b('NBR') <= thresh_moderateLowBurn) ? 3" + 
-  ": (b('NBR') <= thresh_LowBurn) ? 4" +
-  ": (b('NBR') <= thresh_VeryLowBurn) ? 5" +
-  ": (b('NBR') <= thresh_NoBurnOrVeryLowSeverityBurn) ? 6" +
-  ": (b('NBR') <= thresh_NoBurnOrLowSeverityBurn) ? 7" +
+  "(b('NBR_Post') < thresh_SevereBurn) ? 0" +   
+  ": (b('NBR_Post') <= thresh_ModeratetoSevereBurn) ? 1" +  
+  ": (b('NBR_Post') <= thresh_ModerateBurn) ? 2" +  
+  ": (b('NBR_Post') <= thresh_moderateLowBurn) ? 3" + 
+  ": (b('NBR_Post') <= thresh_LowBurn) ? 4" +
+  ": (b('NBR_Post') <= thresh_VeryLowBurn) ? 5" +
+  ": (b('NBR_Post') <= thresh_NoBurnOrVeryLowSeverityBurn) ? 6" +
+  ": (b('NBR_Post') <= thresh_NoBurnOrLowSeverityBurn) ? 7" +
   ": 8", 
   {
     thresh_SevereBurn: thresh_SevereBurn,
@@ -70,24 +66,23 @@ var nbrClassified = nbrPostFire.expression(
     thresh_NoBurnOrLowSeverityBurn: thresh_NoBurnOrLowSeverityBurn
   }
 ).rename('NBR_ClassifiedSeverity');
-*/
 
-
-// Standard USGS dNBR Severity Classification Visualization
-var dnbrVis = {
-  min: -0.1, 
-  max: 0.66, 
-  palette: ['7a8ef8', '007a00', 'ffff00', 'ff7f00', 'ff0000', '800080']
-};
-Map.addLayer(dNBR, dnbrVis, 'dNBR (True Burn Severity)');
+// B. Standard USGS dNBR Classification
+var dnbrClassified = dNBR.expression(
+  "(b('dNBR') < -0.1) ? 0" +                     
+  ": (b('dNBR') <= 0.1) ? 1" +                   
+  ": (b('dNBR') <= 0.27) ? 2" +                  
+  ": (b('dNBR') <= 0.44) ? 3" +                  
+  ": (b('dNBR') <= 0.66) ? 4" +                  
+  ": 5",                                         
+  { dNBR: dNBR }
+).rename('dNBR_ClassifiedSeverity');
 
 // =========================================================================
-// 4. STATISTICAL AREA CALCULATIONS
+// 4. STATISTICAL AREA CALCULATIONS (dNBR Based)
 // =========================================================================
-var threshBurned = -0.1;
-var burnedMask = nbrPostFire.lt(threshBurned);
+var burnedMask = dNBR.gt(0.1); // dNBR > 0.1 threshold
 
-// Calculate exact surface area in hectares using ee.Image.pixelArea()
 var areaImage = ee.Image.pixelArea().rename('totalArea')
   .addBands(ee.Image.pixelArea().updateMask(burnedMask).rename('burnedArea'));
 
@@ -103,7 +98,7 @@ var burnedAreaHa = ee.Number(areaStats.get('burnedArea')).divide(10000);
 var totalAreaHa = ee.Number(areaStats.get('totalArea')).divide(10000);
 var burnedPercentage = burnedAreaHa.divide(totalAreaHa).multiply(100);
 
-print('=== POST-FIRE METRICS ===');
+print('=== dNBR FIRE METRICS ===');
 print('Burned Area (Hectares):', burnedAreaHa);
 print('Total Area (Hectares):', totalAreaHa);
 print('Burned Fraction (%):', burnedPercentage);
@@ -111,71 +106,52 @@ print('Burned Fraction (%):', burnedPercentage);
 // =========================================================================
 // 5. HISTOGRAM CHARTS
 // =========================================================================
-// Overall Post-Fire NBR Histogram
-var histogramNBR = ui.Chart.image.histogram({
-  image: nbrPostFire,
+var histogramDNBR = ui.Chart.image.histogram({
+  image: dNBR,
   region: affectedAreaCEMS,
   scale: 10,
   maxBuckets: 50,
-  minBucketWidth: 0.01,
+  minBucketWidth: 0.02,
 }).setOptions({
-  title: 'Post-Fire NBR Distribution (Full Event)',
-  hAxis: { title: 'NBR' },
+  title: 'dNBR Distribution (Full Event Area)',
+  hAxis: { title: 'dNBR' },
   vAxis: { title: 'Pixel Count' },
   colors: ['#3182bd']
 });
 
-// Burned Pixels Subset Histogram (< -0.1 NBR)
-var histogramBurned = ui.Chart.image.histogram({
-  image: nbrPostFire.updateMask(burnedMask),
-  region: affectedAreaCEMS,
-  scale: 10,
-  maxBuckets: 50,
-  minBucketWidth: 0.01,
-}).setOptions({
-  title: 'Burned Areas Distribution (NBR < -0.1)',
-  hAxis: { title: 'NBR Value' },
-  vAxis: { title: 'Pixel Count' },
-  colors: ['#de2d26']
-});
-
-print(histogramNBR);
-print(histogramBurned);
+print(histogramDNBR);
 
 // =========================================================================
-// 6. MAP VISUALIZATION & LEGEND
+// 6. MAP VISUALIZATION & LEGENDS
 // =========================================================================
 Map.centerObject(affectedAreaCEMS, 12);
 
-// Layers
-/*
-var severityVis = {
-  min: 0, 
-  max: 8, 
-  palette: ['#8B0000', '#FF0000', '#FF4500', '#FFA500', '#FFD700', '#FFFF00', '#90EE90', '#008000', '#FFFFFF']
-};
+// Palettes
+var dnbrPalette = ['#7a8ef8', '#007a00', '#ffff00', '#ff7f00', '#ff0000', '#800080'];
+var nbrPalette = ['#8B0000', '#FF0000', '#FF4500', '#FFA500', '#FFD700', '#FFFF00', '#90EE90', '#008000', '#FFFFFF'];
 
-Map.addLayer(nbrPostFire, {min: -1, max: 1, palette: ['red', 'orange', 'green']}, 'Post-Fire NBR (Continuous)', false);
-Map.addLayer(nbrClassified, severityVis, 'NBR Burn Severity Classification');
+// Layers
+Map.addLayer(nbrClassified, {min: 0, max: 8, palette: nbrPalette}, 'Single-Scene Post-NBR Severity', false);
+Map.addLayer(dnbrClassified, {min: 0, max: 5, palette: dnbrPalette}, 'dNBR Severity Classification (USGS)');
 Map.addLayer(resultGeometry, {color: 'black'}, 'Outer Geometry Boundary');
 
-// UI Legend Helper Function
+// Dynamic Legend Generator
 var buildLegend = function(titleText, colors, classes) {
   var legendPanel = ui.Panel({
     style: { position: 'bottom-left', padding: '8px' }
   });
   legendPanel.add(ui.Label({
     value: titleText,
-    style: { fontSize: '14px', fontWeight: 'bold', margin: '0 0 4px 0' }
+    style: { fontSize: '14px', fontWeight: 'bold', margin: '0 0 6px 0' }
   }));
 
   for (var i = 0; i < colors.length; i++) {
     var colorBox = ui.Label({
-      style: { backgroundColor: colors[i], padding: '8px', margin: '0 4px 4px 0' }
+      style: { backgroundColor: colors[i], padding: '8px', margin: '0 6px 4px 0' }
     });
     var description = ui.Label({
       value: classes[i],
-      style: { margin: '2px 0 0 4px', fontSize: '12px' }
+      style: { margin: '2px 0 0 0', fontSize: '12px' }
     });
     legendPanel.add(ui.Panel({
       widgets: [colorBox, description],
@@ -185,28 +161,23 @@ var buildLegend = function(titleText, colors, classes) {
   return legendPanel;
 };
 
-var severityColors = ['#8B0000', '#FF0000', '#FF4500', '#FFA500', '#FFD700', '#FFFF00', '#90EE90', '#008000', '#FFFFFF'];
-var severityClasses = [
-  'Severe burn', 
-  'Moderate to severe burn', 
-  'Moderate burn', 
-  'Moderate to low burn', 
-  'Low burn', 
-  'Very low burn', 
-  'No burn or very low severity', 
-  'No burn or low severity', 
-  'Unclassified / Unburned'
+var dnbrClasses = [
+  'High regrowth (< -0.1)',
+  'Unburned (-0.1 to 0.1)',
+  'Low severity (0.10 to 0.27)',
+  'Moderate-low severity (0.27 to 0.44)',
+  'Moderate-high severity (0.44 to 0.66)',
+  'High severity (> 0.66)'
 ];
 
+Map.add(buildLegend('dNBR Severity Classes', dnbrPalette, dnbrClasses));
 
-Map.add(buildLegend('Post-Fire Burn Severity', severityColors, severityClasses));
-*/
 // =========================================================================
 // 7. EXPORT TASK
 // =========================================================================
 Export.image.toDrive({
-  image: nbrPostFire,
-  description: 'S2_20171116_NBR_Postfire',
+  image: dNBR,
+  description: 'S2_2017_dNBR_SusaValley',
   scale: 10,
   region: geoCEMS,
   maxPixels: 1e9

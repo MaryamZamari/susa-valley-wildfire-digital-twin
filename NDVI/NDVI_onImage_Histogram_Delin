@@ -1,15 +1,7 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var geometry = 
-    /* color: #ffffff */
-    /* shown: false */
-    ee.Geometry.Polygon(
-        [[[7.028489842717227, 45.21869339705463],
-          [7.028833165471133, 45.11509275182575],
-          [7.209764256779727, 45.11460819436321],
-          [7.209764256779727, 45.218935234003915]]], null, false),
-    affectedAreaCEMS = ee.FeatureCollection("users/ZamariMaryam/EMSR253_02SUSA_DEL_v2_observed_event_a"),
-    geometry2 = 
-    /* color: #ffc82d */
+var affectedAreaCEMS = ee.FeatureCollection("users/ZamariMaryam/EMSR253_02SUSA_DEL_v2_observed_event_a"),
+    geoCEMS = 
+    /* color: #00ffff */
     /* shown: false */
     ee.Geometry.Polygon(
         [[[7.029021402162807, 45.21972611576043],
@@ -18,16 +10,7 @@ var geometry =
           [7.2092658479635885, 45.21972611576043]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
-var geoCEMS = 
-    /* color: #ffc82d */
-    /* shown: false */
-    geometry2;
-        
-//For NDVI I would need the same time of the year(Preferably)---> Dates: 
-/*var image_prefire = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20170619T103021_20170619T103806_T32TLR') //Pre_Fire image
-                         .select(['B4','B8']); */
-          // Cut the polygon inside the main geometry
-
+// Cut the polygon inside the main geometry
 var resultGeometry = geoCEMS.difference(affectedAreaCEMS, ee.ErrorMargin(1e-3));
 print(resultGeometry);
 
@@ -41,11 +24,11 @@ print(resultGeometry);
  var imageTOA = ee.Image('COPERNICUS/S2_HARMONIZED/' + '20170704T103019_20170704T103637_T32TLR');
            
        
-  //Importing the SIAC atmospheric correction module
+//Importing the SIAC atmospheric correction module
 var siac = require('users/marcyinfeng/utils:SIAC');            
 var imageBOA = siac.get_sur(imageTOA);
 var imageBoaSelect= imageBOA.select("B8" , "B12", "B4", "B3", "B2");
-var image_prefire= imageBoaSelect.clip(geometry);
+var image_prefire= imageBoaSelect.clip(resultGeometry);
 
 var image_postfire = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20180619T103019_20180619T103559_T32TLR') //Pre_Fire image
                          .select(['B4','B8']); 
@@ -106,6 +89,6 @@ print(histo_NDVI_prefire);
 print(histo_NDVI_postfire);
 print(histo_NDVI_2022);
 Map.addLayer(resultGeometry);
-Map.centerObject(geometry);
+Map.centerObject(resultGeometry);
 
 

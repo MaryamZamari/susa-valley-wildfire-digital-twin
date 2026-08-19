@@ -1,28 +1,20 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var geometry = 
-    /* color: #ffffff */
+var affectedAreaCEMS = ee.FeatureCollection("users/ZamariMaryam/EMSR253_02SUSA_DEL_v2_observed_event_a"),
+    geoCEMS = 
+    /* color: #0b4a8b */
     /* shown: false */
     ee.Geometry.Polygon(
-        [[[7.003083958928165, 45.21869339705463],
-          [7.003083958928165, 45.110246992050875],
-          [7.219377293889102, 45.110246992050875],
-          [7.219377293889102, 45.21869339705463]]], null, false),
-    geometry2 = 
-    /* color: #7aa93d */
-    /* shown: false */
-    ee.Geometry.Polygon(
-        [[[7.011323522807711, 45.20994425310098],
-          [7.011323522807711, 45.11601945581964],
-          [7.214570593120211, 45.11601945581964],
-          [7.214570593120211, 45.20994425310098]]], null, false);
+        [[[7.029021402162807, 45.21972611576043],
+          [7.029021402162807, 45.1146736921262],
+          [7.2092658479635885, 45.1146736921262],
+          [7.2092658479635885, 45.21972611576043]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
-//
- geometry2 = 
-    geometry2;
-/*var image = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20170619T103021_20170619T103806_T32TLR') //Pre_Fire image
-                        // .mosaic().clip(geometry) 
-                         .select(['B4','B8','B3','B2']); 
-  */
+
+// Cut the polygon inside the main geometry
+var resultGeometry = geoCEMS.difference(affectedAreaCEMS, ee.ErrorMargin(1e-3));
+print(resultGeometry);
+
+
   var imageTOA = ee.Image('COPERNICUS/S2_HARMONIZED/' + '20170704T103019_20170704T103637_T32TLR');
               //     .select(['B4','B3','B2','B8','B12', 'B11']);
        
@@ -31,15 +23,7 @@ var siac = require('users/marcyinfeng/utils:SIAC');
 var imageBOA = siac.get_sur(imageTOA);
 
 print('image BOA: ' , imageBOA);
-//level C1: TOA
-/*var sentinel2 = ee.ImageCollection('COPERNICUS/S2_HARMONIZED')
-                  .filterDate('2017-06-20', '2017-07-10')
-                  .filterBounds(geometry2)
-                  // Pre-filter to get less cloudy granules.
-                  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 20))
-                   .select(['B4','B3','B2','B8','B12']);
-                 
-var s2_median = sentinel2.reduce(ee.Reducer.median()) */
+
 //---------------------------------------------------------
 // Expression using image band indices to calculate NDVI
 //var bandIndexExp = '(b("B8_median") - b("B4_median")) / (b("B8_median") + b("B4_median"))';
@@ -103,7 +87,7 @@ var ndviVis = {min: 0, max: 11 , palette:['#000000','#a50026','#d73027', '#f46d4
  //  the distribution of burned and unburned pixels:
 var histogram_ndvi_classified = ui.Chart.image.histogram({
   image: ndvi_classified,
-  region: geometry2,
+  region: affectedAreaCEMS,
   scale: 10,
   maxBuckets: 50,
   minBucketWidth: 0.01,
@@ -115,24 +99,13 @@ var histogram_ndvi_classified = ui.Chart.image.histogram({
 });
 
 
-//Map.centerObject(geometry);
+Map.centerObject(resultGeometry);
 Map.addLayer(bandIndexImg , ndviVis_1, 'NDVI1');
 Map.addLayer(ndvi_classified , ndviVis, 'NDVI2');
 
-//Map.addLayer(image);
-//Map.addLayer(imageTOA);
-Map.addLayer(imageBOA);
+//Map.addLayer(imageBOA);
+Map.addLayer(resultGeometry);
 
-Map.addLayer(geometry);
-//Map.add(histogram_ndvi_classified);
-
-/*Export.image.toDrive({
-  image: bandIndexImg ,
-  description: 'S2Harmonized-20170704T103019_20170704T103637_T32TLR_NDVI_Prefire',
-  scale: 10,
-  region: geometry,
-})
-*/
 
 //---------Add Legend-----------------------
 var panel = ui.Panel({

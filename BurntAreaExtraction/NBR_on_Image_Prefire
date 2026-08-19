@@ -1,18 +1,23 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var geometry = 
-    /* color: #ffffff */
+var affectedAreaCEMS = ee.FeatureCollection("users/ZamariMaryam/EMSR253_02SUSA_DEL_v2_observed_event_a"),
+    geoCEMS = 
+    /* color: #afafaf */
     /* shown: false */
     ee.Geometry.Polygon(
-        [[[7.003083958928165, 45.21869339705463],
-          [7.003083958928165, 45.110246992050875],
-          [7.219377293889102, 45.110246992050875],
-          [7.219377293889102, 45.21869339705463]]], null, false);
+        [[[7.029021402162807, 45.21972611576043],
+          [7.029021402162807, 45.1146736921262],
+          [7.2092658479635885, 45.1146736921262],
+          [7.2092658479635885, 45.21972611576043]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
+
 
  var image = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20170619T103021_20170619T103806_T32TLR') //Post_Fire image
                         // .mosaic().clip(geometry) 
                          .select(['B12','B8','B4','B3','B2']); 
 
+// Cut the polygon inside the main geometry
+var resultGeometry = geoCEMS.difference(affectedAreaCEMS, ee.ErrorMargin(1e-3));
+print(resultGeometry);
 //---------------------------------------------------------
 
 // Expression using image band indices to calculate NBR
@@ -26,16 +31,15 @@ var nbrVis = {min: -1, max: 1 , palette:['red','orange','green']};
 
 
 print(image);
-Map.centerObject(geometry);
 Map.addLayer(bandIndexImg , nbrVis, 'NBR1');
-Map.addLayer(image);
-Map.addLayer(geometry);
+Map.addLayer(resultGeometry);
+Map.centerObject(geoCEMS);
 
 Export.image.toDrive({
   image: bandIndexImg /*image*/,
   description: 'S2SrHarmonized-20170619T103021_20170619T103806_T32TLR_NBR_Prefire',
   scale: 10,
-  region: geometry,
+  region: geoCEMS,
 })
 
 

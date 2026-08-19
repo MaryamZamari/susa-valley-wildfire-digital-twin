@@ -1,46 +1,25 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var BurnedRoi = 
-    /* color: #d63000 */
-    /* shown: false */
-    /* displayProperties: [
-      {
-        "type": "rectangle"
-      }
-    ] */
-    ee.Geometry.Polygon(
-        [[[7.019220128361758, 45.18786421842558],
-          [7.019220128361758, 45.14211379100212],
-          [7.169595494572696, 45.14211379100212],
-          [7.169595494572696, 45.18786421842558]]], null, false),
-    geometry2 = 
-    /* color: #7aa93d */
-    /* shown: false */
-    /* displayProperties: [
-      {
-        "type": "rectangle"
-      }
-    ] */
-    ee.Geometry.Polygon(
-        [[[7.011323522807711, 45.20994425310098],
-          [7.011323522807711, 45.11601945581964],
-          [7.214570593120211, 45.11601945581964],
-          [7.214570593120211, 45.20994425310098]]], null, false),
-    geometry = 
-    /* color: #98ff00 */
+var geoCEMS = 
+    /* color: #ffc82d */
     /* shown: false */
     ee.Geometry.Polygon(
-        [[[7.003083958928165, 45.21869339705463],
-          [7.003083958928165, 45.110246992050875],
-          [7.219377293889102, 45.110246992050875],
-          [7.219377293889102, 45.21869339705463]]], null, false);
+        [[[7.029021402162807, 45.21972611576043],
+          [7.029021402162807, 45.1146736921262],
+          [7.2092658479635885, 45.1146736921262],
+          [7.2092658479635885, 45.21972611576043]]], null, false),
+    affectedAreaCEMS = ee.FeatureCollection("users/ZamariMaryam/EMSR253_02SUSA_DEL_v2_observed_event_a");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
-   geometry = 
-    geometry;
+    affectedAreaCEMS = ee.FeatureCollection("users/ZamariMaryam/EMSR253_02SUSA_DEL_v2_observed_event_a");
+    print(resultGeometry);
+
+    
  var image = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20171116T103311_20171116T103542_T32TLR') //Post_Fire image
-                        // .mosaic().clip(geometry) 
                          .select(['B12','B8'])
                           .updateMask(ee.Image('JRC/GSW1_2/GlobalSurfaceWater').select('max_extent').not()); // Mask out water areas; 
 
+// Cut the polygon inside the main geometry
+var resultGeometry = geoCEMS.difference(affectedAreaCEMS, ee.ErrorMargin(1e-3));
+print(resultGeometry);
 //---------------------------------------------------------
 // Define the threshold values for each category
 var burnedThreshold = -0.2;
@@ -90,31 +69,11 @@ var nbr_classified = bandIndexImg.expression(
 var nbrVis = {min: 0, max: 8 , palette:['#8B0000','#FF0000','#FF4500', '#FFA500', '#FFD700', '#FFFF00', '#90EE90', '#008000']};  
 
 //----------------visualisation commands------------
-Map.centerObject(geometry2);
+Map.centerObject(resultGeometry);
 Map.addLayer(nbr_classified , nbrVis, 'NBR1');
-Map.addLayer(geometry2);
-Map.addLayer(geometry);
+Map.addLayer(resultGeometry);
 
-/*
-- -1 < NBR < -0.9: Severe burn
-- -0.9 < NBR < -0.8: Moderate to severe burn
-- -0.8 < NBR < -0.7: Moderate burn
-- -0.7 < NBR < -0.6: Moderate to low burn
-- -0.6 < NBR < -0.5: Low burn
-- -0.5 < NBR < -0.4: Very low burn
-- -0.2 < NBR < -0.1: No burn or very low severity burn
-- -0.1 < NBR < 0: No burn or low severity burn        
-*/ 
 
-/*-0.9 < NBR < -1: #8B0000 (Dark Red)
--0.8 < NBR < -0.9: #FF0000 (Red)
--0.7 < NBR < -0.8: #FF4500 (Orange-Red)
--0.7 < NBR < -0.6: #FFA500 (Orange)
--0.6 < NBR < -0.5: #FFD700 (Yellow-Orange)
--0.5 < NBR < -0.4: #FFFF00 (Yellow)
--0.2 < NBR < -0.1: #90EE90 (Light Green)
--0.1 < NBR < 0: #008000 (Green) 
-*/
 
 //---------Add Legend-----------------------
 var panel = ui.Panel({

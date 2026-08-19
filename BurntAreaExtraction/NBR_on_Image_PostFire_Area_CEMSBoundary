@@ -11,8 +11,8 @@ var geoCEMS =
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
 
-// Cut the polygon inside the main geometry
 
+// Cut the polygon inside the main geometry
 var resultGeometry = geoCEMS.difference(affectedAreaCEMS, ee.ErrorMargin(1e-3));
 print(resultGeometry);
 
@@ -102,13 +102,8 @@ print('Projection B12: ', projectionb12);
 //----------------visualisation commands------------
 //print(image);
 Map.centerObject(geoCEMS);
-//Map.addLayer(burnedNBRImage);
 Map.addLayer(bandIndexImg , nbrVis, 'NBR1');
-//Map.addLayer(image); 
-//Map.addLayer(bandIndexImg);
 
-
-//Map.centerObject(geometry);
 
 // Add the styled feature collection to the map
 Map.addLayer(resultGeometry);

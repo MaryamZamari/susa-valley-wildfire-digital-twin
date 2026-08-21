@@ -1,0 +1,180 @@
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var affectedAreaCEMS = ee.FeatureCollection("users/ZamariMaryam/EMSR253_02SUSA_DEL_v2_observed_event_a"),
+    geoCEMS = 
+    /* color: #ffc82d */
+    /* shown: false */
+    ee.Geometry.Polygon(
+        [[[7.029021402162807, 45.21972611576043],
+          [7.029021402162807, 45.1146736921262],
+          [7.2092658479635885, 45.1146736921262],
+          [7.2092658479635885, 45.21972611576043]]], null, false);
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
+
+          // Cut the polygon inside the main geometry
+
+var resultGeometry = geoCEMS.difference(affectedAreaCEMS, ee.ErrorMargin(1e-3));
+print(resultGeometry);
+
+// importing pre-fire and post-fire NBR images (the same dates for which NBR was calculated).a
+var prefire_image = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20170619T103021_20170619T103806_T32TLR')
+                      .select('B8', 'B12');
+                        
+var postfire_image = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20171116T103311_20171116T103542_T32TLR')
+                       .select('B8', 'B12');
+
+//----------------------NBR Calculations for Post and Prefire-------------------
+// Expression using image band indices to calculate NBR
+var bandIndexExp = '(b("B8") - b("B12")) / (b("B8") + b("B12"))';
+var prefire_nbr =  prefire_image.expression(bandIndexExp).rename('NBR_Prefire');
+var postfire_nbr = postfire_image.expression(bandIndexExp).rename('NBR_Postfire');
+
+// delta_nbr calculation(Burn Severity formula)-----------------------------------
+var delta_nbr = prefire_nbr.subtract(postfire_nbr).rename('dNBR');
+
+// Clip the dNBR image to your geometry
+
+print("delta_nbr", delta_nbr);
+
+//thresholds lt
+/*var threshold_enhanced_regrowth_high = -0.251;  
+var threshold_enhanced_regrowth_low = -0.101 ; 
+var threshold_unburned= 0.1;//0.99;
+var threshold_low_severity= 0.27;
+var threshold_moderate_low_severity= 0.44;
+var threshold_moderate_high_severity= 0.66;
+var threshold_high_severity= 1;//;*/
+var threshold_enhanced_regrowth_high = -0.3;  
+var threshold_enhanced_regrowth_low = -0.1 ; 
+var threshold_unburned= 0.3;//0.99;
+var threshold_low_severity= 0.4;
+var threshold_moderate_low_severity= 0.5;
+var threshold_moderate_high_severity= 0.7;
+var threshold_high_severity= 1;
+
+// defining the burn severity image based on the threshholds and values_3,2,1,0 are values for visualisation
+var burnSeverity = delta_nbr.expression(
+      "(b('dNBR') <= threshold_enhanced_regrowth_high) ? 0" + 
+    ": (b('dNBR') <= threshold_enhanced_regrowth_low) ? 1" +  // Moderate-high burn severity
+    ": (b('dNBR') <= threshold_unburned) ? 2" +  // Moderate-low burn severity
+    ": (b('dNBR') <= threshold_low_severity) ? 3" + 
+    ": (b('dNBR') <= threshold_moderate_low_severity ) ? 4" + 
+    ": (b('dNBR') <= threshold_moderate_high_severity) ? 5" + 
+    ": (b('dNBR') <= threshold_high_severity) ? 6" +
+      ":7" 
+  , {
+     threshold_enhanced_regrowth_high : threshold_enhanced_regrowth_high ,  
+     threshold_enhanced_regrowth_low : threshold_enhanced_regrowth_low , 
+     threshold_unburned : threshold_unburned ,
+     threshold_low_severity : threshold_low_severity ,
+     threshold_moderate_low_severity : threshold_moderate_low_severity ,
+     threshold_moderate_high_severity : threshold_moderate_high_severity ,
+     threshold_high_severity : threshold_high_severity  ,
+  }).rename(['burnSeverity']);
+
+
+//histogram
+var histogram_burnSeverity = ui.Chart.image.histogram({
+  image: delta_nbr,
+  region: affectedAreaCEMS,
+  scale: 10,
+  maxBuckets: 50,
+  minBucketWidth: 0.01,
+})
+  .setOptions({
+    title: 'Burn Severity Histogram',
+    hAxis: { title: 'NDVI category' },
+    vAxis: { title: 'Pixel Count' }
+}); 
+
+var histogram_burnSeverity_thresh = ui.Chart.image.histogram({
+  image: burnSeverity,
+  region: affectedAreaCEMS,
+  scale: 10,
+  maxBuckets: 50,
+  minBucketWidth: 0.01,
+})
+  .setOptions({
+    title: 'Burn Severity Histogram based on Thresholds',
+    hAxis: { title: 'NDVI category' },
+    vAxis: { title: 'Pixel Count'  }
+}); 
+
+
+// Display the burn severity map       )       
+var visBurnSeverity = {min: 0, max: 7, palette: ['#778835', '#a7c050', '#0be344', '#f8fc11', '#f8b140', '#f8671a', '#a600d4', 'Grey']};
+Map.addLayer(burnSeverity, visBurnSeverity, 'Burn Severity');
+Map.addLayer(geoCEMS);  
+//Map.addLayer(affectedAreaCEMS); 
+Map.addLayer(resultGeometry);
+//Map.add(histogram_burnSeverity_thresh); 
+//Map.add(histogram_burnSeverity); 
+Map.centerObject(geoCEMS);
+
+Export.image.toDrive({
+  image: burnSeverity /*image*/,
+  description: 'S2SrHarmonized-20170619T103021_20170619T103806_T32TLR_BurnSeverity_newBoundary',
+  scale: 10,
+  region: geoCEMS,
+})
+//---------Add Legend-----------------------
+var panel = ui.Panel({
+  style: {
+    position: 'bottom-left',
+    padding: '5px;'
+  }
+})
+
+var title = ui.Label({
+  value: 'Classification',
+  style: {
+    fontSize: '14px',
+    fontWeight: 'bold',
+    margin: '0px;'
+  }
+})
+
+panel.add(title)
+
+var color = ['#778835', '#a7c050', '#0be344', '#f8fc11', '#f8b140', '#f8671a', 'a600d4', 'Grey'];
+
+var lc_class = [
+                'Enhanced regrowth_high',
+                'Enhanced regrowth_low',
+                'Unburned',
+                'Low burn Severity',
+                'Moderate_low Severity',
+                'Moderate_high Severity',
+                'High Severity',
+                'No value'
+                ]
+
+//---------Add Legend-----------------------
+
+var list_legend = function(color, description) {
+  
+  var c = ui.Label({
+    style: {
+      backgroundColor: color,
+      padding: '10px',
+      margin: '4px'
+    }
+  })
+  
+  var ds = ui.Label({
+    value: description,
+    style: {
+      margin: '5px'
+    }
+  })
+  
+  return ui.Panel({
+    widgets: [c, ds],
+    layout: ui.Panel.Layout.Flow('horizontal')
+  })
+}
+
+for(var a = 0; a <= 7; a++){
+  panel.add(list_legend(color[a], lc_class[a]))
+}
+
+Map.add(panel)

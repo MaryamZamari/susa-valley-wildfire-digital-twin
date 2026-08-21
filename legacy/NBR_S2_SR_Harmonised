@@ -1,0 +1,85 @@
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var roi = 
+    /* color: #cecece */
+    /* displayProperties: [
+      {
+        "type": "rectangle"
+      }
+    ] */
+    ee.Geometry.Polygon(
+        [[[6.5947420758131114, 45.20882936495508],
+          [6.5947420758131114, 44.91394352253096],
+          [7.416656748664674, 44.91394352253096],
+          [7.416656748664674, 45.20882936495508]]], null, false);
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
+//---------------------Preprocessing phase ----------------------------------------------
+/**
+ * Function to mask clouds using the Sentinel-2 QA band
+ * @param {ee.Image} image Sentinel-2 image
+ * @return {ee.Image} cloud masked Sentinel-2 image
+ */
+ 
+function maskS2clouds(image) {
+  var qa = image.select('QA60');
+
+  // Bits 10 and 11 are clouds and cirrus, respectively.
+  var cloudBitMask = 1 << 10;
+  var cirrusBitMask = 1 << 11;
+
+  // Both flags should be set to zero, indicating clear conditions.
+  var mask = qa.bitwiseAnd(cloudBitMask).eq(0)
+      .and(qa.bitwiseAnd(cirrusBitMask).eq(0));
+ //divide to 1000 to convert the pixel values from the original 16-bit format to a 32-bit floating-point format(To prevent the loss of precision)
+  return image.updateMask(mask).divide(10000);  
+}
+
+//The fire was ongoing from the begining of october until the end of it in the AOI
+var dataset = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
+
+                  .filterDate('2017-06-01', '2017-06-20')     //  PREFIRE DATES
+               //   .filterDate('2017-11-01', '2017-12-30')   //POSTFIRE DATES
+  // Pre-filter to get less cloudy granules.
+                  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE',20))
+             //     .filter(ee.Filter.lt('SNOW_ICE_PERCENTAGE',5))     // ---> I comment it because it gave me less pixels. and the wrong results were the same
+                  .filterBounds(roi)
+                //  .map(maskS2clouds)//This mask eliminates a lot of pixels...
+                  
+                  .map(function(image) {
+                     return image.divide(10000);    //dividing so that the reflectance values will be between 0 and 1
+                  }) ;
+
+//---------------------Index Calculation phase ----------------------------------------------
+ 
+// Function to calculate NBR index
+function calculateNBR(image) {
+  // Select NIR and SWIR bands from the image
+  var nir = image.select('B8');
+  var swir = image.select('B12');
+  
+  // Calculate NBR index
+  var nbr = nir.subtract(swir).divide(nir.add(swir)).rename('NBR');
+  
+  return nbr;
+}
+
+  
+// here i map the function over the collection to get the NBR for each image
+var nbr_collection = dataset.map(calculateNBR);  
+            
+            
+//---------------------Visualisation phase ----------------------------------------------
+
+// Clip the NBR collection
+var clipped_nbr_collection = nbr_collection.map(function(image){
+  return image.clip(roi);
+});
+
+Map.centerObject(roi);
+//Map.addLayer(nbr_roi); 
+
+Map.addLayer(clipped_nbr_collection);
+
+// Display NBR(burnt areas) on the map (Healthy green vegetation will have a high NBR value while burnt vegetation will have a low value)
+Map.addLayer(clipped_nbr_collection, {min:-1, max:1, palette:['red','orange','green']},'PostFire_NBR');
+
+//Map.addLayer(dataset.mean(), visualization, 'NBR');

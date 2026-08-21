@@ -1,0 +1,37 @@
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var geometry = /* color: #fdfff1 */ee.Geometry.Polygon(
+        [[[7.029021402162807, 45.21972611576043],
+          [7.029021402162807, 45.1146736921262],
+          [7.2092658479635885, 45.1146736921262],
+          [7.2092658479635885, 45.21972611576043]]], null, false),
+    affectedAreaCEMS = ee.FeatureCollection("users/ZamariMaryam/EMSR253_02SUSA_DEL_v2_observed_event_a");
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
+var geoCEMS = 
+    /* color: #ffc82d */
+    /* shown: false */
+    geometry;
+// Visualize FireCCI51 for one year
+
+
+
+var dataset = ee.ImageCollection('ESA/CCI/FireCCI/5_1')
+                  .filterDate('2017-11-01', '2017-11-20');
+var burnedArea = dataset.select('BurnDate');
+
+// Use a circular palette to assign colors to date of first detection
+var baVis = {
+  min: 1,
+  max: 366,
+  palette: [
+    'ff0000', 'fd4100', 'fb8200', 'f9c400', 'f2ff00', 'b6ff05',
+    '7aff0a', '3eff0f', '02ff15', '00ff55', '00ff99', '00ffdd',
+    '00ddff', '0098ff', '0052ff', '0210ff', '3a0dfb', '7209f6',
+    'a905f1', 'e102ed', 'ff00cc', 'ff0089', 'ff0047', 'ff0004'
+  ]
+};
+var maxBA = burnedArea.max();
+
+Map.centerObject(geometry);
+Map.addLayer(maxBA, baVis, 'Burned Area');
+Map.addLayer(affectedAreaCEMS);
+

@@ -1,0 +1,13 @@
+
+// Load an image
+var image = ee.Image('LANDSAT/LC08/C01/T1_TOA/LC08_044034_20140318');
+
+// Load a shapefile
+var geometry = ee.FeatureCollection('users/your_username/shapefile_name');
+
+// Mask the image with the shapefile
+var maskedImage = image.clip(geometry);
+
+// Display the masked image
+Map.addLayer(maskedImage, {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'Masked Image');
+

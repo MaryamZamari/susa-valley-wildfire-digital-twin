@@ -1,0 +1,152 @@
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var affectedAreaCEMS = ee.FeatureCollection("users/ZamariMaryam/EMSR253_02SUSA_DEL_v2_observed_event_a"),
+    geoCEMS = 
+    /* color: #afafaf */
+    /* shown: false */
+    ee.Geometry.Polygon(
+        [[[7.029021402162807, 45.21972611576043],
+          [7.029021402162807, 45.1146736921262],
+          [7.2092658479635885, 45.1146736921262],
+          [7.2092658479635885, 45.21972611576043]]], null, false);
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
+ var image = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20171116T103311_20171116T103542_T32TLR') //Post_Fire image
+                        // .mosaic().clip(geometry) 
+                         .select(['B12','B8'])
+                          .updateMask(ee.Image('JRC/GSW1_2/GlobalSurfaceWater').select('max_extent').not()); // Mask out water areas; 
+
+// Cut the polygon inside the main geometry
+var resultGeometry = geoCEMS.difference(affectedAreaCEMS, ee.ErrorMargin(1e-3));
+print(resultGeometry);
+
+
+// Get the projection of the image
+var projectionb8 = image.select(['B8']).projection();
+var projectionb12 = image.select(['B12']).projection();
+//---------------------------------------------------------
+// Define the threshold values for each category
+var burnedThreshold = -0.2;
+var unburnedThreshold = 0.2;
+
+// Expression using image band indices to calculate NBR
+var bandIndexExp = '(b("B8") - b("B12")) / (b("B8") + b("B12"))';
+var bandIndexImg = image.expression(bandIndexExp).rename('NBR');
+var nbr_ND = image.normalizedDifference(['B8', 'B12']).rename('NBR_ND');
+//---------------------Visualisation phase ----------------------------------------------
+// Visualization parameters for NDVI.
+var nbrVis = {min: -1, max: 1 , palette:['red','orange','green']};  
+
+//-------Area Calculation----------------------
+var thresh_burned = -0.1; //lt
+
+//------------------------------QUANTIFICATION OF STATISTICS------------------
+// Create binary masks for NBR pixel categories
+var burnedMask = bandIndexImg.lt(thresh_burned);
+var unburnedMask= bandIndexImg.gt(thresh_burned);
+
+// Create a binary mask for burned areas
+var burnedMask = nbr_ND.lt(-0.1);
+
+// Mask the image based on the binary masks
+var burnedNBRImage = image.updateMask(burnedMask);
+var unburnedNBRImage= image.updateMask(unburnedMask);
+var burnedNbrImage_ND = nbr_ND.updateMask(burnedMask);
+
+//-------Merging the masked images (merging the two bands in 1 band)--
+var burnedNBRImageMerged = burnedNBRImage
+                                .select(['B8', 'B12'])
+                                .reduce(ee.Reducer.sum())
+                                .toFloat()
+                                .rename('burnedNBRImageMerged');
+                                
+var unburnedNBRImageMerged = unburnedNBRImage
+                                .select(['B8', 'B12'])
+                                .reduce(ee.Reducer.sum())
+                                .toFloat()
+                                .rename('unburnedNBRImageMerged');
+                                
+//------Merging the complete image into 1 band
+var imageMerged= image
+                    .select('B8', 'B12')
+                    .reduce(ee.Reducer.sum())
+                    .toFloat()
+                    .rename('imageMerged');
+  
+//**************** Solution From StackoverFlow _ burned areas calculations ************
+var totalAreaImage = ee.Image.pixelArea()
+  .updateMask(imageMerged.mask())
+  .rename('totalArea');
+  
+var burnedAreaImage = totalAreaImage
+  .updateMask(burnedNBRImageMerged)
+  .rename('burnedArea');
+  
+var areas = totalAreaImage
+  .addBands(burnedAreaImage)
+  .reduceRegion({
+    reducer: ee.Reducer.sum(),
+    geometry: geoCEMS,
+    scale: 10,
+    crs: 'EPSG:32632',
+    maxPixels: 1e13
+  }); 
+
+var burnedArea = areas.getNumber('burnedArea');
+var totalArea = areas.getNumber('totalArea');
+var percentage = burnedArea.divide(totalArea).multiply(100);
+
+print('Burned Area (Hectares)', burnedArea.divide(10000));
+print('Total Area (Hectares)', totalArea.divide(10000));
+print('Burned Fraction (%)', percentage);
+
+
+//**************** Solution From StackoverFlow _ burned areas calculations ************
+
+
+
+/*============== create a histogram of the NBR index values to visualize
+   the distribution of burned and unburned pixels: ====================*/
+var histogram_NBR = ui.Chart.image.histogram({
+  image: bandIndexImg,
+  region: affectedAreaCEMS,
+  scale: 10,
+  maxBuckets: 50,
+  minBucketWidth: 0.01,
+ // series: ['burnedAreaImage']
+})
+  .setOptions({
+    title: 'NBR Histogram',
+    hAxis: { title: 'NBR' },
+    vAxis: { title: 'Pixel Count' }
+});
+
+
+//Histogram for burned areas
+var histogram_Burned = ui.Chart.image.histogram({
+  image: burnedNbrImage_ND,
+  region: affectedAreaCEMS,
+  scale: 10,
+  maxBuckets: 50,
+  minBucketWidth: 0.01,
+//  series: ['burnedAreaImage']
+})
+  .setOptions({
+    title: 'Burned Histogram',
+    hAxis: { title: 'Burned Areas' },
+    vAxis: { title: 'Pixel Count' }
+});
+
+
+
+
+
+
+//----------------visualisation commands------------.
+print(image);
+Map.centerObject(affectedAreaCEMS);
+//Map.addLayer(burnedNBRImage);
+Map.addLayer(bandIndexImg , nbrVis, 'NBR1');
+Map.addLayer(resultGeometry);
+
+// Add the histogram chart to the map
+Map.add(histogram_NBR);
+Map.add(histogram_Burned);

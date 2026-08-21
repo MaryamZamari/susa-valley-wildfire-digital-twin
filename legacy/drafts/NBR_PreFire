@@ -1,0 +1,58 @@
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var roi = 
+    /* color: #80929d */
+    /* displayProperties: [
+      {
+        "type": "rectangle"
+      }
+    ] */
+    ee.Geometry.Polygon(
+        [[[6.5947420758131114, 45.20882936495508],
+          [6.5947420758131114, 44.91394352253096],
+          [7.716034190070924, 44.91394352253096],
+          [7.716034190070924, 45.20882936495508]]], null, false),
+    sentinel2 = ee.ImageCollection("COPERNICUS/S2_SR");
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
+
+var startDate= '2017-09-01';
+var endDate= '2017-09-30'; 
+
+var data= sentinel2
+              .select('B8','B12')
+              .filterBounds(roi)
+              .filterDate(startDate , endDate);
+              
+var nir= sentinel2.select('B8');
+var swir= sentinel2.select('B12');
+
+//var nbr= nir.subtract(swir)
+  //          .divide(nir.add(swir));
+  
+  
+// Function to calculate NBR index
+function calculateNBR(image) {
+  // Select NIR and SWIR bands from the image
+  var nir = image.select('B8');
+  var swir = image.select('B12');
+  
+  // Calculate NBR index
+  var nbr = nir.subtract(swir).divide(nir.add(swir)).rename('NBR');
+  
+  return nbr;
+}
+  
+// here i mapped the function over the collection to get the NBR for each image
+var nbr_collection = sentinel2.map(calculateNBR);  
+            
+// Clip  NBR 
+var clipped_nbr_collection = nbr_collection.map(function(image){
+  return image.clip(roi);
+});
+
+Map.centerObject(roi);
+//Map.addLayer(nbr_roi); 
+
+Map.addLayer(clipped_nbr_collection);
+
+// Display NBR(burnt areas) on the map (Healthy green vegetation will have a high NBR value while burnt vegetation will have a low value)
+Map.addLayer(clipped_nbr_collection, {min:-1, max:1, palette:['red','orange','green']},'PreFire_NBR');

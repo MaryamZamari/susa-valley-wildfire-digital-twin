@@ -1,0 +1,44 @@
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var roi = 
+    /* color: #80929d */
+    /* displayProperties: [
+      {
+        "type": "rectangle"
+      }
+    ] */
+    ee.Geometry.Polygon(
+        [[[6.6235811871412364, 45.20882936495508],
+          [6.6235811871412364, 44.91394352253096],
+          [7.500427500617799, 44.91394352253096],
+          [7.500427500617799, 45.20882936495508]]], null, false),
+    geometry = /* color: #98ff00 */ee.Geometry.Polygon(
+        [[[7.003083958928165, 45.21869339705463],
+          [7.003083958928165, 45.110246992050875],
+          [7.219377293889102, 45.110246992050875],
+          [7.219377293889102, 45.21869339705463]]], null, false);
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
+  roi2 = 
+    geometry;
+/* Define the Susa Valley region of interest 
+/===> We did by importing the polygone based on the geographyc coordinates */
+
+
+// Load the Sentinel-2 image collection for the time period of interest
+// Load the Sentinel-2 image collection
+ var sentinel2 = ee.ImageCollection('COPERNICUS/S2_SR') 
+.filterDate('2017-09-01', '2017-12-31') .filterBounds(roi); 
+
+// Define the NBR function
+ var nbr = function(image)
+    { 
+var nir = image.select('B8'); 
+var swir = image.select('B12');
+ var nbr = nir.subtract(swir)
+.divide(nir.add(swir))
+.rename('NBR'); 
+ return image.addBands(nbr);
+   }; 
+   
+// Apply the NBR function to the Sentinel-2 image collection 
+var sentinel2Nbr = sentinel2.map(nbr); 
+

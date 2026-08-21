@@ -1,0 +1,40 @@
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var roi = 
+    /* color: #80929d */
+    /* displayProperties: [
+      {
+        "type": "rectangle"
+      }
+    ] */
+    ee.Geometry.Polygon(
+        [[[6.5947420758131114, 45.20882936495508],
+          [6.5947420758131114, 44.91394352253096],
+          [7.716034190070924, 44.91394352253096],
+          [7.716034190070924, 45.20882936495508]]], null, false),
+    sentinel2 = ee.ImageCollection("COPERNICUS/S2_SR");
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
+
+var startDate= '2017-10-01';
+var endDate= '2017-12-15'; 
+
+
+  var data= sentinel2
+            .select('B8','B4')
+            .filterBounds(roi)
+            .filterDate(startDate , endDate)
+            .median();
+                      
+  var nir= data.select('B8');
+  var red= data.select('B4');
+    
+  var NDVI= nir.subtract(red)
+               .divide(nir.add(red));
+               
+  var NDVI_ROI= NDVI.clip(roi);
+  
+  Map.centerObject(roi);
+  Map.addLayer(NDVI_ROI);
+  
+  // Display NDVI on the map (from lowest to highest, water, barren areas(i.e sand, snow, rock), shrub or grassland, and rain forrest)
+  Map.addLayer(NDVI_ROI, {min:-1, max:1, palette:['red','orange','	#d9ef8b', '#006837']},'PostFire_NDVI');
+

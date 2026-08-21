@@ -1,0 +1,127 @@
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var geoCEMS = 
+    /* color: #ffc82d */
+    /* shown: false */
+    ee.Geometry.Polygon(
+        [[[7.029021402162807, 45.21972611576043],
+          [7.029021402162807, 45.1146736921262],
+          [7.2092658479635885, 45.1146736921262],
+          [7.2092658479635885, 45.21972611576043]]], null, false),
+    affectedAreaCEMS = ee.FeatureCollection("users/ZamariMaryam/EMSR253_02SUSA_DEL_v2_observed_event_a");
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
+    affectedAreaCEMS = ee.FeatureCollection("users/ZamariMaryam/EMSR253_02SUSA_DEL_v2_observed_event_a");
+    print(resultGeometry);
+
+    
+ var image = ee.Image('COPERNICUS/S2_SR_HARMONIZED/' + '20171116T103311_20171116T103542_T32TLR') //Post_Fire image
+                         .select(['B12','B8'])
+                          .updateMask(ee.Image('JRC/GSW1_2/GlobalSurfaceWater').select('max_extent').not()); // Mask out water areas; 
+
+// Cut the polygon inside the main geometry
+var resultGeometry = geoCEMS.difference(affectedAreaCEMS, ee.ErrorMargin(1e-3));
+print(resultGeometry);
+//---------------------------------------------------------
+// Define the threshold values for each category
+var burnedThreshold = -0.2;
+var unburnedThreshold = 0.2;
+
+// Expression using image band indices to calculate NBR
+var bandIndexExp = '(b("B8") - b("B12")) / (b("B8") + b("B12"))';
+var bandIndexImg = image.expression(bandIndexExp).rename('NBR');
+
+//---------------------Visualisation phase ----------------------------------------------
+
+//--------thresholds (lt)----------------------------
+var thresh_SevereBurn = -0.9; 
+var thresh_ModeratetoSevereBurn= -0.8;
+var thresh_ModerateBurn= -0.7;
+var thresh_moderateLowBurn= -0.6; 
+var thresh_LowBurn= -0.5;
+var thresh_VeryLowBurn= -0.4; 
+var thresh_NoBurnOrVeryLowSeverityBurn= -0.1; 
+var thresh_NoBurnOrLowSeverityBurn = 0; 
+
+// defining the NBR image based on the threshholds and values_3,2,1,0 are values for visualisation
+var nbr_classified = bandIndexImg.expression(
+  "(b('NBR') < thresh_SevereBurn) ? 0" +   
+    ": (b('NBR') <= thresh_ModeratetoSevereBurn) ? 1" +  
+    ": (b('NBR') <= thresh_ModerateBurn) ? 2" +  
+    ": (b('NBR') <= thresh_moderateLowBurn) ? 3" + 
+    ": (b('NBR') <= thresh_LowBurn) ? 4" +
+    ": (b('NBR') <= thresh_VeryLowBurn) ? 5" +
+    ": (b('NBR') <= thresh_NoBurnOrVeryLowSeverityBurn) ? 6" +
+    ": (b('NBR') <= thresh_NoBurnOrLowSeverityBurn) ? 7" +
+      ":8" //unclassified 
+  , {
+     thresh_SevereBurn : thresh_SevereBurn ,
+     thresh_ModeratetoSevereBurn : thresh_ModeratetoSevereBurn ,
+     thresh_ModerateBurn : thresh_ModerateBurn ,
+     thresh_moderateLowBurn : thresh_moderateLowBurn ,
+     thresh_LowBurn : thresh_LowBurn,
+     thresh_VeryLowBurn : thresh_VeryLowBurn,
+     thresh_NoBurnOrVeryLowSeverityBurn : thresh_NoBurnOrVeryLowSeverityBurn,
+     thresh_NoBurnOrLowSeverityBurn : thresh_NoBurnOrLowSeverityBurn,
+    })
+    .rename(['NBR_ClassifiedSeverity']);
+
+//---------------------Visualisation phase ----------------------------------------------
+// Visualization parameters for NDVI.
+var nbrVis = {min: 0, max: 8 , palette:['#8B0000','#FF0000','#FF4500', '#FFA500', '#FFD700', '#FFFF00', '#90EE90', '#008000']};  
+
+//----------------visualisation commands------------
+Map.centerObject(resultGeometry);
+Map.addLayer(nbr_classified , nbrVis, 'NBR1');
+Map.addLayer(resultGeometry);
+
+
+
+//---------Add Legend-----------------------
+var panel = ui.Panel({
+  style: {
+    position: 'bottom-left',
+    padding: '5px;'
+  }
+})
+
+var title = ui.Label({
+  value: 'Classification',
+  style: {
+    fontSize: '14px',
+    fontWeight: 'bold',
+    margin: '0px;'
+  }
+})
+
+panel.add(title)
+
+var color = ['#8B0000','#FF0000','#FF4500', '#FFA500', '#FFD700', '#FFFF00', '#90EE90', '#008000', 'white']
+var lc_class = ['Severe burn', 'Moderate to severe burn', 'Moderate burn', 'Moderate to low burn', 'Low burn', 'Very low burn', 'No burn or very low severity burn', 'No burn or low severity burn'  ]
+
+var list_legend = function(color, description) {
+  
+  var c = ui.Label({
+    style: {
+      backgroundColor: color,
+      padding: '10px',
+      margin: '4px'
+    }
+  })
+  
+  var ds = ui.Label({
+    value: description,
+    style: {
+      margin: '5px'
+    }
+  })
+  
+  return ui.Panel({
+    widgets: [c, ds],
+    layout: ui.Panel.Layout.Flow('horizontal')
+  })
+}
+
+for(var a = 0; a <= 8; a++){
+  panel.add(list_legend(color[a], lc_class[a]))
+}
+
+Map.add(panel)

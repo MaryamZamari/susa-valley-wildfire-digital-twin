@@ -1,29 +1,37 @@
 import os
 import ee
-import geemap
 
 # --- GEOSPATIAL & PROJECT CONSTANTS ---
-# Project CRS matching QGIS visual reference
 DEFAULT_CRS = "EPSG:3857"
-
-# CEMS Wildfire EMSR253 Data / AOI Defaults
 DEFAULT_AOI_NAME = "EMSR253"
-# Coordinates centered around your wildfire event region (Longitude, Latitude)
-DEFAULT_CENTER = [38.2, 23.8]
-DEFAULT_ZOOM = 10
+
+# Map display center [lat, lon] for geemap
+DEFAULT_CENTER = [45.167, 7.119]
+DEFAULT_ZOOM = 11
+
+# Susa Valley EMSR253 study area coordinates [lon, lat]
+EMSR253_COORDS_BB = [
+    [
+        [7.029021402162807, 45.21972611576043],
+        [7.029021402162807, 45.1146736921262],
+        [7.2092658479635885, 45.1146736921262],
+        [7.2092658479635885, 45.21972611576043]
+    ]
+]
+
+# EMSR253 Event Timeline (October 2017 Wildfire)
+PRE_FIRE_START = "2017-09-15"
+PRE_FIRE_END = "2017-10-15"
+POST_FIRE_START = "2017-10-25"
+POST_FIRE_END = "2017-11-20"
+
 
 
 def initialize_earth_engine(project_id: str = 'ee-zamarimaryam') -> bool:
     """
     Authenticates and initializes the Google Earth Engine API.
-
-    Args:
-        project_id (str, optional): Google Cloud Project ID required for GEE API v1+.
-                                    Defaults to EE_PROJECT_ID environment variable if set.
-    Returns:
-        bool: True if initialization succeeded, False otherwise.
     """
-    ee_project = project_id or os.getenv("ee-zamarimaryam")
+    ee_project = project_id or os.getenv("EE_PROJECT_ID")
 
     try:
         if ee_project:
@@ -49,6 +57,4 @@ def initialize_earth_engine(project_id: str = 'ee-zamarimaryam') -> bool:
 
 
 if __name__ == "__main__":
-    # Test execution when running config.py directly
     initialize_earth_engine()
-
